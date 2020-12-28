@@ -45,18 +45,16 @@ class MwINFO(MwRecord):
         self.set_subrecord_string(self.prev_id, "PNAM")
         self.set_subrecord_string(self.next_id, "NNAM")
     
-    def record_details(self, full=False):
+    def record_details(self):
         if self.dial.type == "Journal":
             disp_index = "Index"
             response_entry = "Entry"
         else:
             disp_index = "Disp"
             response_entry = "Response"
-        string = MwRecord.format_record_details(self, [
-        ("|ID|", "id"), ("    |Prev|", "prev_id", ""), ("    |Next|", "next_id", "")
-        ]) + "\n" if full else ""
-        return string + MwRecord.format_record_details(self, [
-        ("|" + response_entry + "|", "response"),
+        return MwRecord.format_record_details(self, [
+        ("|" + response_entry + "|    " + str(self.dial) + ": {}", "response"),
+        ("\n|ID|", "id"), ("    |Prev|", "prev_id", ""), ("    |Next|", "next_id", ""),
         ("\n|" + disp_index + "|", "disposition", 0),
         ("\n|Sex|", "sex", -1),
         ("\n|Actor|", "actor"),
