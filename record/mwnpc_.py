@@ -2,6 +2,8 @@ import math
 from mwrecord import MwRecord
 import mwglobals
 
+do_autocalc = False
+
 class MwNPC_(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -58,7 +60,7 @@ class MwNPC_(MwRecord):
         
         load_ai(self)
         
-        if self.autocalc:
+        if do_autocalc and self.autocalc:
             self.autocalc_stats()
         mwglobals.object_ids[self.id] = self
     
@@ -92,7 +94,7 @@ class MwNPC_(MwRecord):
             health_mult += 1
         self.health = math.floor(0.5 * (self.attributes["Strength"]  + self.attributes["Endurance"]) + health_mult * (self.level - 1))
         
-        self.magicka = math.floor(mwglobals.game_settings["fNPCbaseMagickaMult"] * self.attributes["Intelligence"])
+        self.magicka = math.floor(2 * self.attributes["Intelligence"]) # 2 = fNPCbaseMagickaMult
         self.fatigue = self.attributes["Strength"] + self.attributes["Willpower"] + self.attributes["Agility"] + self.attributes["Endurance"]
         
         self.skills = {}
@@ -113,7 +115,10 @@ class MwNPC_(MwRecord):
             self.skills[mw_skill.name] = round(base + k * (self.level - 1))
         
         if self.faction:
-            self.reputation = mwglobals.game_settings["iAutoRepFacMod"] * (self.faction_rank + 1) + mwglobals.game_settings["iAutoRepLevMod"] * (self.level - 1)
+            self.reputation = 2 * (self.faction_rank + 1) # 2 = iAutoRepFacMod
+            # formula technically adds
+            # iAutoRepLevMod [0] * (level - 1)
+            # which is always 0
         else:
             self.reputation = 0
     
@@ -234,8 +239,8 @@ class MwNPC_(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["animation_file", "name", "race", "class_", "faction", "head_model", "hair_model", "script", "level", "attributes", "skills", "health", "magicka", "fatigue", "disposition", "reputation", "faction_rank", "barter_gold", "female", "essential", "respawn", "autocalc", "white_blood", "gold_blood", "spells", "items", "hello", "fight", "flee", "alarm", "service_weapons", "service_armor", "service_clothing", "service_books", "service_ingredients", "service_picks", "service_probes", "service_lights", "service_apparatus", "service_repair_items", "service_miscellaneous", "service_spells", "service_magic_items", "service_potions", "service_training", "service_spellmaking", "service_enchanting", "service_repair", "destinations", "ai_packages"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["animation_file", "name", "race", "class_", "faction", "head_model", "hair_model", "script", "level", "attributes", "skills", "health", "magicka", "fatigue", "disposition", "reputation", "faction_rank", "barter_gold", "female", "essential", "respawn", "autocalc", "white_blood", "gold_blood", "spells", "items", "hello", "fight", "flee", "alarm", "service_weapons", "service_armor", "service_clothing", "service_books", "service_ingredients", "service_picks", "service_probes", "service_lights", "service_apparatus", "service_repair_items", "service_miscellaneous", "service_spells", "service_magic_items", "service_potions", "service_training", "service_spellmaking", "service_enchanting", "service_repair", "destinations", "ai_packages"])
 
 def load_ai(self):
     self.hello = self.get_subrecord_int("AIDT", start=0, length=1, signed=False)

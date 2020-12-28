@@ -30,8 +30,8 @@ class MwLEVI(MwRecord):
     def __str__(self):
         return self.id
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["calc_less_than_pc_level", "calc_each_item", "chance_none"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["calc_less_than_pc_level", "calc_each_item", "chance_none"])
         
         item_details1 = []
         item_details2 = []
@@ -42,11 +42,11 @@ class MwLEVI(MwRecord):
         
         for item2 in item_details2:
             if item2 not in item_details1:
-                print(str(self) + " Added " + str(item2))
+                print(str(self) + ": Added " + str(item2))
         
         for item1 in item_details1:
             if item1 not in item_details2:
-                print(str(self) + " Removed " + str(item1))
+                print(str(self) + ": Removed " + str(item1))
 
 class MwLEVIItem:
     def __str__(self):

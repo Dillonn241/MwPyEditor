@@ -29,5 +29,5 @@ class MwMISC(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["model", "name", "weight", "value", "is_key", "script", "icon"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["model", "name", "weight", "value", "is_key", "script", "icon"])

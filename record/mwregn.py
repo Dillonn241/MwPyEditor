@@ -33,5 +33,5 @@ class MwREGN(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["name", "weather_chances", "sleep_creature", "map_red", "map_blue", "map_green", "sounds"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["name", "weather_chances", "sleep_creature", "map_red", "map_blue", "map_green", "sounds"])

@@ -22,5 +22,5 @@ class MwSOUN(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["name", "volume", "min_range", "max_range"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["name", "volume", "min_range", "max_range"])

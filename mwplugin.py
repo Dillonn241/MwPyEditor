@@ -1,5 +1,7 @@
+import sys
 import struct
 import time
+import argparse
 import record.mwtes3 as mwtes3
 import record.mwgmst as mwgmst
 import record.mwglob as mwglob
@@ -45,86 +47,62 @@ import record.mwinfo as mwinfo
 import record.mwsscr as mwsscr
 import mwglobals
 import mwjobs
-import sys, argparse
 
-def main(args):
-    start = time.time()
+plugin_records = {}
+
+def init():
+    """Choose at most one: list of records loaded by default for every plugin. TES3 should always be loaded."""
+    mwglobals.default_records = mwglobals.RECORDS_MIN # minimum types required for autocalc: MGEF, CLAS, RACE, SKIL
+    #mwglobals.default_records = mwglobals.RECORDS_MOST # all types except: DIAL, INFO, CELL, LAND
+    #mwglobals.default_records = mwglobals.RECORDS_ALL # all types
     
-    """Choose any: load large data for CELL and LAND"""
-    mwcell.init_references = True
-    #mwland.init_lod = True
-    #mwland.init_terrain = True
-    
-    """Choose one: preset of records to load by default for every plugin"""
-    mwglobals.default_records = mwglobals.RECORDS_MIN # Minimum records required to avoid errors with autocalc
-    #mwglobals.default_records = mwglobals.RECORDS_MOST # All except dialogue and world data
-    #mwglobals.default_records = mwglobals.RECORDS_ALL
-    
-    """Add to records to load by default for every plugin"""
+    """Expand list of records loaded by default for every plugin."""
     mwglobals.default_records += []
     
-    init(vanilla=False)
+    """Choose any: load large data for CELL and LAND."""
+    mwcell.init_references = True # statics and other references placed in the world
+    #mwland.init_lod = True # lod to show global map
+    #mwland.init_terrain = True # normals, heights, colors, and textures of landscape (long load time)
     
-    # do things
+    """Choose any: run algorithms to autocalc stats for ALCH, ENCH, SPEL, and NPC_."""
+    #mwalch.do_autocalc = True # requires MGEF
+    #mwench.do_autocalc = True # requires MGEF
+    #mwspel.do_autocalc = True # requires MGEF
+    #mwnpc_.do_autocalc = True # requires CLAS, RACE, SKIL
     
-    # Comparing two plugins:
-    if hasattr(args, "compare") and args.compare:
-        if len(args.compare) != 2:
-            sys.exit("Exactly two plugins can be compared!")
-        plugin1 = args.compare[0] # "Tamriel_Data_6.esm"
-        plugin2 = args.compare[1] # "Tamriel_Data.esm"
-        load_plugin(plugin1)
-        load_plugin(plugin2)
-        print("# Comparing " + str(plugin1) + " with " + str(plugin2) + ": #")
+    """Load any plugins you want. Masters are automatically loaded."""
+    # Vanilla
+    #load_plugin("Morrowind.esm")
+    #load_plugin("Tribunal.esm")
+    #load_plugin("Bloodmoon.esm")
     
-        for rcd in mwglobals.default_records:
-            print()
-            print("## Comparing " + str(rcd) + ": ##")
-            compare_plugins(plugin1, plugin2, rcd)
-
-    # Dumping INFOs from a plugin:
-    if hasattr(args, "dumpinfo") and args.dumpinfo:
-        load_plugin(args.dumpinfo)
-        for dial in mwglobals.records["DIAL"]:
-            for info in dial.infos:
-                print(info)
+    # DLC
+    #load_plugin("adamantiumarmor.esp")
+    #load_plugin("AreaEffectArrows.esp")
+    #load_plugin("bcsounds.esp")
+    #load_plugin("EBQ_Artifact.esp")
+    #load_plugin("entertainers.esp")
+    #load_plugin("LeFemmArmor.esp")
+    #load_plugin("master_index.esp")
+    #load_plugin("Siege at Firemoth.esp")
     
-    end = time.time()
-    print()
-    print(" ** Time spent: " + str(end - start))
-
-def init(vanilla=False):
-    vanilla_records = mwglobals.default_records if vanilla else mwglobals.RECORDS_MIN
-    load_plugin("Morrowind.esm", records_to_load=vanilla_records)
-    load_plugin("Tribunal.esm", records_to_load=vanilla_records)
-    load_plugin("Bloodmoon.esm", records_to_load=vanilla_records)
-    
-    if vanilla:
-        load_plugin("adamantiumarmor.esp")
-        load_plugin("AreaEffectArrows.esp")
-        load_plugin("bcsounds.esp")
-        load_plugin("EBQ_Artifact.esp")
-        load_plugin("entertainers.esp")
-        load_plugin("LeFemmArmor.esp")
-        load_plugin("master_index.esp")
-        load_plugin("Siege at Firemoth.esp")
-    
+    # Tamriel Data
     #load_plugin("Tamriel_Data_6.esm")
     #load_plugin("Tamriel_Data_7.esm")
     #load_plugin("Tamriel_Data_7.1.esm")
     #load_plugin("Tamriel_Data.esm")
     
-    #load_plugin("TR_Mainland_1809.esm")
-    #load_plugin("TR_Mainland_1912.esm")
-    #load_plugin("TR_Mainland_2002.esm")
-    #load_plugin("TR_Preview.esp")
-    #load_plugin("TR_Travels.esp")
-    #load_plugin("Cyrodiil_Main_0.2.esm")
-    #load_plugin("Sky_Main_02.esp")
-    #load_plugin("Sky_Main_1812.esm")
-    #load_plugin("Sky_Main_1903.esm")
-    #load_plugin("Sky_Main_2001.esm")
+    # Released versions of province mods
+    #load_plugin("Unused/TR_Mainland_1809.esm")
+    #load_plugin("Unused/TR_Mainland_1912.esm")
+    #load_plugin("Unused/TR_Mainland_2002.esm")
+    #load_plugin("Unused/Cyrodiil_Main_0.2.esm")
+    #load_plugin("Unused/Sky_Main_02.esp")
+    #load_plugin("Unused/Sky_Main_1812.esm")
+    #load_plugin("Unused/Sky_Main_1903.esm")
+    #load_plugin("Unused/Sky_Main_2001.esm")
     
+    # Tamriel Rebuilt
     #load_plugin("TR_Mainland.esp")
     #load_plugin("TR_Factions.esp")
     #load_plugin("TR_Travels.esp")
@@ -137,20 +115,72 @@ def init(vanilla=False):
     #load_plugin("TR_Kartur_v0021.esp")
     #load_plugin("TR_RestExterior.esp")
     
-    #load_plugin("Sky_Main_2020_12_26.esp")
+    # Skyrim: Home of the Nords
+    #load_plugin("Sky_Main_2020_12_26b.esp")
     #load_plugin("Sky_Markarth_2020-12-21.ESP")
     #load_plugin("Sky_Falkheim_2020-10-10.ESP")
     
+    # Province: Cyrodiil
     #load_plugin("Cyrodiil_Main_2020_12_23.ESP")
     #load_plugin("PC_Anvil_v0058.ESP")
     #load_plugin("PC_Sutch_v0015.ESP")
     
     print()
 
+def handle_args(args):
+    if args.command:
+        if args.command == "diff":
+            args_diff(args)
+        elif args.command == "dump":
+            args_dump(args)
+
+def args_diff(args):
+    if len(args.plugins) != 2:
+        sys.exit("Exactly two plugins can be compared!")
+    plugin1 = args.plugins[0] # "Tamriel_Data_6.esm"
+    plugin2 = args.plugins[1] # "Tamriel_Data.esm"
+    record_types = args.type if args.type else mwglobals.RECORDS_ALL
+    load_plugin(plugin1, records_to_load=record_types)
+    load_plugin(plugin2, records_to_load=record_types)
+    print()
+    print("# Diff plugin " + str(plugin1) + " with " + str(plugin2) + ": #")
+    
+    for rcd_type in record_types:
+        print()
+        print("## Diff record type " + str(rcd_type) + ": ##")
+        diff_plugins(plugin1, plugin2, rcd_type)
+    print()
+
+def args_dump(args):
+    for plugin in args.plugins:
+        record_types = args.type if args.type else mwglobals.RECORDS_ALL
+        load_plugin(plugin, records_to_load=record_types)
+        print()
+        print("# Dump plugin " + plugin + ": #")
+        for rcd_type in record_types:
+            print()
+            print("## Dump record type " + rcd_type + ": ##")
+            if args.list:
+                print()
+                for rcd in plugin_records[plugin][rcd_type]:
+                    print(rcd)
+            else:
+                for rcd in plugin_records[plugin][rcd_type]:
+                    print()
+                    print(rcd.record_details())
+        print()
+
 def load_plugin(file_name, records_to_load=None):
-    if records_to_load == None:
+    if records_to_load is None:
         records_to_load = mwglobals.default_records
-    print(file_name)
+    if file_name in plugin_records:
+        records_to_load = [x for x in records_to_load if x not in plugin_records[file_name]]
+    else:
+        plugin_records[file_name] = {}
+        for rcd_type in records_to_load:
+            plugin_records[file_name][rcd_type] = []
+    if not records_to_load:
+        return
     with open(mwglobals.DATA_PATH + file_name, mode='rb') as file:
         while True:
             header = file.read(16)
@@ -166,6 +196,7 @@ def load_plugin(file_name, records_to_load=None):
             record.file_name = file_name
             mwglobals.records[record_type] += [record]
             mwglobals.ordered_records += [record]
+            plugin_records[file_name][record_type] += [record]
             
             while length_left > 0:
                 subtype, sublength = struct.unpack("<4si", file.read(8))
@@ -175,6 +206,10 @@ def load_plugin(file_name, records_to_load=None):
             
             record.load_universal(flags)
             record.load()
+            if record_type == "TES3":
+                for master in record.masters:
+                    load_plugin(master)
+                print("** Loading " + file_name + ": " + str(records_to_load) + " **")
 
 def save_plugin(file_name, other_files=[]):
     print(file_name)
@@ -278,14 +313,15 @@ def create_record(record_type):
         return mwdial.MwDIAL()
     elif record_type == "INFO":
         info = mwinfo.MwINFO()
-        last_dial = mwglobals.records["DIAL"][-1]
-        last_dial.infos += [info]
-        info.dial = last_dial
+        if "DIAL" in mwglobals.records:
+            last_dial = mwglobals.records["DIAL"][-1]
+            last_dial.infos += [info]
+            info.dial = last_dial
         return info
     elif record_type == "SSCR":
         return mwsscr.MwSSCR()
 
-def compare_plugins(plugin1, plugin2, record_type, added=True, removed=True, changed=True):
+def diff_plugins(plugin1, plugin2, record_type, added=True, removed=True, changed=True):
     object_ids1 = {}
     object_ids2 = {}
     for record in mwglobals.records[record_type]:
@@ -314,9 +350,9 @@ def compare_plugins(plugin1, plugin2, record_type, added=True, removed=True, cha
             if record.file_name == plugin1:
                 if record.get_id() in object_ids2:
                     record2 = object_ids2[record.get_id()]
-                    record.compare(record2)
+                    record.diff(record2)
 
-def compare_locations(plugin1, file_names1, plugin2, file_names2, record_type):
+def diff_locations(plugin1, file_names1, plugin2, file_names2, record_type):
     file_names1 += [plugin1]
     file_names2 += [plugin2]
     object_ids2 = {}
@@ -344,10 +380,23 @@ def compare_locations(plugin1, file_names1, plugin2, file_names2, record_type):
                             first_print = False
                         print("+ " + loc)
 
+def main(args):
+    start = time.time()
+    init()
+    handle_args(args)
+    end = time.time()
+    print()
+    print("** Time spent: {:.3f} seconds **".format(end - start))
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Analyze a plugin file.')
-    parser.add_argument("-c", "--compare", help="compare two plugins", action="append")
-    parser.add_argument("-d", "--dumpinfo", help="dump INFOs from a plugin")
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description="Analyze a plugin file."
+    "\n\nThe following commands are available:"
+    "\ndiff\tfind the difference between two plugins"
+    "\ndump\toutput readable record data")
+    parser.add_argument("command", help="name of the action to take")
+    parser.add_argument("plugins", help="list of plugins to load and provide as arguments", nargs="+")
+    parser.add_argument("-l", "--list", help="show only identifying data for each record", action="store_true")
+    parser.add_argument("-t", "--type", help="limit to given <record-type>s", nargs="+", metavar="<record-type>")
     args = parser.parse_args()
     main(args)
 

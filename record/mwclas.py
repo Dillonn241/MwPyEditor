@@ -102,5 +102,5 @@ class MwCLAS(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["name", "primary_attributes", "specialization", "minor_skills", "major_skills", "playable", "service_weapons", "service_armor", "service_clothing", "service_books", "service_ingredients", "service_picks", "service_probes", "service_lights", "service_apparatus", "service_repair_items", "service_miscellaneous", "service_spells", "service_magic_items", "service_potions", "service_training", "service_spellmaking", "service_enchanting", "service_repair", "description"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["name", "primary_attributes", "specialization", "minor_skills", "major_skills", "playable", "service_weapons", "service_armor", "service_clothing", "service_books", "service_ingredients", "service_picks", "service_probes", "service_lights", "service_apparatus", "service_repair_items", "service_miscellaneous", "service_spells", "service_magic_items", "service_potions", "service_training", "service_spellmaking", "service_enchanting", "service_repair", "description"])

@@ -71,5 +71,5 @@ class MwRACE(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["name", "skill_bonuses", "male_attributes", "female_attributes", "male_height", "female_height", "male_weight", "female_weight", "playable", "beast_race", "specials", "description"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["name", "skill_bonuses", "male_attributes", "female_attributes", "male_height", "female_height", "male_weight", "female_weight", "playable", "beast_race", "specials", "description"])

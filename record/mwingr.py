@@ -18,12 +18,14 @@ class MwINGR(MwRecord):
             self.effects += [None]
             self.skill_attributes += [None]
             if effect_id != -1:
-                effect = mwglobals.records["MGEF"][effect_id]
-                self.effects[i] = effect.name
-                if effect.requires_skill():
-                    self.skill_attributes[i] = mwglobals.SKILLS[self.get_subrecord_int("IRDT", start=24 + i * 4, length=4)]
-                elif effect.requires_attribute():
-                    self.skill_attributes[i] = mwglobals.ATTRIBUTES[self.get_subrecord_int("IRDT", start=40 + i * 4, length=4)]
+                self.effects[i] = mwglobals.MAGIC_NAMES[effect_id]
+                skill_id = self.get_subrecord_int("IRDT", start=24 + i * 4, length=4)
+                if skill_id != -1:
+                    self.skill_attributes[i] = mwglobals.SKILLS[skill_id]
+                else:
+                    attribute_id = self.get_subrecord_int("IRDT", start=40 + i * 4, length=4)
+                    if attribute_id != -1:
+                        self.skill_attributes[i] = mwglobals.ATTRIBUTES[attribute_id]
         self.script = self.get_subrecord_string("SCRI")
         self.icon = self.get_subrecord_string("ITEX")
         mwglobals.object_ids[self.id] = self
@@ -46,5 +48,5 @@ class MwINGR(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["model", "name", "weight", "value", "effects", "skill_attributes", "script", "icon"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["model", "name", "weight", "value", "effects", "skill_attributes", "script", "icon"])

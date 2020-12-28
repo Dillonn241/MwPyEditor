@@ -4,9 +4,9 @@ DATA_PATH = "C:/Games/Morrowind/Data Files/"
 
 RECORDS_ALL = ["TES3", "GMST", "GLOB", "CLAS", "FACT", "RACE", "SOUN", "SKIL", "MGEF", "SCPT", "REGN", "BSGN", "LTEX", "STAT", "DOOR", "MISC", "WEAP", "CONT", "SPEL", "CREA", "BODY", "LIGH", "ENCH", "NPC_", "ARMO", "CLOT", "REPA", "ACTI", "APPA", "LOCK", "PROB", "INGR", "BOOK", "ALCH", "LEVI", "LEVC", "CELL", "LAND", "PGRD", "SNDG", "DIAL", "INFO", "SSCR"]
 
-RECORDS_MOST = ["GMST", "GLOB", "CLAS", "FACT", "RACE", "SOUN", "SKIL", "MGEF", "SCPT", "REGN", "BSGN", "LTEX", "STAT", "DOOR", "MISC", "WEAP", "CONT", "SPEL", "CREA", "BODY", "LIGH", "ENCH", "NPC_", "ARMO", "CLOT", "REPA", "ACTI", "APPA", "LOCK", "PROB", "INGR", "BOOK", "ALCH", "LEVI", "LEVC", "SNDG", "SSCR"]
+RECORDS_MOST = ["TES3", "GMST", "GLOB", "CLAS", "FACT", "RACE", "SOUN", "SKIL", "MGEF", "SCPT", "REGN", "BSGN", "LTEX", "STAT", "DOOR", "MISC", "WEAP", "CONT", "SPEL", "CREA", "BODY", "LIGH", "ENCH", "NPC_", "ARMO", "CLOT", "REPA", "ACTI", "APPA", "LOCK", "PROB", "INGR", "BOOK", "ALCH", "LEVI", "LEVC", "SNDG", "SSCR"]
 
-RECORDS_MIN = ["GMST", "CLAS", "RACE", "SKIL", "MGEF"]
+RECORDS_MIN = ["TES3", "CLAS", "RACE", "SKIL", "MGEF"]
 
 ATTRIBUTES = ["Strength", "Intelligence", "Willpower", "Agility", "Speed", "Endurance", "Personality", "Luck"]
 SPECIALIZATIONS = ["Magic", "Stealth", "Combat"]
@@ -14,6 +14,8 @@ SKILLS = ["Block", "Armorer", "Medium Armor", "Heavy Armor", "Blunt Weapon", "Lo
 
 MAGIC_EFFECTS = ["WaterBreathing", "SwiftSwim", "WaterWalking", "Shield", "FireShield", "LightningShield",
 "FrostShield", "Burden", "Feather", "Jump", "Levitate", "SlowFall", "Lock", "Open", "FireDamage", "ShockDamage", "FrostDamage", "DrainAttribute", "DrainHealth", "DrainSpellpoints", "DrainFatigue", "DrainSkill", "DamageAttribute", "DamageHealth", "DamageMagicka", "DamageFatigue", "DamageSkill", "Poison", "WeaknessToFire", "WeaknessToFrost", "WeaknessToShock", "WeaknessToMagicka", "WeaknessToCommonDisease", "WeaknessToBlightDisease", "WeaknessToCorprusDisease", "WeaknessToPoison", "WeaknessToNormalWeapons", "DisintegrateWeapon", "DisintegrateArmor", "Invisibility", "Chameleon", "Light", "Sanctuary", "NightEye", "Charm", "Paralyze", "Silence", "Blind", "Sound", "CalmHumanoid", "CalmCreature", "FrenzyHumanoid", "FrenzyCreature", "DemoralizeHumanoid", "DemoralizeCreature", "RallyHumanoid", "RallyCreature", "Dispel", "Soultrap", "Telekinesis", "Mark", "Recall", "DivineIntervention", "AlmsiviIntervention", "DetectAnimal", "DetectEnchantment", "DetectKey", "SpellAbsorption", "Reflect", "CureCommonDisease", "CureBlightDisease", "CureCorprusDisease", "CurePoison", "CureParalyzation", "RestoreAttribute", "RestoreHealth", "RestoreSpellPoints", "RestoreFatigue", "RestoreSkill", "FortifyAttribute", "FortifyHealth", "FortifySpellpoints", "FortifyFatigue", "FortifySkill", "FortifyMagickaMultiplier", "AbsorbAttribute", "AbsorbHealth", "AbsorbSpellPoints", "AbsorbFatigue", "AbsorbSkill", "ResistFire", "ResistFrost", "ResistShock", "ResistMagicka", "ResistCommonDisease", "ResistBlightDisease", "ResistCorprusDisease", "ResistPoison", "ResistNormalWeapons", "ResistParalysis", "RemoveCurse", "TurnUndead", "SummonScamp", "SummonClannfear", "SummonDaedroth", "SummonDremora", "SummonAncestralGhost", "SummonSkeletalMinion", "SummonLeastBonewalker", "SummonGreaterBonewalker", "SummonBonelord", "SummonWingedTwilight", "SummonHunger", "SummonGoldensaint", "SummonFlameAtronach", "SummonFrostAtronach", "SummonStormAtronach", "FortifyAttackBonus", "CommandCreatures", "CommandHumanoids", "BoundDagger", "BoundLongsword", "BoundMace", "BoundBattleAxe", "BoundSpear", "BoundLongbow", "ExtraSpell", "BoundCuirass", "BoundHelm", "BoundBoots", "BoundShield", "BoundGloves", "Corpus", "Vampirism", "SummonCenturionSphere", "SunDamage", "StuntedMagicka", "SummonFabricant", "SummonCreature01", "SummonCreature02", "SummonCreature03", "SummonCreature04", "SummonCreature05"]
+
+MAGIC_NAMES = ["Water Breathing", "Swift Swim", "Water Walking", "Shield", "Fire Shield", "Lightning Shield", "Frost Shield", "Burden", "Feather", "Jump", "Levitate", "SlowFall", "Lock", "Open", "Fire Damage", "Shock Damage", "Frost Damage", "Drain Attribute", "Drain Health", "Drain Magicka", "Drain Fatigue", "Drain Skill", "Damage Attribute", "Damage Health", "Damage Magicka", "Damage Fatigue", "Damage Skill", "Poison", "Weakness to Fire", "Weakness to Frost", "Weakness to Shock", "Weakness to Magicka", "Weakness to Common Disease", "Weakness to Blight Disease", "Weakness to Corprus Disease", "Weakness to Poison", "Weakness to Normal Weapons", "Disintegrate Weapon", "Disintegrate Armor", "Invisibility", "Chameleon", "Light", "Sanctuary", "Night Eye", "Charm", "Paralyze", "Silence", "Blind", "Sound", "Calm Humanoid", "Calm Creature", "Frenzy Humanoid", "Frenzy Creature", "Demoralize Humanoid", "Demoralize Creature", "Rally Humanoid", "Rally Creature", "Dispel", "Soultrap", "Telekinesis", "Mark", "Recall", "Divine Intervention", "Almsivi Intervention", "Detect Animal", "Detect Enchantment", "Detect Key", "Spell Absorption", "Reflect", "Cure Common Disease", "Cure Blight Disease", "Cure Corprus Disease", "Cure Poison", "Cure Paralyzation", "Restore Attribute", "Restore Health", "Restore Magicka", "Restore Fatigue", "Restore Skill", "Fortify Attribute", "Fortify Health", "Fortify Magicka", "Fortify Fatigue", "Fortify Skill", "Fortify Maximum Magicka", "Absorb Attribute", "Absorb Health", "Absorb Magicka", "Absorb Fatigue", "Absorb Skill", "Resist Fire", "Resist Frost", "Resist Shock", "Resist Magicka", "Resist Common Disease", "Resist Blight Disease", "Resist Corprus Disease", "Resist Poison", "Resist Normal Weapons", "Resist Paralysis", "Remove Curse", "Turn Undead", "Summon Scamp", "Summon Clannfear", "Summon Daedroth", "Summon Dremora", "Summon Ancestral Ghost", "Summon Skeletal Minion", "Summon Bonewalker", "Summon Greater Bonewalker", "Summon Bonelord", "Summon Winged Twilight", "Summon Hunger", "Summon Golden Saint", "Summon Flame Atronach", "Summon Frost Atronach", "Summon Storm Atronach", "Fortify Attack", "Command Creature", "Command Humanoid", "Bound Dagger", "Bound Longsword", "Bound Mace", "Bound Battle Axe", "Bound Spear", "Bound Longbow", "EXTRA SPELL", "Bound Cuirass", "Bound Helm", "Bound Boots", "Bound Shield", "Bound Gloves", "Corprus", "Vampirism", "Summon Centurion Sphere", "Sun Damage", "Stunted Magicka", "Summon Fabricant", "Detect Animal", "Call Wolf", "Call Bear", "Summon Bonewolf"]
 
 MAGIC_SCHOOLS = ["Alteration", "Conjuration", "Destruction", "Illusion", "Mysticism", "Restoration"]
 
@@ -66,10 +68,10 @@ INFO_SCVR_FUNCTION = ["Rank Low", "Rank High", "Rank Requirement", "Reputation",
 INFO_SCVR_COMPARE = ["=", "!=", ">", ">=", "<", "<="]
 
 records = {}
-for type in RECORDS_ALL:
-    records[type] = []
+for record_type in RECORDS_ALL:
+    records[record_type] = []
 ordered_records = []
-default_records = []
+default_records = ["TES3"]
 game_settings = {}
 object_ids = {}
 info_ids = {}

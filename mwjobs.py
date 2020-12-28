@@ -1,8 +1,8 @@
-import tkinter as tk
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import seaborn as sns
+import tkinter as tk
 import record.mwtes3 as mwtes3
 import record.mwgmst as mwgmst
 import record.mwglob as mwglob
@@ -54,11 +54,11 @@ def region_location_changes(plugin1, plugin2):
     for cell in mwglobals.records["CELL"]:
         if not cell.is_interior:
             if cell.file_name == plugin1:
-                for ref in cell.references.values():
+                for ref in cell.references:
                     if hasattr(ref, "door_cell"):
                         locations1 += [cell.region + ": " + ref.door_cell]
             elif cell.file_name == plugin2:
-                for ref in cell.references.values():
+                for ref in cell.references:
                     if hasattr(ref, "door_cell"):
                         locations2 += [cell.region + ": " + ref.door_cell]
     for loc in locations1:
@@ -80,7 +80,7 @@ def find_usage(id):
                 print(str(creature))
                 break
     for cell in mwglobals.records["CELL"]:
-        for ref in cell.references.values():
+        for ref in cell.references:
             if ref.id == id:
                 print(str(cell))
                 break
@@ -106,7 +106,7 @@ def find_usage(id):
 def find_item_usage(id, file_names=None):
     usages = []
     for npc in mwglobals.records["NPC_"]:
-        if file_names == None or npc.file_name in file_names:
+        if file_names is None or npc.file_name in file_names:
             for item in npc.items:
                 if item == id:
                     count = npc.items[item]
@@ -116,7 +116,7 @@ def find_item_usage(id, file_names=None):
                         usages += ["Carried by {{" + mod_shortcut(npc) + "|" + npc.name + "}} (&times;" + str(count) + ")"]
                     break
     for creature in mwglobals.records["CREA"]:
-        if file_names == None or creature.file_name in file_names:
+        if file_names is None or creature.file_name in file_names:
             for item in creature.items:
                 if item == id:
                     count = creature.items[item]
@@ -126,9 +126,9 @@ def find_item_usage(id, file_names=None):
                         usages += ["Carried by {{" + mod_shortcut(creature) + "|" + creature.name + "}} (&times;" + str(count) + ")"]
                     break
     for cell in mwglobals.records["CELL"]:
-        if file_names == None or cell.file_name in file_names:
+        if file_names is None or cell.file_name in file_names:
             count = 0
-            for ref in cell.references.values():
+            for ref in cell.references:
                 if ref.id == id:
                     count += 1
             if count == 1:
@@ -136,7 +136,7 @@ def find_item_usage(id, file_names=None):
             elif count > 1:
                 usages += [str(cell) + " (&times;" + str(count) + ")"]
     for container in mwglobals.records["CONT"]:
-        if file_names == None or container.file_name in file_names:
+        if file_names is None or container.file_name in file_names:
             for item in container.items:
                 if item == id:
                     for loc in find_item_usage(container.id, file_names=file_names):
@@ -147,7 +147,7 @@ def find_item_usage(id, file_names=None):
                             usages += [loc + " (&times;" + str(count) + ", in " + container.name + ")"]
                     break
     for leveled_list in mwglobals.records["LEVI"]:
-        if file_names == None or leveled_list.file_name in file_names:
+        if file_names is None or leveled_list.file_name in file_names:
             for item in leveled_list.items:
                 if item.id == id:
                     usages += [leveled_list.id]
@@ -163,7 +163,7 @@ def faction_members(faction, file_name):
         data = "|" + npc.get_sex_template()
         data += "||[[Morrowind:" + npc.get_wiki_race() + "|" + npc.get_wiki_race() + "]]||[[Morrowind:" + npc.get_wiki_class() + "|" + npc.class_ + "]]||" + str(npc.faction_rank) + " " + npc.get_faction_rank_name() + "||"
         for cell in mwglobals.records["CELL"]:
-            for ref in cell.references.values():
+            for ref in cell.references:
                 if ref.id == npc.id:
                     data += str(cell)
                     break
@@ -218,7 +218,7 @@ def exterior_doors(file):
     cols = ['Name', 'GridX', 'GridY', 'PosX', 'PosY', 'ID', 'Check']
     data = []
     for cell in mwglobals.exterior_cells.values():
-        for ref in cell.references.values():
+        for ref in cell.references:
             obj = mwglobals.object_ids[ref.id]
             if isinstance(obj, mwdoor.MwDOOR) and not ref.deleted:
                 if hasattr(ref, "door_cell"):
@@ -279,7 +279,7 @@ def deprecated_check():
     
     print("Cells:")
     for cell in mwglobals.records["CELL"]:
-        for ref in cell.references.values():
+        for ref in cell.references:
             if ref.id in deprecated_ids:
                 print(str(cell) + ": " + ref.id)
     print()

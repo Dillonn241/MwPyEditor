@@ -37,5 +37,5 @@ class MwGLOB(MwRecord):
     def get_id(self):
         return self.name
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["type", "value"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["type", "value"])

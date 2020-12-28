@@ -15,5 +15,5 @@ class MwSSCR(MwRecord):
     def __str__(self):
         return self.id
     
-    def compare(self, other):
-        MwRecord.compare(self, other)
+    def diff(self, other):
+        MwRecord.diff(self, other)

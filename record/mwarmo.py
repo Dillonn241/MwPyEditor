@@ -16,13 +16,11 @@ class MwARMO(MwRecord):
         self.health = self.get_subrecord_int("AODT", start=12, length=4)
         self.enchantment = self.get_subrecord_int("AODT", start=16, length=4)
         self.armor = self.get_subrecord_int("AODT", start=20, length=4)
-        
         self.icon = self.get_subrecord_string("ITEX")
-        
-        load_body_parts(self)
-        
         self.enchanting = self.get_subrecord_string("ENAM")
         mwglobals.object_ids[self.id] = self
+        
+        load_body_parts(self)
     
     def is_pauldron(self):
         return self.type == "Left Pauldron" or self.type == "Right Pauldron"
@@ -38,24 +36,23 @@ class MwARMO(MwRecord):
     
     def get_weight_class(self):
         if self.type == "Helmet":
-            setting = "iHelmWeight"
+            weight_setting = 5 # iHelmWeight
         elif self.type == "Cuirass":
-            setting = "iCuirassWeight"
+            weight_setting = 30 # iCuirassWeight"
         elif self.is_pauldron():
-            setting = "iPauldronWeight"
+            weight_setting = 10 # iPauldronWeight
         elif self.type == "Greaves":
-            setting = "iGreavesWeight"
+            weight_setting = 15 # iGreavesWeight
         elif self.type == "Boots":
-            setting = "iBootsWeight"
+            weight_setting = 20 # iBootsWeight
         elif self.type == "Shield":
-            setting = "iShieldWeight"
+            weight_setting = 15 # iShieldWeight
         else:
-            setting = "iGauntletWeight"
-        weight_setting = mwglobals.game_settings[setting]
+            weight_setting = 5 # iGauntletWeight
         epsilon = 0.0005
-        if self.weight <= weight_setting * mwglobals.game_settings["fLightMaxMod"] + epsilon:
+        if self.weight <= weight_setting * 0.6 + epsilon: # fLightMaxMod
             return "Light"
-        elif self.weight <= weight_setting * mwglobals.game_settings["fMedMaxMod"] + epsilon:
+        elif self.weight <= weight_setting * 0.9 + epsilon: # fMedMaxMod
             return "Medium"
         else:
             return "Heavy"
@@ -78,8 +75,8 @@ class MwARMO(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["model", "name", "script", "type", "weight", "value", "health", "enchantment", "armor", "icon", "body_parts", "enchanting"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["model", "name", "script", "type", "weight", "value", "health", "enchantment", "armor", "icon", "body_parts", "enchanting"])
 
 def load_body_parts(self):
     self.body_parts = []

@@ -22,5 +22,5 @@ class MwSNDG(MwRecord):
     def __str__(self):
         return self.id
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["type", "sound_id", "creature"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["type", "sound_id", "creature"])

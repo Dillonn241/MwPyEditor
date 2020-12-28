@@ -19,5 +19,5 @@ class MwSTAT(MwRecord):
     def __str__(self):
         return self.id
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["model"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["model"])

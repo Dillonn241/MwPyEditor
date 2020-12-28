@@ -19,5 +19,5 @@ class MwLTEX(MwRecord):
     def __str__(self):
         return self.id
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["index", "texture"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["index", "texture"])

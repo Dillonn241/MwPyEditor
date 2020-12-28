@@ -1,5 +1,8 @@
 from mwrecord import MwRecord
+import record.mwmgef as mwmgef
 import mwglobals
+
+do_autocalc = False
 
 class MwENCH(MwRecord):
     def __init__(self):
@@ -14,7 +17,7 @@ class MwENCH(MwRecord):
         
         load_enchantments(self)
         
-        if self.autocalc:
+        if do_autocalc and self.autocalc:
             self.autocalc_stats()
         mwglobals.object_ids[self.id] = self
     
@@ -60,8 +63,8 @@ class MwENCH(MwRecord):
     def __str__(self):
         return self.id
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["type", "enchantment_cost", "charge", "autocalc", "enchantments"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["type", "enchantment_cost", "charge", "autocalc", "enchantments"])
 
 def load_enchantments(self):
     self.enchantments = []
@@ -79,20 +82,20 @@ def load_enchantments(self):
 
 class MwENCHSingle:
     def __str__(self, add_template=False, add_type=True):
-        effect = mwglobals.records["MGEF"][self.effect_id]
-        string = ("{{Effect Link|" if add_template else "") + effect.name
+        effect_name = mwglobals.MAGIC_NAMES[self.effect_id]
+        string = ("{{Effect Link|" if add_template else "") + effect_name
         if self.skill_id != -1:
             if add_template:
-                string += "|" + effect.name
+                string += "|" + effect_name
             string += " " + mwglobals.SKILLS[self.skill_id]
         elif self.attribute_id != -1:
             if add_template:
-                string += "|" + effect.name
+                string += "|" + effect_name
             string += " " + mwglobals.ATTRIBUTES[self.attribute_id]
         if add_template:
             string += "}}"
         if self.mag_min >= 0 or self.mag_max >= 0:
-            mag_type = effect.get_magnitude_type()
+            mag_type = mwmgef.get_magnitude_type(self.effect_id)
             if mag_type == mwglobals.MagnitudeType.TIMES_INT:
                 string += " {:.1f}".format(self.mag_min / 10)
                 if self.mag_min != self.mag_max:
@@ -112,7 +115,7 @@ class MwENCHSingle:
                     string += " pt" if self.mag_min == 1 and self.mag_max == 1 else " pts"
             
             if add_type:
-                if self.duration > 0 and not effect.no_duration:
+                if self.duration > 0 and not mwmgef.has_no_duration(self.effect_id):
                     string += " for {} {}".format(self.duration, "sec" if self.duration == 1 else "secs")
                 if self.area > 0:
                     string += " in {} ft".format(self.area)

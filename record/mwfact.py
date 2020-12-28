@@ -65,8 +65,8 @@ class MwFACT(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["name", "ranks", "favored_attributes", "favored_skills", "hidden", "faction_reactions"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["name", "ranks", "favored_attributes", "favored_skills", "hidden", "faction_reactions"])
 
 class MwFACTRank:
     def record_details(self, longest=33):

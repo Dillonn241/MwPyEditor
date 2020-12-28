@@ -58,5 +58,5 @@ class MwWEAP(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["model", "name", "weight", "value", "type", "health", "speed", "reach", "enchantment", "chop_min", "chop_max", "slash_min", "slash_max", "thrust_min", "thrust_max", "ignore_normal_weapon_resistance", "silver", "icon", "enchanting", "script"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["model", "name", "weight", "value", "type", "health", "speed", "reach", "enchantment", "chop_min", "chop_max", "slash_min", "slash_max", "thrust_min", "thrust_max", "ignore_normal_weapon_resistance", "silver", "icon", "enchanting", "script"])

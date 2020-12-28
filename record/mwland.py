@@ -127,8 +127,8 @@ class MwLAND(MwRecord):
     def get_id(self):
         return str(self)
     
-    def compare(self, other):
+    def diff(self, other):
         if self.lod_loaded:
-            MwRecord.compare(self, other, ["lod_heights"])
+            MwRecord.diff(self, other, ["lod_heights"])
         if self.terrain_loaded:
-            MwRecord.compare(self, other, ["normals", "heights", "colors", "textures"])
+            MwRecord.diff(self, other, ["normals", "heights", "colors", "textures"])

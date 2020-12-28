@@ -2,6 +2,8 @@ from mwrecord import MwRecord
 import mwglobals
 from record.mwench import load_enchantments
 
+do_autocalc = False
+
 class MwSPEL(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -19,7 +21,7 @@ class MwSPEL(MwRecord):
         
         load_enchantments(self)
         
-        if self.autocalc:
+        if do_autocalc and self.autocalc:
             self.autocalc_stats()
         mwglobals.object_ids[self.id] = self
     
@@ -59,5 +61,5 @@ class MwSPEL(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["name", "type", "spell_cost", "autocalc", "pc_start_spell", "always_succeeds", "enchantments"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["name", "type", "spell_cost", "autocalc", "pc_start_spell", "always_succeeds", "enchantments"])

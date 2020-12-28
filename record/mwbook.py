@@ -38,5 +38,5 @@ class MwBOOK(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["model", "name", "weight", "value", "scroll", "skill", "enchantment", "icon", "script", "enchanting", "text"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["model", "name", "weight", "value", "scroll", "skill", "enchantment", "icon", "script", "enchanting", "text"])

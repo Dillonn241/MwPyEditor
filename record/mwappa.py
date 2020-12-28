@@ -38,5 +38,5 @@ class MwAPPA(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["model", "name", "type", "quality", "weight", "value", "icon", "script"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["model", "name", "type", "quality", "weight", "value", "icon", "script"])

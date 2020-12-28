@@ -79,8 +79,8 @@ class MwINFO(MwRecord):
     def __repr__(self):
         return str(self)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["prev_id", "next_id", "response", "disposition", "rank", "sex", "pc_rank", "actor", "race", "class_", "faction", "cell", "pc_faction", "sound_file", "quest_name", "quest_finished", "quest_restart", "func_var_filters", "result"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["prev_id", "next_id", "response", "disposition", "rank", "sex", "pc_rank", "actor", "race", "class_", "faction", "cell", "pc_faction", "sound_file", "quest_name", "quest_finished", "quest_restart", "func_var_filters", "result"])
 
 class MwINFOFilter:
     def get_type_string(self):

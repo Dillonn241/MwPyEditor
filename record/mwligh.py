@@ -66,5 +66,5 @@ class MwLIGH(MwRecord):
             return "{} [{}]".format(self.name, self.id)
         return "[{}]".format(self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["model", "name", "icon", "weight", "value", "time", "radius", "red", "green", "blue", "dynamic", "can_carry", "negative", "flicker", "fire", "off_default", "flicker_slow", "pulse", "pulse_slow", "sound_id", "script"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["model", "name", "icon", "weight", "value", "time", "radius", "red", "green", "blue", "dynamic", "can_carry", "negative", "flicker", "fire", "off_default", "flicker_slow", "pulse", "pulse_slow", "sound_id", "script"])

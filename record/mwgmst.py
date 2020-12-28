@@ -17,14 +17,21 @@ class MwGMST(MwRecord):
             self.type = "Float"
             self.value = self.get_subrecord_float("FLTV")
         else:
-            self.value = ""
+            self.type = "String"
+            self.value = None
         mwglobals.game_settings[self.name] = self.value
     
     def record_details(self):
+        if self.type == "Integer":
+            f = ":d"
+        elif self.type == "Float":
+            f = ":.4f"
+        else:
+            f = ""
         return MwRecord.format_record_details(self, [
         ("|Name|", "name"),
         ("\n|Type|", "type"),
-        ("\n|Value|    {:.4f}", "value")
+        ("\n|Value|    {" + f + "}", "value")
         ])
     
     def __str__(self):
@@ -33,5 +40,5 @@ class MwGMST(MwRecord):
     def get_id(self):
         return self.name
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["type", "value"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["type", "value"])

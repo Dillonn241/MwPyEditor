@@ -43,5 +43,5 @@ class MwDIAL(MwRecord):
     def get_id(self):
         return str(self)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["infos"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["infos"])

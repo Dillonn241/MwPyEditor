@@ -2,6 +2,8 @@ from mwrecord import MwRecord
 import mwglobals
 from record.mwench import MwENCHSingle
 
+do_autocalc = False
+
 class MwALCH(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -30,7 +32,7 @@ class MwALCH(MwRecord):
         self.icon = self.get_subrecord_string("TEXT")
         self.script = self.get_subrecord_string("SCRI")
         
-        if self.autocalc:
+        if do_autocalc and self.autocalc:
             self.autocalc_stats()
         mwglobals.object_ids[self.id] = self
     
@@ -79,5 +81,5 @@ class MwALCH(MwRecord):
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["model", "name", "weight", "value", "autocalc", "enchantments", "icon", "script"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["model", "name", "weight", "value", "autocalc", "enchantments", "icon", "script"])

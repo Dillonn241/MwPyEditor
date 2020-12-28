@@ -46,10 +46,10 @@ class MwTES3(MwRecord):
         ])
     
     def __str__(self):
-        return "Metadata"
+        return self.description
     
     def get_id(self):
         return "TES3"
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["version", "treat_as_master", "author", "description", "num_records", "masters"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["version", "treat_as_master", "author", "description", "num_records", "masters"])

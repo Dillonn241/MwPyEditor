@@ -7,7 +7,7 @@ class MwMGEF(MwRecord):
     
     def load(self):
         self.index = self.get_subrecord_int("INDX")
-        self.name = mwglobals.game_settings["sEffect" + mwglobals.MAGIC_EFFECTS[self.index]]
+        self.name = mwglobals.MAGIC_NAMES[self.index] # sEffect + MAGIC_EFFECTS
         self.school = mwglobals.MAGIC_SCHOOLS[self.get_subrecord_int("MEDT", start=0, length=4)]
         self.base_cost = self.get_subrecord_float("MEDT", start=4, length=4)
         
@@ -50,23 +50,19 @@ class MwMGEF(MwRecord):
         self.description = self.get_subrecord_string("DESC")
     
     def get_magnitude_type(self):
-        if self.no_magnitude:
-            return mwglobals.MagnitudeType.NONE
-        if self.index == 84:
-            return mwglobals.MagnitudeType.TIMES_INT
-        if self.index == 59 or (self.index >= 64 and self.index <= 66):
-            return mwglobals.MagnitudeType.FEET
-        if self.index == 118 or self.index == 119:
-            return mwglobals.MagnitudeType.LEVEL
-        if (self.index >= 28 and self.index <= 36) or (self.index >= 90 and self.index <= 99) or self.index == 40 or self.index == 47 or self.index == 57 or self.index == 68:
-            return mwglobals.MagnitudeType.PERCENTAGE
-        return mwglobals.MagnitudeType.POINTS
+        return get_magnitude_type(self.index)
+    
+    def has_no_duration(self):
+        return self.no_duration
+    
+    def has_no_magnitude(self):
+        return self.no_magnitude
     
     def requires_attribute(self):
-        return self.index == 17 or self.index == 22 or self.index == 74 or self.index == 79 or self.index == 85
+        return requires_attribute(self.index)
     
     def requires_skill(self):
-        return self.index == 21 or self.index == 26 or self.index == 78 or self.index == 83 or self.index == 89
+        return requires_skill(self.index)
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
@@ -111,5 +107,33 @@ class MwMGEF(MwRecord):
     def get_id(self):
         return self.index
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["name", "school", "base_cost", "spellmaking", "enchanting", "negative", "target_skill", "target_attribute", "no_duration", "no_magnitude", "harmful", "continuous_vfx", "cast_self", "cast_touch", "cast_target", "uncapped_damage", "non_recastable", "unreflectable", "caster_linked", "red", "green", "blue", "speed_x", "size_x", "size_cap", "effect_icon", "particle_texture", "bolt_sound", "casting_sound", "hit_sound", "area_sound", "casting_visual", "bolt_visual", "hit_visual", "area_visual", "description"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["name", "school", "base_cost", "spellmaking", "enchanting", "negative", "target_skill", "target_attribute", "no_duration", "no_magnitude", "harmful", "continuous_vfx", "cast_self", "cast_touch", "cast_target", "uncapped_damage", "non_recastable", "unreflectable", "caster_linked", "red", "green", "blue", "speed_x", "size_x", "size_cap", "effect_icon", "particle_texture", "bolt_sound", "casting_sound", "hit_sound", "area_sound", "casting_visual", "bolt_visual", "hit_visual", "area_visual", "description"])
+
+def get_magnitude_type(index):
+    if has_no_magnitude(index):
+        return mwglobals.MagnitudeType.NONE
+    if index == 84:
+        return mwglobals.MagnitudeType.TIMES_INT
+    if index == 59 or (index >= 64 and index <= 66):
+        return mwglobals.MagnitudeType.FEET
+    if index == 118 or index == 119:
+        return mwglobals.MagnitudeType.LEVEL
+    if (index >= 28 and index <= 36) or (index >= 90 and index <= 99) or index == 40 or index == 47 or index == 57 or index == 68:
+        return mwglobals.MagnitudeType.PERCENTAGE
+    return mwglobals.MagnitudeType.POINTS
+
+def has_no_duration(index):
+    return index in [12, 13, 57, 60, 61, 62, 63, 69, 70, 71, 72, 73, 133]
+
+def has_no_magnitude(index):
+    if index < 102:
+        return index in [0, 2, 39, 45, 46, 58, 60, 61, 62, 63, 69, 70, 71, 72, 73]
+    else:
+        return index not in [117, 118, 119, 135]
+
+def requires_attribute(index):
+    return index == 17 or index == 22 or index == 74 or index == 79 or index == 85
+
+def requires_skill(index):
+    return index == 21 or index == 26 or index == 78 or index == 83 or index == 89

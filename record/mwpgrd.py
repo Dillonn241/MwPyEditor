@@ -48,8 +48,8 @@ class MwPGRD(MwRecord):
     def get_id(self):
         return str(self)
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["num_points", "points", "edges"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["num_points", "points", "edges"])
 
 class MwPGRDPoint:
     def __str__(self):

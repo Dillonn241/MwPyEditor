@@ -29,5 +29,5 @@ class MwSKIL(MwRecord):
     def get_id(self):
         return self.name
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["governing_attribute", "specialization", "use_values", "description"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["governing_attribute", "specialization", "use_values", "description"])

@@ -31,5 +31,5 @@ class MwSCPT(MwRecord):
     def __str__(self):
         return self.id
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["num_shorts", "num_longs", "num_floats", "local_vars", "text"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["num_shorts", "num_longs", "num_floats", "local_vars", "text"])

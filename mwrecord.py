@@ -97,7 +97,7 @@ class MwRecord:
     def get_id(self):
         return self.id
     
-    def compare(self, other, attrs=[]):
+    def diff(self, other, attrs=[]):
         attrs += ["deleted", "persists", "blocked"]
         first = True
         for attr in attrs:
@@ -141,7 +141,7 @@ class Subrecord:
         return f
     
     def get_string(self, start=None, length=None):
-        if start == None and length == None and 0x00 in self.data: # zstring
+        if start is None and length is None and 0x00 in self.data: # zstring
             subdata = self.data[:self.data.index(0x00)]
         else:
             subdata = self.get_data(start=start, length=length)
@@ -172,6 +172,6 @@ class Subrecord:
     def set_string(self, value, start=None, length=None):
         format_str = (str(length) if length != None else str(len(value))) + "s"
         subdata = struct.pack(format_str, value.encode("mbcs"))
-        if start == None and length == None:
+        if start is None and length is None:
             subdata += struct.pack("b", 0x00)
         self.set_data(subdata, start=start, length=length)

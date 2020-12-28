@@ -29,8 +29,8 @@ class MwLEVC(MwRecord):
     def __str__(self):
         return self.id
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["calc_less_than_pc_level", "chance_none"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["calc_less_than_pc_level", "chance_none"])
         
         creature_details1 = []
         creature_details2 = []
@@ -41,8 +41,8 @@ class MwLEVC(MwRecord):
         
         for creature2 in creature_details2:
             if creature2 not in creature_details1:
-                print(str(self) + " Added " + str(creature2))
+                print(str(self) + ": Added " + str(creature2))
         
         for creature1 in creature_details1:
             if creature1 not in creature_details2:
-                print(str(self) + " Removed " + str(creature1))
+                print(str(self) + ": Removed " + str(creature1))

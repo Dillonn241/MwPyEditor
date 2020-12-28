@@ -41,5 +41,5 @@ class MwBODY(MwRecord):
     def __str__(self):
         return self.id
     
-    def compare(self, other):
-        MwRecord.compare(self, other, ["model", "race", "part", "vampire", "female", "playable", "part_type"])
+    def diff(self, other):
+        MwRecord.diff(self, other, ["model", "race", "part", "vampire", "female", "playable", "part_type"])
