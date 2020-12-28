@@ -145,10 +145,13 @@ def args_diff(args):
     print()
     print("# Diff plugin " + str(plugin1) + " with " + str(plugin2) + ": #")
     
+    diff_added = args.diff_added if args.diff_added else False
+    diff_removed = args.diff_removed if args.diff_removed else False
+    diff_changed = not args.diff_ignore_changed if args.diff_ignore_changed else True
     for rcd_type in record_types:
         print()
         print("## Diff record type " + str(rcd_type) + ": ##")
-        diff_plugins(plugin1, plugin2, rcd_type)
+        diff_plugins(plugin1, plugin2, rcd_type, added=diff_added, removed=diff_removed, changed=diff_changed)
     print()
 
 def args_dump(args):
@@ -404,6 +407,10 @@ if __name__ == "__main__":
     parser.add_argument("plugins", help="list of plugins to load and provide as arguments", nargs="+")
     parser.add_argument("-l", "--list", help="show only identifying data for each record", action="store_true")
     parser.add_argument("-t", "--type", help="limit to given <record-type>s", nargs="+", metavar="<record-type>")
+    parser.add_argument("--diff_added", help="report records in plugin2 that do not exist in plugin1", action="store_true")
+    parser.add_argument("--diff_removed", help="report records in plugin1 that do not exist in plugin2", action="store_true")
+    parser.add_argument("--diff_ignore_changed", help="do not report changes between records that exist in plugin1 and plugin2", action="store_true")
     args = parser.parse_args()
+    args.type = [x.upper() for x in args.type]
     main(args)
 
