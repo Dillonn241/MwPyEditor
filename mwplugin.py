@@ -171,16 +171,24 @@ def args_dump(args):
         print()
 
 def load_plugin(file_name, records_to_load=None):
+    # use default_records if no argument is provided for records_to_load
     if records_to_load is None:
         records_to_load = mwglobals.default_records
+    # DIAL should always be loaded if INFO is
+    if "INFO" in records_to_load and "DIAL" not in records_to_load:
+        records_to_load = records_to_load + ["DIAL"]
     if file_name in plugin_records:
+        # if the plugin has already been loaded before, only load what is still unloaded
         records_to_load = [x for x in records_to_load if x not in plugin_records[file_name]]
     else:
+        # if this is the first time, set up the plugin_records data structure
         plugin_records[file_name] = {}
         for rcd_type in records_to_load:
             plugin_records[file_name][rcd_type] = []
+    # nothing to do if records_to_load is empty
     if not records_to_load:
         return
+    # read the plugin file
     with open(mwglobals.DATA_PATH + file_name, mode='rb') as file:
         while True:
             header = file.read(16)
@@ -313,10 +321,9 @@ def create_record(record_type):
         return mwdial.MwDIAL()
     elif record_type == "INFO":
         info = mwinfo.MwINFO()
-        if "DIAL" in mwglobals.records:
-            last_dial = mwglobals.records["DIAL"][-1]
-            last_dial.infos += [info]
-            info.dial = last_dial
+        last_dial = mwglobals.records["DIAL"][-1]
+        last_dial.infos += [info]
+        info.dial = last_dial
         return info
     elif record_type == "SSCR":
         return mwsscr.MwSSCR()

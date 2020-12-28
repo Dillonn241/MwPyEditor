@@ -8,7 +8,7 @@ class MwDIAL(MwRecord):
     
     def load(self):
         self.name = self.get_subrecord_string("NAME")
-        self.type = mwglobals.DIAL_TYPES[self.get_subrecord_int("DATA")]
+        self.type = mwglobals.DIAL_TYPES[self.get_subrecord_int("DATA", length=1, signed=False)]
     
     def save(self):
         self.set_subrecord_string(self.name, "NAME")
