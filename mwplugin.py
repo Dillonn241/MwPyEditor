@@ -411,6 +411,7 @@ if __name__ == "__main__":
     parser.add_argument("--diff_removed", help="report records in plugin1 that do not exist in plugin2", action="store_true")
     parser.add_argument("--diff_ignore_changed", help="do not report changes between records that exist in plugin1 and plugin2", action="store_true")
     args = parser.parse_args()
-    args.type = [x.upper() for x in args.type]
+    if args.type:
+        args.type = [x.upper() for x in args.type]
     main(args)
 
