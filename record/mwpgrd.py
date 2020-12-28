@@ -9,7 +9,11 @@ class MwPGRD(MwRecord):
         self.id = self.get_subrecord_string("NAME")
         self.grid_x = self.get_subrecord_int("DATA", start=0, length=4)
         self.grid_y = self.get_subrecord_int("DATA", start=4, length=4)
-        if (self.grid_x, self.grid_y) in mwglobals.exterior_cells:
+        if self.id in mwglobals.interior_cells:
+            cell = mwglobals.interior_cells[self.id]
+            cell.pgrd = self
+            self.cell = cell
+        elif (self.grid_x, self.grid_y) in mwglobals.exterior_cells:
             cell = mwglobals.exterior_cells[(self.grid_x, self.grid_y)]
             cell.pgrd = self
             self.cell = cell
@@ -41,9 +45,9 @@ class MwPGRD(MwRecord):
         ])
     
     def __str__(self):
-        if hasattr(self, "cell"):
-            return str(self.cell)
-        return "Wilderness [{},{}]".format(self.grid_x, self.grid_y)
+        if self.grid_x == 0 and self.grid_y == 0 and self.id != "Ashlands Region":
+            return self.id
+        return "{} [{},{}]".format(self.id, self.grid_x, self.grid_y)
     
     def get_id(self):
         return str(self)
