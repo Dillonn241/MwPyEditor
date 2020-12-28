@@ -44,4 +44,4 @@ class MwDIAL(MwRecord):
         return str(self)
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["infos"])
+        MwRecord.diff(self, other)
