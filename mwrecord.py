@@ -86,17 +86,15 @@ class MwRecord:
         ]
         string = []
         for record_detail in record_detail_list:
-            display = record_detail[0]
-            if "{" not in record_detail[0]:
-                display += "    {}"
             if hasattr(self, record_detail[1]):
                 value = getattr(self, record_detail[1])
                 if callable(value):
                     value = value()
-                if len(record_detail) > 2:
-                    if value != record_detail[2]:
-                        string.append(display.format(value))
-                elif value != None:
+                default = record_detail[2] if len(record_detail) > 2 else None
+                if value != default:
+                    display = record_detail[0]
+                    if "{" not in record_detail[0]:
+                        display += "    {}"
                     string.append(display.format(value))
         return "".join(string)
     
