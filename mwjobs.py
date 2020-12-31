@@ -191,7 +191,7 @@ def all_record_details(file_name=None):
             if file_name != None and record.file_name != file_name:
                 continue
             if print_type and hasattr(record, "record_details"):
-                print("==== " + record_type + " ====\n\n")
+                print("====", record_type, "====\n\n")
                 print_type = False
             print(record.record_details())
             print()
@@ -204,7 +204,7 @@ def unique_dialogue(actor_id):
             print("* '''" + dial.name + "''':")
             for info in infos:
                 if info.disposition != 0:
-                    print("Disposition >= " + str(info.disposition))
+                    print("Disposition >=", info.disposition)
                 for filter in info.func_var_filters:
                     print(filter)
                 print("** ''\"" + info.response + "\"''")
@@ -281,43 +281,43 @@ def deprecated_check():
     for cell in mwglobals.records["CELL"]:
         for ref in cell.references:
             if ref.id in deprecated_ids:
-                print(str(cell) + ": " + ref.id)
+                print(str(cell) + ":", ref.id)
     print()
     print("NPCs:")
     for npc in mwglobals.records["NPC_"]:
         for item in npc.items:
             if item in deprecated_ids:
-                print(npc.id + ": " + item)
+                print(npc.id + ":", item)
     print()
     print("Creatures:")
     for creature in mwglobals.records["CREA"]:
         for item in creature.items:
             if item in deprecated_ids:
-                print(creature.id + ": " + item)
+                print(creature.id + ":", item)
     print()
     print("Containers:")
     for container in mwglobals.records["CONT"]:
         for item in container.items:
             if item in deprecated_ids:
-                print(container.id + ": " + item)
+                print(container.id + ":", item)
     print()
     print("Scripts:")
     for script in mwglobals.records["SCPT"]:
         for id in deprecated_ids:
             if id in script.text:
-                print(script.id + ": " + id)
+                print(script.id + ":", id)
     print()
     print("Leveled Items:")
     for list in mwglobals.records["LEVI"]:
         for item in list.items:
             if item.id in deprecated_ids:
-                print(list.id + ": " + item.id)
+                print(list.id + ":", item.id)
     print()
     print("Leveled Creatures:")
     for list in mwglobals.records["LEVC"]:
         for creature in list.creatures:
             if creature.id in deprecated_ids:
-                print(list.id + ": " + creature.id)
+                print(list.id + ":", creature.id)
 
 def mod_shortcut(obj):
     if obj.file_name.startswith("Tamriel_"):

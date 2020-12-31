@@ -84,39 +84,45 @@ class MwRecord:
         ("\n|Persists|", "persists", False),
         ("\n|Blocked|", "blocked", False),
         ]
-        string = ""
+        string = []
         for record_detail in record_detail_list:
-            if len(record_detail) == 4 or hasattr(self, record_detail[1]):
-                display = record_detail[0] + ("    {}" if "{" not in record_detail[0] else "")
-                value = getattr(self, record_detail[1]) if len(record_detail) < 4 else record_detail[1]
-                default = record_detail[2] if len(record_detail) > 2 else None
-                if value != default:
-                    string += display.format(value)
-        return string
+            display = record_detail[0]
+            if "{" not in record_detail[0]:
+                display += "    {}"
+            if hasattr(self, record_detail[1]):
+                value = getattr(self, record_detail[1])
+                if callable(value):
+                    value = value()
+            else:
+                value = record_detail[1]
+            if len(record_detail) > 2:
+                if value != record_detail[2]:
+                    string.append(display.format(value))
+            elif value:
+                string.append(display.format(value))
+        return "".join(string)
     
     def get_id(self):
         return self.id
     
     def diff(self, other, attrs=[]):
-        attrs += ["deleted", "persists", "blocked"]
-        first = True
-        for attr in attrs:
-            if hasattr(self, attr) and hasattr(other, attr) and str(getattr(self, attr)) != str(getattr(other, attr)):
-                if first:
-                    print("Changed " + str(self))
-                    first = False
-                print("\t" + attr + ": " + str(getattr(self, attr)))
-                print("\t" + attr + ": " + str(getattr(other, attr)))
-            elif hasattr(self, attr) and not hasattr(other, attr):
-                if first:
-                    first = False
-                print("Removed attribute from " + str(self))
-                print("\t" + attr + ": " + str(getattr(self, attr)))
-            elif hasattr(other, attr) and not hasattr(self, attr):
-                if first:
-                    first = False
-                print("Added attribute to " + str(self))
-                print("\t" + attr + ": " + str(getattr(other, attr)))
+        all_attrs = attrs + ["deleted", "persists", "blocked"]
+        string = []
+        for attr in all_attrs:
+            has_attr_self = hasattr(self, attr)
+            has_attr_other = hasattr(other, attr)
+            if has_attr_self:
+                if has_attr_other:
+                    get_attr_self = str(getattr(self, attr))
+                    get_attr_other = str(getattr(other, attr))
+                    if get_attr_self != get_attr_other:
+                        string.append("\n\t{0}: {1}\n\t{0}: {2}".format(attr, get_attr_self, get_attr_other))
+                else:
+                    string.append("\n\tRemoved {}: {}".format(attr, getattr(self, attr)))
+            elif has_attr_other:
+                string.append("\n\tAdded {}: {}".format(attr, getattr(other, attr)))
+        if string:
+            print("Changed", str(self) + "".join(string))
 
 class Subrecord:
     def get_data(self, start=None, length=None):

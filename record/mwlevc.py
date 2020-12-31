@@ -41,8 +41,8 @@ class MwLEVC(MwRecord):
         
         for creature2 in creature_details2:
             if creature2 not in creature_details1:
-                print(str(self) + ": Added " + str(creature2))
+                print(str(self) + ": Added", creature2)
         
         for creature1 in creature_details1:
             if creature1 not in creature_details2:
-                print(str(self) + ": Removed " + str(creature1))
+                print(str(self) + ": Removed", creature1)

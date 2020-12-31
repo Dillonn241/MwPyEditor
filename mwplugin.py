@@ -143,14 +143,14 @@ def args_diff(args):
     load_plugin(plugin1, records_to_load=record_types)
     load_plugin(plugin2, records_to_load=record_types)
     print()
-    print("# Diff plugin " + str(plugin1) + " with " + str(plugin2) + ": #")
+    print("# Diff plugin", plugin1, "with", str(plugin2) + ": #")
     
     diff_added = args.diff_added if args.diff_added else False
     diff_removed = args.diff_removed if args.diff_removed else False
     diff_changed = not args.diff_ignore_changed if args.diff_ignore_changed else True
     for rcd_type in record_types:
         print()
-        print("## Diff record type " + str(rcd_type) + ": ##")
+        print("## Diff record type", str(rcd_type) + ": ##")
         diff_plugins(plugin1, plugin2, rcd_type, added=diff_added, removed=diff_removed, changed=diff_changed)
     print()
 
@@ -159,10 +159,10 @@ def args_dump(args):
         record_types = args.type if args.type else mwglobals.RECORDS_ALL
         load_plugin(plugin, records_to_load=record_types)
         print()
-        print("# Dump plugin " + plugin + ": #")
+        print("# Dump plugin", plugin + ": #")
         for rcd_type in record_types:
             print()
-            print("## Dump record type " + rcd_type + ": ##")
+            print("## Dump record type", rcd_type + ": ##")
             if args.list:
                 print()
                 for rcd in plugin_records[plugin][rcd_type]:
@@ -220,7 +220,7 @@ def load_plugin(file_name, records_to_load=None):
             if record_type == "TES3":
                 for master in record.masters:
                     load_plugin(master)
-                print("** Loading " + file_name + ": " + str(records_to_load) + " **")
+                print("** Loading", file_name + ":", records_to_load, "**")
 
 def save_plugin(file_name, other_files=[]):
     print(file_name)
@@ -345,7 +345,7 @@ def diff_plugins(plugin1, plugin2, record_type, added=True, removed=True, change
             if record.file_name == plugin2:
                 if record.get_id() not in object_ids1:
                     print()
-                    print("Added " + str(record))
+                    print("Added", record)
                     print(record.record_details())
     
     if removed:
@@ -353,7 +353,7 @@ def diff_plugins(plugin1, plugin2, record_type, added=True, removed=True, change
             if record.file_name == plugin1:
                 if record.get_id() not in object_ids2:
                     print()
-                    print("Removed " + str(record))
+                    print("Removed", record)
     
     if changed:
         for record in mwglobals.records[record_type]:
@@ -382,13 +382,13 @@ def diff_locations(plugin1, file_names1, plugin2, file_names2, record_type):
                         if first_print:
                             print(record)
                             first_print = False
-                        print("- " + loc)
+                        print("-", loc)
                 for loc in locations2:
                     if loc not in locations1:
                         if first_print:
                             print(record)
                             first_print = False
-                        print("+ " + loc)
+                        print("+", loc)
 
 def main(args):
     start = time.time()

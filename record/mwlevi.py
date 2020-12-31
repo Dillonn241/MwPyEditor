@@ -42,11 +42,11 @@ class MwLEVI(MwRecord):
         
         for item2 in item_details2:
             if item2 not in item_details1:
-                print(str(self) + ": Added " + str(item2))
+                print(str(self) + ": Added", item2)
         
         for item1 in item_details1:
             if item1 not in item_details2:
-                print(str(self) + ": Removed " + str(item1))
+                print(str(self) + ": Removed", item1)
 
 class MwLEVIItem:
     def __str__(self):

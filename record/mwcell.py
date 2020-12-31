@@ -181,17 +181,17 @@ class MwCELL(MwRecord):
         ref_details1 = []
         ref_details2 = []
         for ref in self.references:
-            ref_details1 += [ref.record_details()]
+            ref_details1 += [ref.diff_string()]
         for ref in other.references:
-            ref_details2 += [ref.record_details()]
+            ref_details2 += [ref.diff_string()]
         
         for ref2 in ref_details2:
             if ref2 not in ref_details1:
-                print(str(self) + ": Added " + str(ref2))
+                print(str(self) + ": Added", ref2)
         
         for ref1 in ref_details1:
             if ref1 not in ref_details2:
-                print(str(self) + ": Removed " + str(ref1))
+                print(str(self) + ": Removed", ref1)
 
     def diff(self, other):
         # Like diff_old, but trying to match changed references (for now, only if
@@ -215,40 +215,44 @@ class MwCELL(MwRecord):
         
         for refid in refids:
             # Form the set of differences between refs1[refid] and refs2[refid]:
-            refs1_refid_strings = [str(ref1.record_details()) for ref1 in refs1[refid]]
-            refs2_refid_strings = [str(ref2.record_details()) for ref2 in refs2[refid]]
+            refs1_refid_strings = [ref1.diff_string() for ref1 in refs1[refid]]
+            refs2_refid_strings = [ref2.diff_string() for ref2 in refs2[refid]]
             refs1only = [ref1 for ref1 in refs1[refid] if
-                         str(ref1.record_details()) not in refs2_refid_strings]
+                         ref1.diff_string() not in refs2_refid_strings]
             refs2only = [ref2 for ref2 in refs2[refid] if
-                         str(ref2.record_details()) not in refs1_refid_strings]
+                         ref2.diff_string() not in refs1_refid_strings]
         
             if not different:
                 if refs1only or refs2only:
                     different = True
                     print()
-                    print("### Cell " + str(self) + ": ###")
+                    print("### Cell", str(self) + ": ###")
         
             for ref1 in refs1only:
                 # Try to match ref1 with a reference from other that has
                 # the same ID and is close by.
-                dist = 1000000
+                DISTANCE_CUTOFF = 200
+                closest_dist = DISTANCE_CUTOFF
                 closest_ref = None
                 for ref2 in refs2only:
-                    if ref1.distance(ref2) < dist:
+                    dist = ref1.distance(ref2)
+                    if dist < closest_dist:
                         closest_ref = ref2
-                        dist = ref1.distance(ref2)
-                if dist < 200:
-                    ref1.diff(ref2)
+                        closest_dist = dist
+                if closest_dist < DISTANCE_CUTOFF:
+                    ref1.diff(closest_ref)
                     refs1only.remove(ref1)
                     refs2only.remove(closest_ref)
             
             for ref2 in refs2only:
-                print("Added " + str(ref2))
+                print("Added", ref2)
             
             for ref1 in refs1only:
-                print("Removed " + str(ref1))
+                print("Removed", ref1)
 
 class MwCELLReference:
+    diff_list = ["scale", "owner", "global_variable", "faction", "faction_rank", "soul", "charge_left", "uses_left", "door_pos_x", "door_pos_y", "door_pos_z", "door_rot_x", "door_rot_y", "door_rot_z", "door_cell", "lock_level", "key_id", "trap_id", "pos_x", "pos_y", "pos_z", "rot_x", "rot_y", "rot_z"]
+    
     def __init__(self):
         self.deleted = False
         self.blocked = False
@@ -261,7 +265,7 @@ class MwCELLReference:
     
     def record_details(self):
         return MwRecord.format_record_details(self, [
-        ("|ID|", "id"), ("    |Object Index|", self.get_object_index(), None, None), ("    |Master Index|", self.get_master_index(), None, None),
+        ("|ID|", "id"), ("    |Object Index|", "get_object_index"), ("    |Master Index|", "get_master_index"),
         ("\n  |Scale|    {:.2f}", "scale"),
         ("\n  |Owner|", "owner"), ("    |Global Variable|", "global_variable"),
         ("\n  |Faction|", "faction"), ("    |Rank|", "faction_rank"),
@@ -282,7 +286,10 @@ class MwCELLReference:
         return str(self)
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["id", "scale", "owner", "global_variable", "faction", "faction_rank", "soul", "charge_left", "uses_left", "door_pos_x", "door_pos_y", "door_pos_z", "door_rot_x", "door_rot_y", "door_rot_z", "door_cell", "lock_level", "key_id", "trap_id", "pos_x", "pos_y", "pos_z", "rot_x", "rot_y", "rot_z"])
+        MwRecord.diff(self, other, MwCELLReference.diff_list)
+    
+    def diff_string(self):
+        return "".join(str(getattr(self, attr, "")) for attr in MwCELLReference.diff_list)
 
     def distance(self, other):
         # taxicab distance
