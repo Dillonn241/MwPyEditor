@@ -93,13 +93,11 @@ class MwRecord:
                 value = getattr(self, record_detail[1])
                 if callable(value):
                     value = value()
-            else:
-                value = record_detail[1]
-            if len(record_detail) > 2:
-                if value != record_detail[2]:
+                if len(record_detail) > 2:
+                    if value != record_detail[2]:
+                        string.append(display.format(value))
+                elif value != None:
                     string.append(display.format(value))
-            elif value:
-                string.append(display.format(value))
         return "".join(string)
     
     def get_id(self):

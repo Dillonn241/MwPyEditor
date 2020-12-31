@@ -142,14 +142,14 @@ class MwCREA(MwRecord):
         ("\n|Attack 1|", "attack1_min"), (" - {}", "attack1_max"),
         ("\n|Attack 2|", "attack2_min"), (" - {}", "attack2_max"),
         ("\n|Attack 3|", "attack3_min"), (" - {}", "attack3_max"),
-        ("\n|Blood Texture|", self.get_blood(), "Default (Red)", None),
+        ("\n|Blood Texture|", "get_blood", "Default (Red)"),
         ("\n|Sound Gen Creature|", "sound_gen_creature"),
         ("\n|Items|", "items", {}),
         ("\n|Spells|", "spells", []),
         ("\n|Fight|", "fight"), ("    |Flee|", "flee"), ("    |Alarm|", "alarm"), ("    |Hello|", "hello"),
         ("\n|Barter Gold|", "barter_gold", 0),
-        ("\n|Buys / Sells|", self.buys_sells(), [], None),
-        ("\n|Other Services|", self.other_services(), [], None)
+        ("\n|Buys / Sells|", "buys_sells", []),
+        ("\n|Other Services|", "other_services", [])
         ])
         if len(self.destinations) > 0:
             string += "\n|Travel Services|"

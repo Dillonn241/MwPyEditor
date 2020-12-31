@@ -217,14 +217,14 @@ class MwNPC_(MwRecord):
         ("\n|Fatigue|", "fatigue"),
         ("\n|Disposition|", "disposition"),
         ("\n|Reputation|", "reputation"),
-        ("\n|Blood Texture|", self.get_blood(), "Default (Red)", None),
+        ("\n|Blood Texture|", "get_blood", "Default (Red)"),
         ("\n|Auto Calculate Stats|", "autocalc", False),
         ("\n|Items|", "items", {}),
         ("\n|Spells|", "spells", []),
         ("\n|Fight|", "fight"), ("    |Flee|", "flee"), ("    |Alarm|", "alarm"), ("    |Hello|", "hello"),
         ("\n|Barter Gold|", "barter_gold", 0),
-        ("\n|Buys / Sells|", self.buys_sells(), [], None),
-        ("\n|Other Services|", self.other_services(), [], None)
+        ("\n|Buys / Sells|", "buys_sells", []),
+        ("\n|Other Services|", "other_services", [])
         ])
         if len(self.destinations) > 0:
             string += "\n|Travel Services|"
@@ -333,7 +333,7 @@ def load_ai(self):
 class MwNPCDestination:
     def record_details(self):
         return MwRecord.format_record_details(self, [
-        ("|Position|    {:.3f}", "pos_x"), (", {:.3f}", "pos_y"), (", {:.3f}", "pos_z"), (" [{:.3f}", "rot_x"), (", {:.3f}", "rot_y"), (", {:.3f}]", "rot_z"), (" {}", str(self), None, None)
+        ("|Position|    {:.3f}", "pos_x"), (", {:.3f}", "pos_y"), (", {:.3f}", "pos_z"), (" [{:.3f}", "rot_x"), (", {:.3f}", "rot_y"), (", {:.3f}]", "rot_z"), (" {}", "__str__")
         ])
     
     def __str__(self):

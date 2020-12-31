@@ -34,7 +34,7 @@ class MwBODY(MwRecord):
         if self.part_type == "Skin":
             string += MwRecord.format_record_details(self, [
             ("\n|Skin Race|", "race"),
-            ("\n|Skin Type|", self.get_skin_type(), None, None)
+            ("\n|Skin Type|", "get_skin_type")
             ])
         return string
     

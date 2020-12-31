@@ -61,7 +61,7 @@ class MwARMO(MwRecord):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
         ("\n|Type|", "type"),
         ("\n|Script|", "script"),
-        ("\n|Weight|    {:.2f}", "weight"), (" ({})", self.get_weight_class(), None, None),
+        ("\n|Weight|    {:.2f}", "weight"), (" ({})", "get_weight_class"),
         ("\n|Value|", "value"),
         ("\n|AR|", "armor"),
         ("\n|Health|", "health"),

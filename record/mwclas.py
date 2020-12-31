@@ -95,8 +95,8 @@ class MwCLAS(MwRecord):
         ("\n|Minor Skills|", "minor_skills"),
         ("\n|Description|", "description"),
         ("\n|Playable|", "playable", False),
-        ("\n|Buys / Sells|", self.buys_sells(), [], None),
-        ("\n|Other Services|", self.other_services(), [], None)
+        ("\n|Buys / Sells|", "buys_sells", []),
+        ("\n|Other Services|", "other_services", [])
         ])
     
     def __str__(self):
