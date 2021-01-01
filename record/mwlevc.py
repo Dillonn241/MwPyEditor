@@ -1,5 +1,5 @@
-from mwrecord import MwRecord
 import mwglobals
+from mwrecord import MwRecord
 from record.mwlevi import MwLEVIItem
 
 class MwLEVC(MwRecord):

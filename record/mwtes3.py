@@ -1,5 +1,5 @@
-from mwrecord import MwRecord
 import mwglobals
+from mwrecord import MwRecord
 
 class MwTES3(MwRecord):
     def __init__(self):

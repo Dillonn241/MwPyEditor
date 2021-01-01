@@ -1,6 +1,5 @@
-from mwrecord import MwRecord
 import mwglobals
-from mwglobals import *
+from mwrecord import MwRecord
 
 class MwAPPA(MwRecord):
     def __init__(self):
@@ -10,7 +9,7 @@ class MwAPPA(MwRecord):
         self.id = self.get_subrecord_string("NAME")
         self.model = self.get_subrecord_string("MODL")
         self.name = self.get_subrecord_string("FNAM")
-        self.type = APPA_TYPES[self.get_subrecord_int("AADT", start=0, length=4)]
+        self.type = mwglobals.APPA_TYPES[self.get_subrecord_int("AADT", start=0, length=4)]
         self.quality = self.get_subrecord_float("AADT", start=4, length=4)
         self.weight = self.get_subrecord_float("AADT", start=8, length=4)
         self.value = self.get_subrecord_int("AADT", start=12, length=4)

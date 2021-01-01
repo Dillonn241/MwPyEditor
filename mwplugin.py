@@ -1,7 +1,11 @@
-import sys
-import struct
-import time
 import argparse
+from collections import defaultdict
+import struct
+import sys
+import time
+
+import mwglobals
+import mwjobs
 import record.mwtes3 as mwtes3
 import record.mwgmst as mwgmst
 import record.mwglob as mwglob
@@ -45,8 +49,6 @@ import record.mwsndg as mwsndg
 import record.mwdial as mwdial
 import record.mwinfo as mwinfo
 import record.mwsscr as mwsscr
-import mwglobals
-import mwjobs
 
 plugin_records = {}
 
@@ -116,23 +118,22 @@ def init():
     #load_plugin("TR_RestExterior.esp")
     
     # Skyrim: Home of the Nords
-    #load_plugin("Sky_Main_2020_12_26b.esp")
+    #load_plugin("Sky_Main_2020_12_31.esp")
     #load_plugin("Sky_Markarth_2020-12-21.ESP")
     #load_plugin("Sky_Falkheim_2020-10-10.ESP")
     
     # Province: Cyrodiil
-    #load_plugin("Cyrodiil_Main_2020_12_23.ESP")
+    #load_plugin("Cyrodiil_Main_2020_12_10.ESP")
     #load_plugin("PC_Anvil_v0058.ESP")
     #load_plugin("PC_Sutch_v0015.ESP")
     
     print()
 
 def handle_args(args):
-    if args.command:
-        if args.command == "diff":
-            args_diff(args)
-        elif args.command == "dump":
-            args_dump(args)
+    if args.command == "diff":
+        args_diff(args)
+    elif args.command == "dump":
+        args_dump(args)
 
 def args_diff(args):
     if len(args.plugins) != 2:
@@ -184,19 +185,15 @@ def load_plugin(file_name, records_to_load=None):
         # if the plugin has already been loaded before, only load what is still unloaded
         records_to_load = [x for x in records_to_load if x not in plugin_records[file_name]]
     else:
-        # if this is the first time, set up the plugin_records data structure
-        plugin_records[file_name] = {}
-        for rcd_type in records_to_load:
-            plugin_records[file_name][rcd_type] = []
+        # if this is the first time, add this plugin to plugin_records
+        plugin_records[file_name] = defaultdict(list)
     # nothing to do if records_to_load is empty
     if not records_to_load:
         return
     # read the plugin file
-    with open(mwglobals.DATA_PATH + file_name, mode='rb') as file:
-        while True:
-            header = file.read(16)
-            if header == b'':
-                break
+    print_loading = True
+    with open(mwglobals.DATA_PATH + file_name, mode="rb") as file:
+        while (header := file.read(16)) != b"":
             record_type, length, unknown, flags = struct.unpack("<4siii", header)
             record_type = record_type.decode("mbcs")
             length_left = length
@@ -219,8 +216,11 @@ def load_plugin(file_name, records_to_load=None):
             record.load()
             if record_type == "TES3":
                 for master in record.masters:
-                    load_plugin(master)
+                    if master not in plugin_records:
+                        load_plugin(master)
+            if print_loading:
                 print("** Loading", file_name + ":", records_to_load, "**")
+                print_loading = False
 
 def save_plugin(file_name, other_files=[]):
     print(file_name)
@@ -390,28 +390,30 @@ def diff_locations(plugin1, file_names1, plugin2, file_names2, record_type):
                             first_print = False
                         print("+", loc)
 
-def main(args):
-    start = time.time()
-    init()
-    handle_args(args)
-    end = time.time()
-    print()
-    print("** Time spent: {:.3f} seconds **".format(end - start))
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description="Analyze a plugin file."
+def init_args():
+    parser = argparse.ArgumentParser(description="Analyze a plugin file."
     "\n\nThe following commands are available:"
     "\ndiff\tfind the difference between two plugins"
-    "\ndump\toutput readable record data")
+    "\ndump\toutput readable record data", formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("command", help="name of the action to take")
-    parser.add_argument("plugins", help="list of plugins to load and provide as arguments", nargs="+")
-    parser.add_argument("-l", "--list", help="show only identifying data for each record", action="store_true")
-    parser.add_argument("-t", "--type", help="limit to given <record-type>s", nargs="+", metavar="<record-type>")
-    parser.add_argument("--diff_added", help="report records in plugin2 that do not exist in plugin1", action="store_true")
-    parser.add_argument("--diff_removed", help="report records in plugin1 that do not exist in plugin2", action="store_true")
-    parser.add_argument("--diff_ignore_changed", help="do not report changes between records that exist in plugin1 and plugin2", action="store_true")
+    parser.add_argument("plugins", nargs="+", help="list of plugins to load and provide as arguments")
+    parser.add_argument("-l", "--list", action="store_true", help="show only identifying data for each record")
+    parser.add_argument("-t", "--type", nargs="+", help="limit to given <record-type>s", metavar="<record-type>")
+    parser.add_argument("--diff_added", action="store_true", help="report records in plugin2 that do not exist in plugin1")
+    parser.add_argument("--diff_removed", action="store_true", help="report records in plugin1 that do not exist in plugin2")
+    parser.add_argument("--diff_ignore_changed", action="store_true", help="do not report changes between records that exist in plugin1 and plugin2")
     args = parser.parse_args()
     if args.type:
         args.type = [x.upper() for x in args.type]
-    main(args)
+    return args
 
+def main():
+    start_time = time.time()
+    init()
+    if len(sys.argv) > 2:
+        args = init_args()
+        handle_args(args)
+    time_spent = time.time() - start_time
+    print("\n** Time spent: {:.3f} seconds **".format(time_spent))
+
+main()

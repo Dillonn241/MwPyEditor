@@ -1,8 +1,9 @@
+from collections import defaultdict
 import copy
+
+import mwglobals
 from mwrecord import MwRecord
 import record.mwligh as mwligh
-import mwglobals
-from collections import defaultdict
 
 init_references = False
 

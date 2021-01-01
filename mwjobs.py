@@ -1,8 +1,10 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
+import pandas as pd
 import seaborn as sns
 import tkinter as tk
+
+import mwglobals
 import record.mwtes3 as mwtes3
 import record.mwgmst as mwgmst
 import record.mwglob as mwglob
@@ -46,7 +48,6 @@ import record.mwsndg as mwsndg
 import record.mwdial as mwdial
 import record.mwinfo as mwinfo
 import record.mwsscr as mwsscr
-import mwglobals
 
 def region_location_changes(plugin1, plugin2):
     locations1 = []
@@ -272,48 +273,61 @@ def print_trainers_by_skill():
 
 def deprecated_check():
     deprecated_ids = []
-    for name in mwglobals.records:
-        for record in mwglobals.records[name]:
-            if hasattr(record, "name") and record.name != None and "deprecated" in record.name.lower():
+    for rcd_type in mwglobals.records:
+        for record in mwglobals.records[rcd_type]:
+            if hasattr(record, "name") and record.name and "deprecated" in record.name.lower():
                 deprecated_ids += [record.id]
-    
-    print("Cells:")
+            elif hasattr(record, "model") and record.model and "tr_help_deprec" in record.model.lower():
+                deprecated_ids += [record.id]
+    print("## Deprecated Cell Refs: ##")
     for cell in mwglobals.records["CELL"]:
         for ref in cell.references:
             if ref.id in deprecated_ids:
                 print(str(cell) + ":", ref.id)
     print()
-    print("NPCs:")
+    print("## Deprecated NPC Items: ##")
     for npc in mwglobals.records["NPC_"]:
         for item in npc.items:
             if item in deprecated_ids:
                 print(npc.id + ":", item)
     print()
-    print("Creatures:")
+    print("## Deprecated NPC Spells: ##")
+    for npc in mwglobals.records["NPC_"]:
+        for spell in npc.spells:
+            if spell in deprecated_ids:
+                print(npc.id + ":", spell)
+    print()
+    print("## Deprecated Creature Items: ##")
     for creature in mwglobals.records["CREA"]:
         for item in creature.items:
             if item in deprecated_ids:
                 print(creature.id + ":", item)
     print()
-    print("Containers:")
+    print("## Deprecated Creature Spells: ##")
+    for creature in mwglobals.records["CREA"]:
+        for spell in creature.spells:
+            if spell in deprecated_ids:
+                print(creature.id + ":", spell)
+    print()
+    print("## Deprecated Container Items: ##")
     for container in mwglobals.records["CONT"]:
         for item in container.items:
             if item in deprecated_ids:
                 print(container.id + ":", item)
     print()
-    print("Scripts:")
+    print("## Deprecated IDs in Scripts: ##")
     for script in mwglobals.records["SCPT"]:
         for id in deprecated_ids:
             if id in script.text:
                 print(script.id + ":", id)
     print()
-    print("Leveled Items:")
+    print("## Deprecated Leveled List Items: ##")
     for list in mwglobals.records["LEVI"]:
         for item in list.items:
             if item.id in deprecated_ids:
                 print(list.id + ":", item.id)
     print()
-    print("Leveled Creatures:")
+    print("## Deprecated Leveled List Creatures: ##")
     for list in mwglobals.records["LEVC"]:
         for creature in list.creatures:
             if creature.id in deprecated_ids:

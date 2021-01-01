@@ -1,6 +1,7 @@
 import math
-from mwrecord import MwRecord
+
 import mwglobals
+from mwrecord import MwRecord
 
 do_autocalc = False
 

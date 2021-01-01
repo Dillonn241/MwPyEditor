@@ -1,6 +1,5 @@
-import struct
 import math
-from mwglobals import *
+import struct
 
 class MwRecord:
     def __init__(self):

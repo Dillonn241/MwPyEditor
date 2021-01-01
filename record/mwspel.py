@@ -1,5 +1,5 @@
-from mwrecord import MwRecord
 import mwglobals
+from mwrecord import MwRecord
 from record.mwench import load_enchantments
 
 do_autocalc = False

@@ -1,5 +1,5 @@
-from mwrecord import MwRecord
 import mwglobals
+from mwrecord import MwRecord
 
 init_lod = False
 init_terrain = False

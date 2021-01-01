@@ -1,5 +1,5 @@
-from mwrecord import MwRecord
 import mwglobals
+from mwrecord import MwRecord
 from record.mwarmo import load_body_parts
 
 class MwCLOT(MwRecord):

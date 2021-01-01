@@ -1,5 +1,5 @@
-from mwrecord import MwRecord
 import mwglobals
+from mwrecord import MwRecord
 
 class MwSOUN(MwRecord):
     def __init__(self):

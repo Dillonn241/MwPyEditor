@@ -1,5 +1,5 @@
-from mwrecord import MwRecord
 import mwglobals
+from mwrecord import MwRecord
 from record.mwnpc_ import load_ai, MwNPCDestination, MwNPCAIPackage
 
 CREA_TYPES = ["Creature", "Daedra", "Undead", "Humanoid"]

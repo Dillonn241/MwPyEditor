@@ -1,6 +1,6 @@
+import mwglobals
 from mwrecord import MwRecord
 import record.mwmgef as mwmgef
-import mwglobals
 
 do_autocalc = False
 
