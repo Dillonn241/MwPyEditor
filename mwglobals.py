@@ -70,6 +70,7 @@ INFO_SCVR_COMPARE = ["=", "!=", ">", ">=", "<", "<="]
 
 records = defaultdict(list)
 ordered_records = []
+plugin_records = {}
 default_records = ["TES3"]
 game_settings = {}
 object_ids = {}

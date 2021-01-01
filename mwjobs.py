@@ -163,24 +163,27 @@ def faction_members(faction, file_name):
         print("!{{TR3|" + npc.name + "}}")
         data = "|" + npc.get_sex_template()
         data += "||[[Morrowind:" + npc.get_wiki_race() + "|" + npc.get_wiki_race() + "]]||[[Morrowind:" + npc.get_wiki_class() + "|" + npc.class_ + "]]||" + str(npc.faction_rank) + " " + npc.get_faction_rank_name() + "||"
+        cell_str = []
         for cell in mwglobals.records["CELL"]:
             for ref in cell.references:
                 if ref.id == npc.id:
-                    data += str(cell)
+                    cell_str.append(str(cell))
                     break
-        data += "||"
+        data += "<br>".join(sorted(cell_str)) + "||"
+        service_str = []
         if npc.service_weapons or npc.service_armor or npc.service_clothing or npc.service_books or npc.service_ingredients or npc.service_picks or npc.service_probes or npc.service_lights or npc.service_apparatus or npc.service_repair_items or npc.service_miscellaneous or npc.service_magic_items or npc.service_potions:
-            data += "{{TR3|Merchants|Merchant}}"
+            service_str.append("{{TR3|Merchants|Merchant}}")
         if npc.service_spells:
-            data += "{{TR3|Spell Merchants|Spell Merchant}}"
+            service_str.append("{{TR3|Spell Merchants|Spell Merchant}}")
         if npc.service_training:
-            data += "{{TR3|Trainers|Trainer}}"
+            service_str.append("{{TR3|Trainers|Trainer}}")
         if npc.service_spellmaking:
-            data += "{{TR3|Spellmaker}}"
+            service_str.append("{{TR3|Spellmaker}}")
         if npc.service_enchanting:
-            data += "{{TR3|Enchanter}}"
+            service_str.append("{{TR3|Enchanter}}")
         if npc.service_repair:
-            data += "{{TR3|Blacksmith|Blacksmith}}"
+            service_str.append("{{TR3|Blacksmith|Blacksmith}}")
+        data += ", ".join(service_str)
         print(data)
 
 def all_record_details(file_name=None):

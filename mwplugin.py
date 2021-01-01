@@ -50,13 +50,13 @@ import record.mwdial as mwdial
 import record.mwinfo as mwinfo
 import record.mwsscr as mwsscr
 
-plugin_records = {}
+auto_load_masters = True
 
 def init():
     """Choose at most one: list of records loaded by default for every plugin. TES3 should always be loaded."""
-    mwglobals.default_records = mwglobals.RECORDS_MIN # minimum types required for autocalc: MGEF, CLAS, RACE, SKIL
+    #mwglobals.default_records = mwglobals.RECORDS_MIN # minimum types required for autocalc: MGEF, CLAS, RACE, SKIL
     #mwglobals.default_records = mwglobals.RECORDS_MOST # all types except: DIAL, INFO, CELL, LAND
-    #mwglobals.default_records = mwglobals.RECORDS_ALL # all types
+    mwglobals.default_records = mwglobals.RECORDS_ALL # all types
     
     """Expand list of records loaded by default for every plugin."""
     mwglobals.default_records += []
@@ -74,9 +74,9 @@ def init():
     
     """Load any plugins you want. Masters are automatically loaded."""
     # Vanilla
-    #load_plugin("Morrowind.esm")
-    #load_plugin("Tribunal.esm")
-    #load_plugin("Bloodmoon.esm")
+    load_plugin("Morrowind.esm")
+    load_plugin("Tribunal.esm")
+    load_plugin("Bloodmoon.esm")
     
     # DLC
     #load_plugin("adamantiumarmor.esp")
@@ -95,14 +95,14 @@ def init():
     #load_plugin("Tamriel_Data.esm")
     
     # Released versions of province mods
-    #load_plugin("Unused/TR_Mainland_1809.esm")
-    #load_plugin("Unused/TR_Mainland_1912.esm")
-    #load_plugin("Unused/TR_Mainland_2002.esm")
-    #load_plugin("Unused/Cyrodiil_Main_0.2.esm")
-    #load_plugin("Unused/Sky_Main_02.esp")
-    #load_plugin("Unused/Sky_Main_1812.esm")
-    #load_plugin("Unused/Sky_Main_1903.esm")
-    #load_plugin("Unused/Sky_Main_2001.esm")
+    #load_plugin("TR_Mainland_1809.esm")
+    #load_plugin("TR_Mainland_1912.esm")
+    #load_plugin("TR_Mainland_2002.esm")
+    #load_plugin("Cyrodiil_Main_0.2.esm")
+    #load_plugin("Sky_Main_02.esp")
+    #load_plugin("Sky_Main_1812.esm")
+    #load_plugin("Sky_Main_1903.esm")
+    #load_plugin("Sky_Main_2001.esm")
     
     # Tamriel Rebuilt
     #load_plugin("TR_Mainland.esp")
@@ -162,10 +162,10 @@ def args_dump(args):
             print("\n## Dump record type", rcd_type + ": ##")
             if args.list:
                 print()
-                for rcd in plugin_records[plugin][rcd_type]:
+                for rcd in mwglobals.plugin_records[plugin][rcd_type]:
                     print(rcd)
             else:
-                for rcd in plugin_records[plugin][rcd_type]:
+                for rcd in mwglobals.plugin_records[plugin][rcd_type]:
                     print()
                     print(rcd.record_details())
         print()
@@ -174,17 +174,18 @@ def load_plugin(file_name, records_to_load=None):
     # use default_records if no argument is provided for records_to_load
     if records_to_load is None:
         records_to_load = mwglobals.default_records
-    # have to load TES3, DIAL should always be loaded if INFO is
-    if "TES3" not in records_to_load:
+    # if automatically loading masters, TES3 is required
+    if auto_load_masters and "TES3" not in records_to_load:
         records_to_load = ["TES3"] + records_to_load
+    # DIAL should always be loaded with INFO
     if "INFO" in records_to_load and "DIAL" not in records_to_load:
         records_to_load = records_to_load + ["DIAL"]
-    if file_name in plugin_records:
-        # if the plugin has already been loaded before, only load what is still unloaded
-        records_to_load = [x for x in records_to_load if x not in plugin_records[file_name]]
+    # if the plugin has been loaded before, only load what is still unloaded
+    if file_name in mwglobals.plugin_records:
+        records_to_load = [x for x in records_to_load if x not in mwglobals.plugin_records[file_name]]
+    # otherwise, set up a record list for this plugin in plugin_records
     else:
-        # if this is the first time, add this plugin to plugin_records
-        plugin_records[file_name] = defaultdict(list)
+        mwglobals.plugin_records[file_name] = defaultdict(list)
     # nothing to do if records_to_load is empty
     if not records_to_load:
         return
@@ -192,29 +193,35 @@ def load_plugin(file_name, records_to_load=None):
     print_loading = True
     with open(mwglobals.DATA_PATH + file_name, mode="rb") as file:
         while (header := file.read(16)) != b"":
+            # 4 bytes make up a header
             record_type, length, unknown, flags = struct.unpack("<4siii", header)
             record_type = record_type.decode("mbcs")
             length_left = length
+            # skip record if it's not a type being loaded
             if record_type not in records_to_load:
                 file.seek(length_left, 1)
                 continue
+            # create record and associate it with this plugin name
             record = create_record(record_type)
             record.file_name = file_name
+            # add to global record data structures
             mwglobals.records[record_type] += [record]
             mwglobals.ordered_records += [record]
-            plugin_records[file_name][record_type] += [record]
-            
+            mwglobals.plugin_records[file_name][record_type] += [record]
+            # split up the data into subrecords
             while length_left > 0:
                 subtype, sublength = struct.unpack("<4si", file.read(8))
                 subtype = subtype.decode("mbcs")
                 record.add_subrecord(subtype, file.read(sublength))
                 length_left -= 8 + sublength
-            
+            # send flags and data off to class to parse
             record.load_universal(flags)
             record.load()
-            if record_type == "TES3":
+            # if setting on, automatically load essential records from masters once they are known
+            if auto_load_masters and record_type == "TES3":
                 for master in record.masters:
-                    load_plugin(master)
+                    load_plugin(master, records_to_load=mwglobals.RECORDS_MIN)
+            # print a progress message
             if print_loading:
                 print("** Loading", file_name + ":", records_to_load, "**")
                 print_loading = False
@@ -411,4 +418,5 @@ def main():
     time_spent = time.time() - start_time
     print("\n** Time spent: {:.3f} seconds **".format(time_spent))
 
-main()
+if __name__ == "__main__":
+    main()
