@@ -50,16 +50,9 @@ class MwFACT(MwRecord):
         ("\n|Faction Reactions|", "faction_reactions", {})
         ])
         if len(self.ranks) > 0:
-            longest = 0
+            string += "\n|Ranks|    Rank Name (Attrib 1, Attrib 2, Pri Skill, Fav Skill, Fact Rep)"
             for rank in self.ranks:
-                length = len(rank.name)
-                if length > longest:
-                    longest = length
-            longest += 2
-            space = " " * (longest - 9)
-            string += "\n|Ranks|\nRank Name" + space + "Attrib 1  Attrib 2  Pri Skill  Fav Skill  Fact Rep"
-            for rank in self.ranks:
-                string += "\n" + rank.record_details(longest=longest)
+                string += "\n" + rank.record_details()
         return string
     
     def __str__(self):
@@ -69,9 +62,8 @@ class MwFACT(MwRecord):
         MwRecord.diff(self, other, ["name", "ranks", "favored_attributes", "favored_skills", "hidden", "faction_reactions"])
 
 class MwFACTRank:
-    def record_details(self, longest=33):
-        space = " " * (longest - len(self.name))
-        return self.name + space + "{:^8}  {:^8}  {:^9}  {:^9}  {:^8}".format(self.attributes[0], self.attributes[1], self.skills[0], self.skills[1], self.fact_rep)
+    def record_details(self):
+        return self.name + " ({}, {}, {}, {}, {})".format(self.attributes[0], self.attributes[1], self.skills[0], self.skills[1], self.fact_rep)
     
     def __str__(self):
         return self.name

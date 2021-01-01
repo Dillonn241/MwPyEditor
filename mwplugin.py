@@ -174,7 +174,9 @@ def load_plugin(file_name, records_to_load=None):
     # use default_records if no argument is provided for records_to_load
     if records_to_load is None:
         records_to_load = mwglobals.default_records
-    # DIAL should always be loaded if INFO is
+    # have to load TES3, DIAL should always be loaded if INFO is
+    if "TES3" not in records_to_load:
+        records_to_load = ["TES3"] + records_to_load
     if "INFO" in records_to_load and "DIAL" not in records_to_load:
         records_to_load = records_to_load + ["DIAL"]
     if file_name in plugin_records:
@@ -212,8 +214,7 @@ def load_plugin(file_name, records_to_load=None):
             record.load()
             if record_type == "TES3":
                 for master in record.masters:
-                    if master not in plugin_records:
-                        load_plugin(master)
+                    load_plugin(master)
             if print_loading:
                 print("** Loading", file_name + ":", records_to_load, "**")
                 print_loading = False
