@@ -1,0 +1,5 @@
+T_Cyr_Stat_Seagulls1
+T_Cyr_Stat_Seagulls2
+T_Cyr_Stat_Seagulls3
+T_Cyr_Stat_Seagulls4
+T_Sky_Stat_Birds
