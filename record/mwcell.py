@@ -226,7 +226,7 @@ class MwCELL(MwRecord):
             if not different:
                 if refs1only or refs2only:
                     different = True
-                    print("\n### Cell", str(self) + ": ###")
+                    print("### Cell", str(self) + ": ###\n")
         
             for ref1 in refs1only:
                 # Try to match ref1 with a reference from other that has

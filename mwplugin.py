@@ -138,39 +138,46 @@ def handle_args(args):
 def args_diff(args):
     if len(args.plugins) != 2:
         sys.exit("Exactly two plugins can be compared!")
+    if args.file:
+        sys.stdout = open(args.file, "w")
+    
     plugin1 = args.plugins[0] # "Tamriel_Data_6.esm"
     plugin2 = args.plugins[1] # "Tamriel_Data.esm"
     record_types = args.type if args.type else mwglobals.RECORDS_ALL
-    load_plugin(plugin1, records_to_load=record_types)
-    load_plugin(plugin2, records_to_load=record_types)
-    print("\n# Diff plugin", plugin1, "with", str(plugin2) + ": #")
+    load_plugin(plugin1, records_to_load=record_types, print_loading=not args.file)
+    load_plugin(plugin2, records_to_load=record_types, print_loading=not args.file)
+    print("# Diff plugin", plugin1, "with", str(plugin2) + ": #\n")
     
     diff_added = args.diff_added if args.diff_added else False
     diff_removed = args.diff_removed if args.diff_removed else False
     diff_changed = not args.diff_ignore_changed if args.diff_ignore_changed else True
     for rcd_type in record_types:
-        print("\n## Diff record type", str(rcd_type) + ": ##")
+        print("## Diff record type", str(rcd_type) + ": ##\n")
         diff_plugins(plugin1, plugin2, rcd_type, added=diff_added, removed=diff_removed, changed=diff_changed)
-    print()
+    if args.file:
+        sys.stdout.close()
+        sys.stdout = sys.__stdout__
 
 def args_dump(args):
+    if args.file:
+        sys.stdout = open(args.file, "w")
     for plugin in args.plugins:
         record_types = args.type if args.type else mwglobals.RECORDS_ALL
-        load_plugin(plugin, records_to_load=record_types)
-        print("\n# Dump plugin", plugin + ": #")
+        load_plugin(plugin, records_to_load=record_types, print_loading=not args.file)
+        print("# Dump plugin", plugin + ": #\n")
         for rcd_type in record_types:
-            print("\n## Dump record type", rcd_type + ": ##")
+            print("## Dump record type", rcd_type + ": ##\n")
             if args.list:
-                print()
                 for rcd in mwglobals.plugin_records[plugin][rcd_type]:
                     print(rcd)
             else:
                 for rcd in mwglobals.plugin_records[plugin][rcd_type]:
-                    print()
                     print(rcd.record_details())
-        print()
+    if args.file:
+        sys.stdout.close()
+        sys.stdout = sys.__stdout__
 
-def load_plugin(file_name, records_to_load=None):
+def load_plugin(file_name, records_to_load=None, print_loading = True):
     # use default_records if no argument is provided for records_to_load
     if records_to_load is None:
         records_to_load = mwglobals.default_records
@@ -190,7 +197,6 @@ def load_plugin(file_name, records_to_load=None):
     if not records_to_load:
         return
     # read the plugin file
-    print_loading = True
     with open(mwglobals.DATA_PATH + file_name, mode="rb") as file:
         while (header := file.read(16)) != b"":
             # 4 bytes make up a header
@@ -220,7 +226,7 @@ def load_plugin(file_name, records_to_load=None):
             # if setting on, automatically load essential records from masters once they are known
             if auto_load_masters and record_type == "TES3":
                 for master in record.masters:
-                    load_plugin(master, records_to_load=mwglobals.RECORDS_MIN)
+                    load_plugin(master, records_to_load=mwglobals.RECORDS_MIN, print_loading=print_loading)
             # print a progress message
             if print_loading:
                 print("** Loading", file_name + ":", records_to_load, "**")
@@ -399,8 +405,9 @@ def init_args():
     "\ndump\toutput readable record data", formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("command", help="name of the action to take")
     parser.add_argument("plugins", nargs="+", help="list of plugins to load and provide as arguments")
+    parser.add_argument("-f", "--file", "->", help="output to a given <file name> instead of the command line", metavar="<file name>")
+    parser.add_argument("-t", "--type", nargs="+", help="limit to given <record type>s", metavar="<record type>")
     parser.add_argument("-l", "--list", action="store_true", help="show only identifying data for each record")
-    parser.add_argument("-t", "--type", nargs="+", help="limit to given <record-type>s", metavar="<record-type>")
     parser.add_argument("--diff_added", action="store_true", help="report records in plugin2 that do not exist in plugin1")
     parser.add_argument("--diff_removed", action="store_true", help="report records in plugin1 that do not exist in plugin2")
     parser.add_argument("--diff_ignore_changed", action="store_true", help="do not report changes between records that exist in plugin1 and plugin2")
@@ -412,7 +419,7 @@ def init_args():
 def main():
     start_time = time.time()
     init()
-    if len(sys.argv) > 2:
+    if len(sys.argv) > 2 or "-h" in sys.argv or "--help" in sys.argv:
         args = init_args()
         handle_args(args)
     time_spent = time.time() - start_time

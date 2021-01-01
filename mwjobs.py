@@ -188,7 +188,7 @@ def faction_members(faction, file_name):
 
 def all_record_details(file_name=None):
     for rcd_type in mwglobals.records:
-        print("\n## Record Details record type", rcd_type, "##")
+        print("## Record Details record type", rcd_type, "##\n")
         for record in mwglobals.records[rcd_type]:
             if file_name == None or record.file_name == file_name:
                 print(record.record_details())
@@ -197,8 +197,8 @@ def all_record_details(file_name=None):
 def filtered_dialogue(actor="", race="", class_="", faction="", cell="", pc_faction=""):
     for info in mwglobals.records["INFO"]:
         if info.filter(actor=actor, race=race, class_=class_, faction=faction, cell=cell, pc_faction=pc_faction):
-            print()
             print(info.record_details())
+            print()
 
 def exterior_doors(file):
     doorfile = open('mwdoorexceptions.txt','r')
@@ -266,7 +266,7 @@ def deprecated_check():
                 deprecated_ids += [record.id]
             elif hasattr(record, "model") and record.model and "help_deprec" in record.model.lower():
                 deprecated_ids += [record.id]
-    print("\n## Deprecated Cell Refs: ##")
+    print("## Deprecated Cell Refs: ##")
     for cell in mwglobals.records["CELL"]:
         for ref in cell.references:
             if ref.id in deprecated_ids:
@@ -311,6 +311,7 @@ def deprecated_check():
         for creature in list.creatures:
             if creature.id in deprecated_ids:
                 print(list.id + ":", creature.id)
+    print()
 
 def mod_shortcut(obj):
     if obj.file_name.startswith("Tamriel_"):
