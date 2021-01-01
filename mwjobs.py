@@ -243,7 +243,7 @@ def door_map(file, img, top, bottom, left, right):
 
 def print_trainers_by_skill():
     trainers = {}
-    for skill in SKILLS:
+    for skill in mwglobals.SKILLS:
         trainers[skill] = []
     for npc in mwglobals.records["NPC_"]:
         for skill, value in npc.trained_skills():
@@ -261,7 +261,7 @@ def deprecated_check():
         for record in mwglobals.records[rcd_type]:
             if hasattr(record, "name") and record.name and "deprecated" in record.name.lower():
                 deprecated_ids += [record.id]
-            elif hasattr(record, "model") and record.model and "tr_help_deprec" in record.model.lower():
+            elif hasattr(record, "model") and record.model and "help_deprec" in record.model.lower():
                 deprecated_ids += [record.id]
     print("\n## Deprecated Cell Refs: ##")
     for cell in mwglobals.records["CELL"]:

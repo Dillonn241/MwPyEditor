@@ -62,15 +62,15 @@ def init():
     mwglobals.default_records += []
     
     """Choose any: load large data for CELL and LAND."""
-    #mwcell.init_references = True # statics and other references placed in the world
+    mwcell.init_references = True # statics and other references placed in the world
     #mwland.init_lod = True # lod to show global map
     #mwland.init_terrain = True # normals, heights, colors, and textures of landscape (long load time)
     
     """Choose any: run algorithms to autocalc stats for ALCH, ENCH, SPEL, and NPC_."""
-    #mwalch.do_autocalc = True # requires MGEF
-    #mwench.do_autocalc = True # requires MGEF
-    #mwspel.do_autocalc = True # requires MGEF
-    #mwnpc_.do_autocalc = True # requires CLAS, RACE, SKIL
+    mwalch.do_autocalc = True # requires MGEF
+    mwench.do_autocalc = True # requires MGEF
+    mwspel.do_autocalc = True # requires MGEF
+    mwnpc_.do_autocalc = True # requires CLAS, RACE, SKIL
     
     """Load any plugins you want. Masters are automatically loaded."""
     # Vanilla
