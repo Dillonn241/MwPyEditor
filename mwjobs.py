@@ -201,7 +201,7 @@ def filtered_dialogue(actor="", race="", class_="", faction="", cell="", pc_fact
             print()
 
 def exterior_doors(file):
-    doorfile = open('mwdoorexceptions.txt','r')
+    doorfile = open('exceptions/mwdoor.txt','r')
     doorlist = doorfile.read().splitlines()
     cols = ['Name', 'GridX', 'GridY', 'PosX', 'PosY', 'ID', 'Check']
     data = []
@@ -219,11 +219,34 @@ def exterior_doors(file):
     doors = pd.DataFrame(data, columns=cols)
     doors.to_csv(file, index=False, header=True)
 
-def door_map(file, img, top, bottom, left, right):
-    door_locs = pd.read_csv(file)
-    door_locs = door_locs[door_locs.Check != 2]
-    door_locs.PosX = door_locs.PosX/pow(2,13)
-    door_locs.PosY = door_locs.PosY/pow(2,13)
+def find_creatures(file):
+    creafile = open('exceptions/mwcrea.txt','r')
+    crealist = creafile.read().splitlines()
+    levcfile = open('exceptions/mwlevc.txt','r')
+    levclist = levcfile.read().splitlines()
+    cols = ['Name', 'GridX', 'GridY', 'PosX', 'PosY', 'ID', 'Check']
+    data = []
+    for cell in mwglobals.exterior_cells.values():
+        for ref in cell.references:
+            obj = mwglobals.object_ids[ref.id]
+            if not ref.deleted:
+                if obj.id in crealist or obj.id in levclist:
+                    check = 3
+                    data.append([cell.get_name(), cell.grid_x, cell.grid_y, ref.pos_x, ref.pos_y, obj.id, check])
+                elif isinstance(obj, mwcrea.MwCREA):
+                    check = 0
+                    data.append([cell.get_name(), cell.grid_x, cell.grid_y, ref.pos_x, ref.pos_y, obj.id, check])
+                elif isinstance(obj, mwlevc.MwLEVC):
+                    check = 1
+                    data.append([cell.get_name(), cell.grid_x, cell.grid_y, ref.pos_x, ref.pos_y, obj.id, check])
+    creas = pd.DataFrame(data, columns=cols)
+    creas.to_csv(file, index=False, header=True)
+
+def ref_map(file, img, top, bottom, left, right):
+    ref_locs = pd.read_csv(file)
+    ref_locs = ref_locs[ref_locs.Check != 2]
+    ref_locs.PosX = ref_locs.PosX/pow(2,13)
+    ref_locs.PosY = ref_locs.PosY/pow(2,13)
     cellexp = plt.imread(img)
     h, w, _ = cellexp.shape
     h = h/256
@@ -240,9 +263,9 @@ def door_map(file, img, top, bottom, left, right):
     ax.get_xaxis().set_minor_locator(MultipleLocator(1))
     ax.get_yaxis().set_minor_locator(MultipleLocator(1))
     ax.imshow(cellexp, extent=(left, right+1, bottom, top+1))
-    g = sns.scatterplot(x='PosX', y='PosY', hue='Check', data=door_locs, ax=ax, marker='.', size=2, edgecolor=None)
+    g = sns.scatterplot(x='PosX', y='PosY', hue='Check', data=ref_locs, ax=ax, marker='.', size=2, edgecolor=None, palette=sns.color_palette('bright',3))
     g.legend([],[], frameon=False)
-    fig.savefig("Doors.png", dpi=256)
+    fig.savefig("Refs.png", dpi=256)
 
 def print_trainers_by_skill():
     trainers = {}

@@ -422,6 +422,13 @@ def main():
     if len(sys.argv) > 2 or "-h" in sys.argv or "--help" in sys.argv:
         args = init_args()
         handle_args(args)
+        
+    #Python commands
+    #mwjobs.find_creatures(file='files/SHOTN_Creas.csv')
+    #mwjobs.ref_map(file='files/SHOTN_Creas.csv', img='files/SHOTN_CellExport.png', top=23, bottom=-3, left=-120, right=-94)
+    #mwjobs.exterior_doors(file='files/PC_Doors.csv')
+    #mwjobs.ref_map(file='files/PC_Doors.csv', img='files/PC_CellExport.png', top=-35, bottom=-58, left=-141, right=-108)
+    
     time_spent = time.time() - start_time
     print("\n** Time spent: {:.3f} seconds **".format(time_spent))
 

@@ -1,0 +1,16 @@
+T_Glb_Fau_BirdChi_01
+T_Glb_Fau_BirdChi_02
+T_Glb_Fau_BirdChi_03
+T_Glb_Fau_BirdChi_04
+T_Glb_Fau_BirdChi_05
+T_Glb_Fau_BirdChiRs_01
+T_Glb_Fau_BirdChiRs_02
+T_Glb_Fau_BirdCkde_01
+T_Glb_Fau_BirdGFnch_01
+T_Glb_Fau_BirdGFnch_02
+T_Glb_Fau_BirdRob_01
+T_Glb_Fau_BirdSeag_01
+T_Glb_Fau_BirdSeag_02
+T_Glb_Fau_BirdSeag_03
+T_Glb_Fau_BirdSpr_01
+T_Glb_Fau_BirdSpr_02
