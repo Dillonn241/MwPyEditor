@@ -45,6 +45,21 @@ class MwINFO(MwRecord):
         self.set_subrecord_string(self.prev_id, "PNAM")
         self.set_subrecord_string(self.next_id, "NNAM")
     
+    def filter(self, actor="", race="", class_="", faction="", cell="", pc_faction=""):
+        if actor != "" and actor != self.actor:
+            return False
+        if race != "" and race != self.race:
+            return False
+        if class_ != "" and class_ != self.class_:
+            return False
+        if faction != "" and faction != self.faction:
+            return False
+        if cell != "" and not (self.cell and self.cell.startswith(cell)):
+            return False
+        if pc_faction != "" and pc_faction != self.pc_faction:
+            return False
+        return True
+    
     def record_details(self):
         if self.dial.type == "Journal":
             disp_index = "Index"

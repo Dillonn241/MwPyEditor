@@ -34,7 +34,7 @@ class MwRACE(MwRecord):
         
         self.specials = []
         for i in range(self.num_subrecords("NPCS")):
-            self.specials += self.get_subrecord_string("NPCS", index=i)
+            self.specials += [self.get_subrecord_string("NPCS", index=i)]
         
         self.description = self.get_subrecord_string("DESC")
         mwglobals.object_ids[self.id] = self

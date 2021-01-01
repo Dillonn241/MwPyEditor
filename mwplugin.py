@@ -62,7 +62,7 @@ def init():
     mwglobals.default_records += []
     
     """Choose any: load large data for CELL and LAND."""
-    mwcell.init_references = True # statics and other references placed in the world
+    #mwcell.init_references = True # statics and other references placed in the world
     #mwland.init_lod = True # lod to show global map
     #mwland.init_terrain = True # normals, heights, colors, and textures of landscape (long load time)
     
@@ -143,15 +143,13 @@ def args_diff(args):
     record_types = args.type if args.type else mwglobals.RECORDS_ALL
     load_plugin(plugin1, records_to_load=record_types)
     load_plugin(plugin2, records_to_load=record_types)
-    print()
-    print("# Diff plugin", plugin1, "with", str(plugin2) + ": #")
+    print("\n# Diff plugin", plugin1, "with", str(plugin2) + ": #")
     
     diff_added = args.diff_added if args.diff_added else False
     diff_removed = args.diff_removed if args.diff_removed else False
     diff_changed = not args.diff_ignore_changed if args.diff_ignore_changed else True
     for rcd_type in record_types:
-        print()
-        print("## Diff record type", str(rcd_type) + ": ##")
+        print("\n## Diff record type", str(rcd_type) + ": ##")
         diff_plugins(plugin1, plugin2, rcd_type, added=diff_added, removed=diff_removed, changed=diff_changed)
     print()
 
@@ -159,11 +157,9 @@ def args_dump(args):
     for plugin in args.plugins:
         record_types = args.type if args.type else mwglobals.RECORDS_ALL
         load_plugin(plugin, records_to_load=record_types)
-        print()
-        print("# Dump plugin", plugin + ": #")
+        print("\n# Dump plugin", plugin + ": #")
         for rcd_type in record_types:
-            print()
-            print("## Dump record type", rcd_type + ": ##")
+            print("\n## Dump record type", rcd_type + ": ##")
             if args.list:
                 print()
                 for rcd in plugin_records[plugin][rcd_type]:
@@ -344,16 +340,14 @@ def diff_plugins(plugin1, plugin2, record_type, added=True, removed=True, change
         for record in mwglobals.records[record_type]:
             if record.file_name == plugin2:
                 if record.get_id() not in object_ids1:
-                    print()
-                    print("Added", record)
+                    print("\nAdded", record)
                     print(record.record_details())
     
     if removed:
         for record in mwglobals.records[record_type]:
             if record.file_name == plugin1:
                 if record.get_id() not in object_ids2:
-                    print()
-                    print("Removed", record)
+                    print("\nRemoved", record)
     
     if changed:
         for record in mwglobals.records[record_type]:

@@ -13,23 +13,8 @@ class MwDIAL(MwRecord):
     def save(self):
         self.set_subrecord_string(self.name, "NAME")
     
-    def filter_infos(self, actor=None, race=None, class_=None, faction=None, cell=None, pc_faction=None):
-        filtered_infos = []
-        for info in self.infos:
-            if actor != None and actor != info.actor:
-                continue
-            if race != None and race != info.race:
-                continue
-            if class_ != None and class_ != info.class_:
-                continue
-            if faction != None and faction != info.faction:
-                continue
-            if cell != None and cell != info.cell:
-                continue
-            if pc_faction != None and pc_faction != info.pc_faction:
-                continue
-            filtered_infos += [info]
-        return filtered_infos
+    def filter_infos(self, actor="", race="", class_="", faction="", cell="", pc_faction=""):
+        return [x for x in self.infos if x.filter(actor=actor, race=race, class_=class_, faction=faction, cell=cell, pc_faction=pc_faction)]
     
     def record_details(self):
         string = str(self)

@@ -184,34 +184,18 @@ def faction_members(faction, file_name):
         print(data)
 
 def all_record_details(file_name=None):
-    for record_type in mwglobals.RECORD_TYPES:
-        if record_type == "INFO":
-            continue
-        print_type = True
-        for record in mwglobals.records[record_type]:
-            if file_name != None and record.file_name != file_name:
-                continue
-            if print_type and hasattr(record, "record_details"):
-                print("====", record_type, "====\n\n")
-                print_type = False
-            print(record.record_details())
-            print()
-            print()
-
-def unique_dialogue(actor_id):
-    for dial in mwglobals.records["DIAL"]:
-        infos = dial.filter_infos(actor=actor_id)
-        if len(infos) > 0:
-            print("* '''" + dial.name + "''':")
-            for info in infos:
-                if info.disposition != 0:
-                    print("Disposition >=", info.disposition)
-                for filter in info.func_var_filters:
-                    print(filter)
-                print("** ''\"" + info.response + "\"''")
-                if info.result != None:
-                    print(info.result)
+    for rcd_type in mwglobals.records:
+        print("\n## Record Details record type", rcd_type, "##")
+        for record in mwglobals.records[rcd_type]:
+            if file_name == None or record.file_name == file_name:
+                print(record.record_details())
                 print()
+
+def filtered_dialogue(actor="", race="", class_="", faction="", cell="", pc_faction=""):
+    for info in mwglobals.records["INFO"]:
+        if info.filter(actor=actor, race=race, class_=class_, faction=faction, cell=cell, pc_faction=pc_faction):
+            print()
+            print(info.record_details())
 
 def exterior_doors(file):
     doorfile = open('mwdoorexceptions.txt','r')
@@ -279,55 +263,47 @@ def deprecated_check():
                 deprecated_ids += [record.id]
             elif hasattr(record, "model") and record.model and "tr_help_deprec" in record.model.lower():
                 deprecated_ids += [record.id]
-    print("## Deprecated Cell Refs: ##")
+    print("\n## Deprecated Cell Refs: ##")
     for cell in mwglobals.records["CELL"]:
         for ref in cell.references:
             if ref.id in deprecated_ids:
                 print(str(cell) + ":", ref.id)
-    print()
-    print("## Deprecated NPC Items: ##")
+    print("\n## Deprecated NPC Items: ##")
     for npc in mwglobals.records["NPC_"]:
         for item in npc.items:
             if item in deprecated_ids:
                 print(npc.id + ":", item)
-    print()
-    print("## Deprecated NPC Spells: ##")
+    print("\n## Deprecated NPC Spells: ##")
     for npc in mwglobals.records["NPC_"]:
         for spell in npc.spells:
             if spell in deprecated_ids:
                 print(npc.id + ":", spell)
-    print()
-    print("## Deprecated Creature Items: ##")
+    print("\n## Deprecated Creature Items: ##")
     for creature in mwglobals.records["CREA"]:
         for item in creature.items:
             if item in deprecated_ids:
                 print(creature.id + ":", item)
-    print()
-    print("## Deprecated Creature Spells: ##")
+    print("\n## Deprecated Creature Spells: ##")
     for creature in mwglobals.records["CREA"]:
         for spell in creature.spells:
             if spell in deprecated_ids:
                 print(creature.id + ":", spell)
-    print()
-    print("## Deprecated Container Items: ##")
+    print("\n## Deprecated Container Items: ##")
     for container in mwglobals.records["CONT"]:
         for item in container.items:
             if item in deprecated_ids:
                 print(container.id + ":", item)
-    print()
-    print("## Deprecated IDs in Scripts: ##")
+    print("\n## Deprecated IDs in Scripts: ##")
     for script in mwglobals.records["SCPT"]:
         for id in deprecated_ids:
             if id in script.text:
                 print(script.id + ":", id)
-    print()
-    print("## Deprecated Leveled List Items: ##")
+    print("\n## Deprecated Leveled List Items: ##")
     for list in mwglobals.records["LEVI"]:
         for item in list.items:
             if item.id in deprecated_ids:
                 print(list.id + ":", item.id)
-    print()
-    print("## Deprecated Leveled List Creatures: ##")
+    print("\n## Deprecated Leveled List Creatures: ##")
     for list in mwglobals.records["LEVC"]:
         for creature in list.creatures:
             if creature.id in deprecated_ids:
