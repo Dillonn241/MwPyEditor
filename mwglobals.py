@@ -66,7 +66,7 @@ DIAL_TYPES = ["Topic", "Voice", "Greeting", "Persuasion", "Journal"]
 
 INFO_SCVR_TYPE = ["", "Function", "Global", "Local", "Journal", "Item", "Dead", "Not ID", "Not Faction", "Not Class", "Not Race", "Not Cell", "Not Local"]
 INFO_SCVR_FUNCTION = ["Rank Low", "Rank High", "Rank Requirement", "Reputation", "Health Percent", "PC Reputation", "PC Level", "PC Health Percent", "PC Magicka", "PC Fatigue", "PC Strength", "PC Block", "PC Armorer", "PC Medium Armor", "PC Heavy Armor", "PC Blunt Weapon", "PC Long Blade", "PC Axe", "PC Spear", "PC Athletics", "PC Enchant", "PC Detruction", "PC Alteration", "PC Illusion", "PC Conjuration", "PC Mysticism", "PC Restoration", "PC Alchemy", "PC Unarmored", "PC Security", "PC Sneak", "PC Acrobatics", "PC Light Armor", "PC Short Blade", "PC Marksman", "PC Merchantile", "PC Speechcraft", "PC Hand to Hand", "PC Sex", "PC Expelled", "PC Common Disease", "PC Blight Disease", "PC Clothing Modifier", "PC Crime Level", "Same Sex", "Same Race", "Same Faction", "Faction Rank Difference", "Detected", "Alarmed", "Choice", "PC Intelligence", "PC Willpower", "PC Agility", "PC Speed", "PC Endurance", "PC Personality", "PC Luck", "PC Corpus", "Weather", "PC Vampire", "Level", "Attacked", "Talked to PC", "PC Health", "Creature Target", "Friend Hit", "Fight", "Hello", "Alarm", "Flee", "Should Attack", "Werewolf", "PC Werewolf Kills"]
-INFO_SCVR_COMPARE = ["=", "!=", ">", ">=", "<", "<="]
+INFO_SCVR_OPERATOR = ["=", "!=", ">", ">=", "<", "<="]
 
 records = defaultdict(list)
 ordered_records = []

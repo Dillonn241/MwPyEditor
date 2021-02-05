@@ -3,22 +3,25 @@ import struct
 
 class MwRecord:
     def __init__(self):
+        self.clear_subrecords()
+    
+    def clear_subrecords(self):
         self.subrecords = {}
         self.ordered_subrecords = []
     
     def get_record_type(self):
         return self.__class__.__name__[2:]
     
-    def load_universal(self, flags):
-        self.deleted = "DELE" in self.subrecords
+    def load_flags(self, flags):
         self.marked_deleted = (flags & 0x20) == 0x20
         self.persists = (flags & 0x400) == 0x400
         self.initially_disabled = (flags & 0x800) == 0x800
         self.blocked = (flags & 0x2000) == 0x2000
     
-    def save_universal(self):
-        if self.deleted:
-            pass
+    def load_deleted(self):
+        self.deleted = "DELE" in self.subrecords
+
+    def save_flags(self):
         flags = 0x0
         if self.marked_deleted:
             flags |= 0x20
@@ -30,19 +33,25 @@ class MwRecord:
             flags |= 0x2000
         return flags
     
-    def add_subrecord(self, subtype, subdata):
+    def save_deleted(self):
+            self.add_subrecord_int(0, "DELE")
+        subrecord = Subrecord(subtype, subdata)
         if subtype not in self.subrecords:
             self.subrecords[subtype] = []
-        subrecord = Subrecord()
-        subrecord.record_type = subtype
-        subrecord.data = subdata
         self.subrecords[subtype] += [subrecord]
         self.ordered_subrecords += [subrecord]
+        return subrecord
     
     def get_subrecord(self, subtype, index=0):
         subarray = self.subrecords.get(subtype, None)
         if subarray != None:
             return subarray[index]
+    
+    def get_subrecord_data(self, subtype, index=0, start=None, length=None):
+        subarray = self.subrecords.get(subtype, None)
+        if subarray != None:
+            subrecord = subarray[index]
+            return subrecord.get_data(start=start, length=length)
     
     def get_subrecord_int(self, subtype, index=0, start=None, length=None, signed=True):
         subarray = self.subrecords.get(subtype, None)
@@ -62,14 +71,17 @@ class MwRecord:
             subrecord = subarray[index]
             return subrecord.get_string(start=start, length=length)
     
-    def set_subrecord_int(self, value, subtype, index=0, start=None, length=None, signed=True):
-        self.subrecords[subtype][index].set_int(value, start=start, length=length, signed=signed)
+    def add_subrecord_int(self, value, subtype, length=4, signed=True):
+        if value is not None:
+            self.add_subrecord(subtype).add_int(value, length=length, signed=signed)
     
-    def set_subrecord_float(self, value, subtype, index=0, start=None, length=None):
-        self.subrecords[subtype][index].set_float(value, start=start, length=length)
+    def add_subrecord_float(self, value, subtype):
+        if value is not None:
+            self.add_subrecord(subtype).add_float(value)
     
-    def set_subrecord_string(self, value, subtype, index=0, start=None, length=None):
-        self.subrecords[subtype][index].set_string(value, start=start, length=length)
+    def add_subrecord_string(self, value, subtype, terminator=True):
+        if value is not None:
+            self.add_subrecord(subtype).add_string(value, terminator=terminator)
     
     def num_subrecords(self, subtype):
         subarray = self.subrecords.get(subtype, None)
@@ -120,6 +132,10 @@ class MwRecord:
             print("Changed", str(self) + "".join(string))
 
 class Subrecord:
+    def __init__(self, subtype, subdata):
+        self.record_type = subtype
+        self.data = subdata
+    
     def get_data(self, start=None, length=None):
         if start != None:
             if length != None:
@@ -142,37 +158,21 @@ class Subrecord:
         return f
     
     def get_string(self, start=None, length=None):
-        if start is None and length is None and 0x00 in self.data: # zstring
-            subdata = self.data[:self.data.index(0x00)]
-        else:
-            subdata = self.get_data(start=start, length=length)
-            if 0x00 in subdata:
-                subdata = subdata[:subdata.index(0x00)]
+        subdata = self.get_data(start=start, length=length)
+        if 0x00 in subdata: # zstring
+            subdata = subdata[:subdata.index(0x00)]
         format_str = str(len(subdata)) + "s"
         return struct.unpack(format_str, subdata)[0].decode("mbcs")
     
-    def set_data(self, subdata, start=None, length=None):
-        if start != None:
-            if length != None:
-                self.data = self.data[:start] + subdata + self.data[start + length:]
-            else:
-                self.data = self.data[:start] + subdata
-        elif length != None:
-            self.data = subdata + self.data[length:]
-        else:
-            self.data = subdata
+    def add_int(self, value, length=4, signed=True):
+        self.data += int.to_bytes(value, byteorder="little", length=length, signed=signed)
     
-    def set_int(self, value, start=None, length=None, signed=True):
-        subdata = int.to_bytes(value, byteorder="little", signed=signed, length=length)
-        self.set_data(subdata, start=start, length=length)
+    def add_float(self, value):
+        self.data += struct.pack("<f", value)
     
-    def set_float(self, value, start=None, length=None):
-        subdata = struct.pack("<f", value)
-        self.set_data(subdata, start=start, length=length)
-    
-    def set_string(self, value, start=None, length=None):
-        format_str = (str(length) if length != None else str(len(value))) + "s"
+    def add_string(self, value, terminator=True):
+        format_str = str(len(value)) + "s"
         subdata = struct.pack(format_str, value.encode("mbcs"))
-        if start is None and length is None:
+        if terminator:
             subdata += struct.pack("b", 0x00)
-        self.set_data(subdata, start=start, length=length)
+        self.data += subdata

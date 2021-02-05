@@ -137,7 +137,7 @@ def handle_args(args):
 
 def args_diff(args):
     if len(args.plugins) != 2:
-        sys.exit("Exactly two plugins can be compared!")
+        sys.exit("Exactly two plugins can be diffed!")
     if args.file:
         sys.stdout = open(args.file, "w")
     
@@ -218,11 +218,12 @@ def load_plugin(file_name, records_to_load=None, print_loading = True):
             while length_left > 0:
                 subtype, sublength = struct.unpack("<4si", file.read(8))
                 subtype = subtype.decode("mbcs")
-                record.add_subrecord(subtype, file.read(sublength))
+                record.add_subrecord(subtype, subdata=file.read(sublength))
                 length_left -= 8 + sublength
             # send flags and data off to class to parse
-            record.load_universal(flags)
+            record.load_flags(flags)
             record.load()
+            record.load_deleted()
             # if setting on, automatically load essential records from masters once they are known
             if auto_load_masters and record_type == "TES3":
                 for master in record.masters:
@@ -238,9 +239,10 @@ def save_plugin(file_name, other_files=[]):
     with open(file_name, mode='wb') as file:
         for record in mwglobals.ordered_records:
             if record.file_name in files:
+                flags = record.save_flags()
                 if hasattr(record, "save"): # temporary until all are implemented
                     record.save()
-                flags = record.save_universal()
+                    record.save_deleted()
                 length = 0
                 for subrecord in record.ordered_subrecords:
                     length += 8 + len(subrecord.data)

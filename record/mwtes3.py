@@ -19,7 +19,7 @@ class MwTES3(MwRecord):
             master_size = self.get_subrecord_int("DATA", index=i)
             self.masters[master_name] = master_size
     
-    def save(self):
+    """def save(self):
         self.set_subrecord_float(self.version, "HEDR", start=0, length=4)
         flags = 0x0
         if self.treat_as_master:
@@ -28,7 +28,7 @@ class MwTES3(MwRecord):
         self.set_subrecord_string(self.author, "HEDR", start=8, length=32)
         self.set_subrecord_string(self.description, "HEDR", start=40, length=256)
         self.num_records = len([x for x in mwglobals.ordered_records if x.file_name == self.file_name]) - 1
-        self.set_subrecord_int(self.num_records, "HEDR", start=296, length=4)
+        self.set_subrecord_int(self.num_records, "HEDR", start=296, length=4)"""
     
     def requires_expansions(self):
         if self.version == 1.3:

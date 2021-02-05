@@ -134,9 +134,6 @@ class MwCELL(MwRecord):
                 cell_copy.references = [ref if x.get_object_index() == ref.get_object_index() else x for x in cell_copy.references]
         cell_list[id] = cell_copy
     
-    def save(self):
-        self.set_subrecord_string(self.id, "NAME")
-    
     def get_name(self):
         if self.is_interior:
             return self.id

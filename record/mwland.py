@@ -66,7 +66,7 @@ class MwLAND(MwRecord):
         
         self.terrain_loaded = True
     
-    def save(self):
+    """def save(self):
         self.set_subrecord_int(self.grid_x, "INTV", start=0, length=4)
         self.set_subrecord_int(self.grid_y, "INTV", start=4, length=4)
         
@@ -102,7 +102,7 @@ class MwLAND(MwRecord):
             
             if "VTEX" in self.subrecords:
                 for i in range(mwglobals.LAND_NUM_TEXTURES):
-                    self.set_subrecord_int(self.textures[i], "VTEX", start=i * 2, length=2)
+                    self.set_subrecord_int(self.textures[i], "VTEX", start=i * 2, length=2)"""
     
     def record_details(self):
         string = "|Cell|    " + str(self)
