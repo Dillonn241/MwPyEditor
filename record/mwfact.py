@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwFACT(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -44,10 +45,10 @@ class MwFACT(MwRecord):
     
     def record_details(self):
         string = "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Hidden from PC|", "hidden", False),
-        ("\n|Favored Attributes|", "favored_attributes"),
-        ("\n|Favored Skills|", "favored_skills"),
-        ("\n|Faction Reactions|", "faction_reactions", {})
+            ("\n|Hidden from PC|", "hidden", False),
+            ("\n|Favored Attributes|", "favored_attributes"),
+            ("\n|Favored Skills|", "favored_skills"),
+            ("\n|Faction Reactions|", "faction_reactions", {})
         ])
         if len(self.ranks) > 0:
             string += "\n|Ranks|    Rank Name (Attrib 1, Attrib 2, Pri Skill, Fav Skill, Fact Rep)"
@@ -59,11 +60,14 @@ class MwFACT(MwRecord):
         return "{} [{}]".format(self.name, self.id)
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["name", "ranks", "favored_attributes", "favored_skills", "hidden", "faction_reactions"])
+        MwRecord.diff(self, other, ["name", "ranks", "favored_attributes", "favored_skills", "hidden",
+                                    "faction_reactions"])
+
 
 class MwFACTRank:
     def record_details(self):
-        return self.name + " ({}, {}, {}, {}, {})".format(self.attributes[0], self.attributes[1], self.skills[0], self.skills[1], self.fact_rep)
+        return self.name + " ({}, {}, {}, {}, {})".format(self.attributes[0], self.attributes[1], self.skills[0],
+                                                          self.skills[1], self.fact_rep)
     
     def __str__(self):
         return self.name

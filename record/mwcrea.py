@@ -4,10 +4,11 @@ from record.mwnpc_ import load_ai, MwNPCDestination, MwNPCAIPackage
 
 CREA_TYPES = ["Creature", "Daedra", "Undead", "Humanoid"]
 
+
 class MwCREA(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
-    
+
     def load(self):
         self.id = self.get_subrecord_string("NAME")
         self.animation_file = self.get_subrecord_string("MODL")
@@ -33,7 +34,7 @@ class MwCREA(MwRecord):
         self.attack3_min = self.get_subrecord_int("NPDT", start=84, length=4)
         self.attack3_max = self.get_subrecord_int("NPDT", start=88, length=4)
         self.barter_gold = self.get_subrecord_int("NPDT", start=92, length=4)
-        
+
         flags = self.get_subrecord_int("FLAG")
         self.biped = (flags & 0x1) == 0x1
         self.respawn = (flags & 0x2) == 0x2
@@ -47,9 +48,9 @@ class MwCREA(MwRecord):
         self.essential = (flags & 0x80) == 0x80
         self.white_blood = (flags & 0x400) == 0x400
         self.gold_blood = (flags & 0x800) == 0x800
-        
+
         self.scale = self.get_subrecord_float("XSCL")
-        
+
         self.items = {}
         for i in range(self.num_subrecords("NPCO")):
             item_count = self.get_subrecord_int("NPCO", index=i, start=0, length=4)
@@ -58,18 +59,18 @@ class MwCREA(MwRecord):
         self.spells = []
         for i in range(self.num_subrecords("NPCS")):
             self.spells += [self.get_subrecord_string("NPCS", index=i)]
-        
+
         load_ai(self)
-        
+
         mwglobals.object_ids[self.id] = self
-    
+
     def get_blood(self):
         if self.white_blood:
             return "Skeleton (White)"
         if self.gold_blood:
             return "Metal Sparks (Gold)"
         return "Default (Red)"
-    
+
     def buys_sells(self):
         types = []
         if self.service_weapons:
@@ -99,7 +100,7 @@ class MwCREA(MwRecord):
         if self.service_magic_items:
             types += ["Magic Items"]
         return types
-    
+
     def other_services(self):
         types = []
         if self.service_training:
@@ -111,45 +112,45 @@ class MwCREA(MwRecord):
         if self.service_repair:
             types += ["Repair"]
         return types
-    
+
     def trained_skills(self):
         if self.service_training:
-            return sorted(self.skills.items(), key=lambda x:x[1], reverse=True)[:3]
+            return sorted(self.skills.items(), key=lambda x: x[1], reverse=True)[:3]
         return []
-    
+
     def record_details(self):
         string = "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Script|", "script"),
-        ("\n|Type|", "type"), ("    |Level|", "level"),
-        ("\n|Essential|", "essential", False),
-        ("\n|Respawn|", "respawn", False),
-        ("\n|Animation File|", "animation_file"),
-        ("\n|Scale|    {:.2f}", "scale"),
-        ("\n|Weapon & Shield|", "weapon_and_shield", False),
-        ("\n|Flies|", "flies", False),
-        ("\n|Walks|", "walks", False),
-        ("\n|Swims|", "swims", False),
-        ("\n|Biped|", "biped", False),
-        ("\n|None|", "none", False),
-        ("\n|Attributes|", "attributes"),
-        ("\n|Combat|", "combat"),
-        ("\n|Magic|", "magic"),
-        ("\n|Stealth|", "stealth"),
-        ("\n|Health|", "health"),
-        ("\n|Spell Pts|", "spell_pts"),
-        ("\n|Fatigue|", "fatigue"),
-        ("\n|Soul|", "soul"),
-        ("\n|Attack 1|", "attack1_min"), (" - {}", "attack1_max"),
-        ("\n|Attack 2|", "attack2_min"), (" - {}", "attack2_max"),
-        ("\n|Attack 3|", "attack3_min"), (" - {}", "attack3_max"),
-        ("\n|Blood Texture|", "get_blood", "Default (Red)"),
-        ("\n|Sound Gen Creature|", "sound_gen_creature"),
-        ("\n|Items|", "items", {}),
-        ("\n|Spells|", "spells", []),
-        ("\n|Fight|", "fight"), ("    |Flee|", "flee"), ("    |Alarm|", "alarm"), ("    |Hello|", "hello"),
-        ("\n|Barter Gold|", "barter_gold", 0),
-        ("\n|Buys / Sells|", "buys_sells", []),
-        ("\n|Other Services|", "other_services", [])
+            ("\n|Script|", "script"),
+            ("\n|Type|", "type"), ("    |Level|", "level"),
+            ("\n|Essential|", "essential", False),
+            ("\n|Respawn|", "respawn", False),
+            ("\n|Animation File|", "animation_file"),
+            ("\n|Scale|    {:.2f}", "scale"),
+            ("\n|Weapon & Shield|", "weapon_and_shield", False),
+            ("\n|Flies|", "flies", False),
+            ("\n|Walks|", "walks", False),
+            ("\n|Swims|", "swims", False),
+            ("\n|Biped|", "biped", False),
+            ("\n|None|", "none", False),
+            ("\n|Attributes|", "attributes"),
+            ("\n|Combat|", "combat"),
+            ("\n|Magic|", "magic"),
+            ("\n|Stealth|", "stealth"),
+            ("\n|Health|", "health"),
+            ("\n|Spell Pts|", "spell_pts"),
+            ("\n|Fatigue|", "fatigue"),
+            ("\n|Soul|", "soul"),
+            ("\n|Attack 1|", "attack1_min"), (" - {}", "attack1_max"),
+            ("\n|Attack 2|", "attack2_min"), (" - {}", "attack2_max"),
+            ("\n|Attack 3|", "attack3_min"), (" - {}", "attack3_max"),
+            ("\n|Blood Texture|", "get_blood", "Default (Red)"),
+            ("\n|Sound Gen Creature|", "sound_gen_creature"),
+            ("\n|Items|", "items", {}),
+            ("\n|Spells|", "spells", []),
+            ("\n|Fight|", "fight"), ("    |Flee|", "flee"), ("    |Alarm|", "alarm"), ("    |Hello|", "hello"),
+            ("\n|Barter Gold|", "barter_gold", 0),
+            ("\n|Buys / Sells|", "buys_sells", []),
+            ("\n|Other Services|", "other_services", [])
         ])
         if len(self.destinations) > 0:
             string += "\n|Travel Services|"
@@ -160,9 +161,19 @@ class MwCREA(MwRecord):
             for ai_package in self.ai_packages:
                 string += "\n" + ai_package.record_details()
         return string
-    
+
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
-    
+
     def diff(self, other):
-        MwRecord.diff(self, other, ["animation_file", "sound_gen_creature", "name", "script", "type", "level", "attributes", "health", "spell_pts", "fatigue", "soul", "combat", "magic", "stealth", "attack1_min", "attack1_max", "attack2_min", "attack2_max", "attack3_min", "attack3_max", "barter_gold", "biped", "respawn", "weapon_and_shield", "none", "swims", "flies", "walks", "essential", "white_blood", "gold_blood", "scale", "items", "spells", "hello", "fight", "flee", "alarm", "service_ingredients", "service_picks", "service_probes", "service_lights", "service_apparatus", "service_repair_items", "service_miscellaneous", "service_spells", "service_magic_items", "service_potions", "service_training", "service_spellmaking", "service_enchanting", "service_repair", "destinations", "ai_packages"])
+        MwRecord.diff(self, other, ["animation_file", "sound_gen_creature", "name", "script", "type", "level",
+                                    "attributes", "health", "spell_pts", "fatigue", "soul", "combat", "magic",
+                                    "stealth", "attack1_min", "attack1_max", "attack2_min", "attack2_max",
+                                    "attack3_min", "attack3_max", "barter_gold", "biped", "respawn",
+                                    "weapon_and_shield", "none", "swims", "flies", "walks", "essential", "white_blood",
+                                    "gold_blood", "scale", "items", "spells", "hello", "fight", "flee", "alarm",
+                                    "service_ingredients", "service_picks", "service_probes", "service_lights",
+                                    "service_apparatus", "service_repair_items", "service_miscellaneous",
+                                    "service_spells", "service_magic_items", "service_potions", "service_training",
+                                    "service_spellmaking", "service_enchanting", "service_repair", "destinations",
+                                    "ai_packages"])

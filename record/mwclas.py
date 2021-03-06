@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwCLAS(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -89,18 +90,23 @@ class MwCLAS(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Primary Attributes|", "primary_attributes"),
-        ("\n|Specialization|", "specialization"),
-        ("\n|Major Skills|", "major_skills"),
-        ("\n|Minor Skills|", "minor_skills"),
-        ("\n|Description|", "description"),
-        ("\n|Playable|", "playable", False),
-        ("\n|Buys / Sells|", "buys_sells", []),
-        ("\n|Other Services|", "other_services", [])
+            ("\n|Primary Attributes|", "primary_attributes"),
+            ("\n|Specialization|", "specialization"),
+            ("\n|Major Skills|", "major_skills"),
+            ("\n|Minor Skills|", "minor_skills"),
+            ("\n|Description|", "description"),
+            ("\n|Playable|", "playable", False),
+            ("\n|Buys / Sells|", "buys_sells", []),
+            ("\n|Other Services|", "other_services", [])
         ])
     
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["name", "primary_attributes", "specialization", "minor_skills", "major_skills", "playable", "service_weapons", "service_armor", "service_clothing", "service_books", "service_ingredients", "service_picks", "service_probes", "service_lights", "service_apparatus", "service_repair_items", "service_miscellaneous", "service_spells", "service_magic_items", "service_potions", "service_training", "service_spellmaking", "service_enchanting", "service_repair", "description"])
+        MwRecord.diff(self, other, ["name", "primary_attributes", "specialization", "minor_skills", "major_skills",
+                                    "playable", "service_weapons", "service_armor", "service_clothing", "service_books",
+                                    "service_ingredients", "service_picks", "service_probes", "service_lights",
+                                    "service_apparatus", "service_repair_items", "service_miscellaneous",
+                                    "service_spells", "service_magic_items", "service_potions", "service_training",
+                                    "service_spellmaking", "service_enchanting", "service_repair", "description"])

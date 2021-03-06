@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwGMST(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -29,9 +30,9 @@ class MwGMST(MwRecord):
         else:
             f = ""
         return MwRecord.format_record_details(self, [
-        ("|Name|", "name"),
-        ("\n|Type|", "type"),
-        ("\n|Value|    {" + f + "}", "value")
+            ("|Name|", "name"),
+            ("\n|Type|", "type"),
+            ("\n|Value|    {" + f + "}", "value")
         ])
     
     def __str__(self):

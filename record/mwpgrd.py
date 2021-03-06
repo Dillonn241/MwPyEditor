@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwPGRD(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -25,8 +26,8 @@ class MwPGRD(MwRecord):
             point.x = self.get_subrecord_int("PGRP", start=i * 16, length=4)
             point.y = self.get_subrecord_int("PGRP", start=4 + i * 16, length=4)
             point.z = self.get_subrecord_int("PGRP", start=8 + i * 16, length=4)
-            point.user = self.get_subrecord_int("PGRP", start = 12 + i * 16, length=1, signed=False) == 1
-            point.num_connections = self.get_subrecord_int("PGRP", start = 13 + i * 16, length=1, signed=False)
+            point.user = self.get_subrecord_uint("PGRP", start=12 + i * 16, length=1) == 1
+            point.num_connections = self.get_subrecord_uint("PGRP", start=13 + i * 16, length=1)
             self.points += [point]
         
         self.edges = []
@@ -39,9 +40,9 @@ class MwPGRD(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Num Points|", "num_points"),
-        ("\n|Points|", "points", []),
-        ("\n|Edges|", "edges", [])
+            ("\n|Num Points|", "num_points"),
+            ("\n|Points|", "points", []),
+            ("\n|Edges|", "edges", [])
         ])
     
     def __str__(self):
@@ -54,6 +55,7 @@ class MwPGRD(MwRecord):
     
     def diff(self, other):
         MwRecord.diff(self, other, ["num_points", "points", "edges"])
+
 
 class MwPGRDPoint:
     def __str__(self):

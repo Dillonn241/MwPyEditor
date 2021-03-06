@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwLOCK(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -19,13 +20,13 @@ class MwLOCK(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Script|", "script"),
-        ("\n|Weight|    {:.2f}", "weight"),
-        ("\n|Value|", "value"),
-        ("\n|Quality|    {:.2f}", "quality"),
-        ("\n|Uses|", "uses"),
-        ("\n|Model|", "model"),
-        ("\n|Icon|", "icon")
+            ("\n|Script|", "script"),
+            ("\n|Weight|    {:.2f}", "weight"),
+            ("\n|Value|", "value"),
+            ("\n|Quality|    {:.2f}", "quality"),
+            ("\n|Uses|", "uses"),
+            ("\n|Model|", "model"),
+            ("\n|Icon|", "icon")
         ])
     
     def __str__(self):

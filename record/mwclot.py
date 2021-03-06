@@ -2,6 +2,7 @@ import mwglobals
 from mwrecord import MwRecord
 from record.mwarmo import load_body_parts
 
+
 class MwCLOT(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -28,22 +29,24 @@ class MwCLOT(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Type|", "type"),
-        ("\n|Script|", "script"),
-        ("\n|Weight|    {:.2f}", "weight"),
-        ("\n|Value|", "value"),
-        ("\n|Model|", "model"),
-        ("\n|Icon|", "icon"),
-        ("\n|Enchantment|", "enchantment"),
-        ("\n|Enchanting|", "enchanting"),
-        ("\n|Body Parts|", "body_parts")
+            ("\n|Type|", "type"),
+            ("\n|Script|", "script"),
+            ("\n|Weight|    {:.2f}", "weight"),
+            ("\n|Value|", "value"),
+            ("\n|Model|", "model"),
+            ("\n|Icon|", "icon"),
+            ("\n|Enchantment|", "enchantment"),
+            ("\n|Enchanting|", "enchanting"),
+            ("\n|Body Parts|", "body_parts")
         ])
     
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["model", "name", "type", "weight", "value", "enchantment", "script", "icon", "body_parts", "enchanting"])
+        MwRecord.diff(self, other, ["model", "name", "type", "weight", "value", "enchantment", "script", "icon",
+                                    "body_parts", "enchanting"])
+
 
 class MwARMORBodyPart:
     def __str__(self):

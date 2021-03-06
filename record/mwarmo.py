@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwARMO(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -36,54 +37,56 @@ class MwARMO(MwRecord):
     
     def get_weight_class(self):
         if self.type == "Helmet":
-            weight_setting = 5 # iHelmWeight
+            weight_setting = 5  # iHelmWeight
         elif self.type == "Cuirass":
-            weight_setting = 30 # iCuirassWeight"
+            weight_setting = 30  # iCuirassWeight"
         elif self.is_pauldron():
-            weight_setting = 10 # iPauldronWeight
+            weight_setting = 10  # iPauldronWeight
         elif self.type == "Greaves":
-            weight_setting = 15 # iGreavesWeight
+            weight_setting = 15  # iGreavesWeight
         elif self.type == "Boots":
-            weight_setting = 20 # iBootsWeight
+            weight_setting = 20  # iBootsWeight
         elif self.type == "Shield":
-            weight_setting = 15 # iShieldWeight
+            weight_setting = 15  # iShieldWeight
         else:
-            weight_setting = 5 # iGauntletWeight
+            weight_setting = 5  # iGauntletWeight
         epsilon = 0.0005
-        if self.weight <= weight_setting * 0.6 + epsilon: # fLightMaxMod
+        if self.weight <= weight_setting * 0.6 + epsilon:  # fLightMaxMod
             return "Light"
-        elif self.weight <= weight_setting * 0.9 + epsilon: # fMedMaxMod
+        elif self.weight <= weight_setting * 0.9 + epsilon:  # fMedMaxMod
             return "Medium"
         else:
             return "Heavy"
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Type|", "type"),
-        ("\n|Script|", "script"),
-        ("\n|Weight|    {:.2f}", "weight"), (" ({})", "get_weight_class"),
-        ("\n|Value|", "value"),
-        ("\n|AR|", "armor"),
-        ("\n|Health|", "health"),
-        ("\n|Model|", "model"),
-        ("\n|Icon|", "icon"),
-        ("\n|Enchantment|", "enchantment"),
-        ("\n|Enchanting|", "enchanting"),
-        ("\n|Body Parts|", "body_parts")
+            ("\n|Type|", "type"),
+            ("\n|Script|", "script"),
+            ("\n|Weight|    {:.2f}", "weight"), (" ({})", "get_weight_class"),
+            ("\n|Value|", "value"),
+            ("\n|AR|", "armor"),
+            ("\n|Health|", "health"),
+            ("\n|Model|", "model"),
+            ("\n|Icon|", "icon"),
+            ("\n|Enchantment|", "enchantment"),
+            ("\n|Enchanting|", "enchanting"),
+            ("\n|Body Parts|", "body_parts")
         ])
     
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["model", "name", "script", "type", "weight", "value", "health", "enchantment", "armor", "icon", "body_parts", "enchanting"])
+        MwRecord.diff(self, other, ["model", "name", "script", "type", "weight", "value", "health", "enchantment",
+                                    "armor", "icon", "body_parts", "enchanting"])
+
 
 def load_body_parts(self):
     self.body_parts = []
     body_part = None
     for subrecord in self.ordered_subrecords:
         if subrecord.record_type == "INDX":
-            if body_part != None:
+            if body_part is not None:
                 self.body_parts += [body_part]
             body_part = MwARMOBodyPart()
             body_part.type = mwglobals.ARMO_PARTS[subrecord.get_int()]
@@ -93,15 +96,16 @@ def load_body_parts(self):
             body_part.male_name = subrecord.get_string()
         elif subrecord.record_type == "CNAM":
             body_part.female_name = subrecord.get_string()
-    if body_part != None:
+    if body_part is not None:
         self.body_parts += [body_part]
+
 
 class MwARMOBodyPart:
     def __str__(self):
         string = "{}:".format(self.type)
-        if self.male_name != None:
+        if self.male_name is not None:
             string += " {} (Male)".format(self.male_name)
-        if self.female_name != None:
+        if self.female_name is not None:
             string += " {} (Female)".format(self.female_name)
         return string
     

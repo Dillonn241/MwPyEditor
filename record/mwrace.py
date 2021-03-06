@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwRACE(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -55,21 +56,23 @@ class MwRACE(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Skill Bonuses|", "skill_bonuses"),
-        ("\n|Male Attributes|", "male_attributes"),
-        ("\n|Female Attributes|", "female_attributes"),
-        ("\n|Male Height|", "male_height"),
-        ("\n|Female Height|", "female_height"),
-        ("\n|Male Weight|", "male_weight"),
-        ("\n|Female Weight|", "female_weight"),
-        ("\n|Playable|", "playable", False),
-        ("\n|Beast Race|", "beast_race", False),
-        ("\n|Specials|", "specials", []),
-        ("\n|Description|", "description")
+            ("\n|Skill Bonuses|", "skill_bonuses"),
+            ("\n|Male Attributes|", "male_attributes"),
+            ("\n|Female Attributes|", "female_attributes"),
+            ("\n|Male Height|", "male_height"),
+            ("\n|Female Height|", "female_height"),
+            ("\n|Male Weight|", "male_weight"),
+            ("\n|Female Weight|", "female_weight"),
+            ("\n|Playable|", "playable", False),
+            ("\n|Beast Race|", "beast_race", False),
+            ("\n|Specials|", "specials", []),
+            ("\n|Description|", "description")
         ])
     
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["name", "skill_bonuses", "male_attributes", "female_attributes", "male_height", "female_height", "male_weight", "female_weight", "playable", "beast_race", "specials", "description"])
+        MwRecord.diff(self, other, ["name", "skill_bonuses", "male_attributes", "female_attributes", "male_height",
+                                    "female_height", "male_weight", "female_weight", "playable", "beast_race",
+                                    "specials", "description"])

@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwLEVI(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -20,11 +21,11 @@ class MwLEVI(MwRecord):
     
     def record_details(self):
         return MwRecord.format_record_details(self, [
-        ("|ID|", "id"),
-        ("\n|Calculate from all levels <= PC's level|", "calc_less_than_pc_level", False),
-        ("\n|Calculate for each item in count|", "calc_each_item", False),
-        ("\n|Chance None|", "chance_none"),
-        ("\n|Items|", "items", [])
+            ("|ID|", "id"),
+            ("\n|Calculate from all levels <= PC's level|", "calc_less_than_pc_level", False),
+            ("\n|Calculate for each item in count|", "calc_each_item", False),
+            ("\n|Chance None|", "chance_none"),
+            ("\n|Items|", "items", [])
         ])
     
     def __str__(self):
@@ -47,6 +48,7 @@ class MwLEVI(MwRecord):
         for item1 in item_details1:
             if item1 not in item_details2:
                 print(str(self) + ": Removed", item1)
+
 
 class MwLEVIItem:
     def __str__(self):

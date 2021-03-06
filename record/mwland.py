@@ -4,6 +4,7 @@ from mwrecord import MwRecord
 init_lod = False
 init_terrain = False
 
+
 class MwLAND(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -108,14 +109,14 @@ class MwLAND(MwRecord):
         string = "|Cell|    " + str(self)
         if self.lod_loaded:
             string += MwRecord.format_record_details(self, [
-            ("\n|LOD Heights|", "lod_heights")
+                ("\n|LOD Heights|", "lod_heights")
             ])
         if self.terrain_loaded:
             string += MwRecord.format_record_details(self, [
-            ("\n|Normals|", "normals"),
-            ("\n|Heights|", "heights"),
-            ("\n|Colors|", "colors"),
-            ("\n|Textures|", "textures")
+                ("\n|Normals|", "normals"),
+                ("\n|Heights|", "heights"),
+                ("\n|Colors|", "colors"),
+                ("\n|Textures|", "textures")
             ])
         return string
     

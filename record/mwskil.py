@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwSKIL(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -16,11 +17,11 @@ class MwSKIL(MwRecord):
     
     def record_details(self):
         return MwRecord.format_record_details(self, [
-        ("|Name|", "name"),
-        ("\n|Governing Attribute|", "governing_attribute"),
-        ("\n|Specialization|", "specialization"),
-        ("\n|Use Values|", "use_values"),
-        ("\n|Description|", "description")
+            ("|Name|", "name"),
+            ("\n|Governing Attribute|", "governing_attribute"),
+            ("\n|Specialization|", "specialization"),
+            ("\n|Use Values|", "use_values"),
+            ("\n|Description|", "description")
         ])
     
     def __str__(self):

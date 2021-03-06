@@ -1,5 +1,6 @@
 from mwrecord import MwRecord
 
+
 class MwSSCR(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -9,7 +10,7 @@ class MwSSCR(MwRecord):
     
     def record_details(self):
         return MwRecord.format_record_details(self, [
-        ("|ID|", "id")
+            ("|ID|", "id")
         ])
     
     def __str__(self):

@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwINFO(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -9,10 +10,10 @@ class MwINFO(MwRecord):
         self.id = self.get_subrecord_string("INAM")
         self.prev_id = self.get_subrecord_string("PNAM")
         self.next_id = self.get_subrecord_string("NNAM")
-        self.disposition = self.get_subrecord_int("DATA", start=4, length=4, signed=False)
-        self.rank = self.get_subrecord_int("DATA", start=8, length=1, signed=False)
+        self.disposition = self.get_subrecord_uint("DATA", start=4, length=4)
+        self.rank = self.get_subrecord_uint("DATA", start=8, length=1)
         self.sex = self.get_subrecord_int("DATA", start=9, length=1)
-        self.pc_rank = self.get_subrecord_int("DATA", start=10, length=1, signed=False)
+        self.pc_rank = self.get_subrecord_uint("DATA", start=10, length=1)
         self.actor = self.get_subrecord_string("ONAM")
         self.race = self.get_subrecord_string("RNAM")
         self.class_ = self.get_subrecord_string("CNAM")
@@ -35,7 +36,7 @@ class MwINFO(MwRecord):
                 func_var_filter.name = subrecord.get_string(start=5)
                 self.func_var_filters += [func_var_filter]
             elif subrecord.record_type == "INTV":
-                func_var_filter.intv = subrecord.get_int(signed=False)
+                func_var_filter.intv = subrecord.get_uint()
             elif subrecord.record_type == "FLTV":
                 func_var_filter.fltv = subrecord.get_float()
         self.result = self.get_subrecord_string("BNAM")
@@ -51,12 +52,12 @@ class MwINFO(MwRecord):
         self.add_subrecord_string(self.next_id, "NNAM")
         if not self.deleted:
             sub_data = self.add_subrecord("DATA")
-            sub_data.add_int(self.dial.get_type_index(), length=1, signed=False)
+            sub_data.add_uint(self.dial.get_type_index(), length=1)
             sub_data.data += b"\x00\x00\x00"
-            sub_data.add_int(self.disposition, signed=False)
-            sub_data.add_int(self.rank, length=1, signed=False)
+            sub_data.add_uint(self.disposition)
+            sub_data.add_uint(self.rank, length=1)
             sub_data.add_int(self.sex, length=1)
-            sub_data.add_int(self.pc_rank, length=1, signed=False)
+            sub_data.add_uint(self.pc_rank, length=1)
             sub_data.data += b"\x00"
             self.add_subrecord_string(self.actor, "ONAM")
             self.add_subrecord_string(self.race, "RNAM")
@@ -70,15 +71,15 @@ class MwINFO(MwRecord):
             for func_var_filter in self.func_var_filters:
                 sub_scvr = self.add_subrecord("SCVR")
                 sub_scvr.add_int(func_var_filter.index + 48, length=1)
-                type = func_var_filter.type
-                if type > 9:
-                    type += 7
-                sub_scvr.add_int(type + 48, length=1)
+                func_type = func_var_filter.type
+                if func_type > 9:
+                    func_type += 7
+                sub_scvr.add_int(func_type + 48, length=1)
                 sub_scvr.add_string(func_var_filter.function, terminator=False)
                 sub_scvr.add_int(func_var_filter.operator + 48, length=1)
                 sub_scvr.add_string(func_var_filter.name, terminator=False)
                 if hasattr(func_var_filter, "intv"):
-                    self.add_subrecord_int(func_var_filter.intv, "INTV", signed=False)
+                    self.add_subrecord_uint(func_var_filter.intv, "INTV")
                 elif hasattr(func_var_filter, "fltv"):
                     self.add_subrecord_float(func_var_filter.fltv, "FLTV")
             self.add_subrecord_string(self.result, "BNAM", terminator=False)
@@ -112,22 +113,22 @@ class MwINFO(MwRecord):
             disp_index = "Disp"
             response_entry = "Response"
         return MwRecord.format_record_details(self, [
-        ("|" + response_entry + "|    " + str(self.dial) + ": {}", "response"),
-        ("\n|ID|", "id"), ("    |Prev|", "prev_id", ""), ("    |Next|", "next_id", ""),
-        ("\n|" + disp_index + "|", "disposition", 0),
-        ("\n|Sex|", "sex", -1),
-        ("\n|Actor|", "actor"),
-        ("\n|Race|", "race"),
-        ("\n|Class|", "class_"),
-        ("\n|Faction|", "faction"), ("    |Rank|", "rank", -1),
-        ("\n|Cell|", "cell"),
-        ("\n|PC Faction|", "pc_faction"), ("    |PC Rank|", "pc_rank", -1),
-        ("\n|Sound Filename|", "sound_file"),
-        ("\n|Function/Variable|", "func_var_filters", []),
-        ("\n|Result|", "result"),
-        ("\n|Quest Name|", "quest_name", False),
-        ("\n|Quest Finished|", "quest_finished", False),
-        ("\n|Quest Restart|", "quest_restart", False)
+            ("|" + response_entry + "|    " + str(self.dial) + ": {}", "response"),
+            ("\n|ID|", "id"), ("    |Prev|", "prev_id", ""), ("    |Next|", "next_id", ""),
+            ("\n|" + disp_index + "|", "disposition", 0),
+            ("\n|Sex|", "sex", -1),
+            ("\n|Actor|", "actor"),
+            ("\n|Race|", "race"),
+            ("\n|Class|", "class_"),
+            ("\n|Faction|", "faction"), ("    |Rank|", "rank", -1),
+            ("\n|Cell|", "cell"),
+            ("\n|PC Faction|", "pc_faction"), ("    |PC Rank|", "pc_rank", -1),
+            ("\n|Sound Filename|", "sound_file"),
+            ("\n|Function/Variable|", "func_var_filters", []),
+            ("\n|Result|", "result"),
+            ("\n|Quest Name|", "quest_name", False),
+            ("\n|Quest Finished|", "quest_finished", False),
+            ("\n|Quest Restart|", "quest_restart", False)
         ])
     
     def __str__(self):
@@ -137,7 +138,10 @@ class MwINFO(MwRecord):
         return str(self)
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["prev_id", "next_id", "disposition", "rank", "sex", "pc_rank", "actor", "race", "class_", "faction", "cell", "pc_faction", "sound_file", "response", "func_var_filters", "result", "quest_name", "quest_finished", "quest_restart"])
+        MwRecord.diff(self, other, ["prev_id", "next_id", "disposition", "rank", "sex", "pc_rank", "actor", "race",
+                                    "class_", "faction", "cell", "pc_faction", "sound_file", "response",
+                                    "func_var_filters", "result", "quest_name", "quest_finished", "quest_restart"])
+
 
 class MwINFOFilter:
     def get_type_string(self):

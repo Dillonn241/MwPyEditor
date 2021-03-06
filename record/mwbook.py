@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwBOOK(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -23,20 +24,21 @@ class MwBOOK(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Script|", "script"),
-        ("\n|Weight|    {:.2f}", "weight"),
-        ("\n|Value|", "value"),
-        ("\n|Skill|", "skill"),
-        ("\n|Model|", "model"),
-        ("\n|Icon|", "icon"),
-        ("\n|Scroll|", "scroll", False),
-        ("\n|Enchantment|", "enchantment"),
-        ("\n|Enchanting|", "enchanting"),
-        ("\n|Text|", "text")
+            ("\n|Script|", "script"),
+            ("\n|Weight|    {:.2f}", "weight"),
+            ("\n|Value|", "value"),
+            ("\n|Skill|", "skill"),
+            ("\n|Model|", "model"),
+            ("\n|Icon|", "icon"),
+            ("\n|Scroll|", "scroll", False),
+            ("\n|Enchantment|", "enchantment"),
+            ("\n|Enchanting|", "enchanting"),
+            ("\n|Text|", "text")
         ])
     
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["model", "name", "weight", "value", "scroll", "skill", "enchantment", "icon", "script", "enchanting", "text"])
+        MwRecord.diff(self, other, ["model", "name", "weight", "value", "scroll", "skill", "enchantment", "icon",
+                                    "script", "enchanting", "text"])

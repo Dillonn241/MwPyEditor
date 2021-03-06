@@ -1,5 +1,6 @@
 from mwrecord import MwRecord
 
+
 class MwLTEX(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -11,9 +12,9 @@ class MwLTEX(MwRecord):
     
     def record_details(self):
         return MwRecord.format_record_details(self, [
-        ("|ID|", "id"),
-        ("\n|Index|", "index"),
-        ("\n|Texture|", "texture")
+            ("|ID|", "id"),
+            ("\n|Index|", "index"),
+            ("\n|Texture|", "texture")
         ])
     
     def __str__(self):

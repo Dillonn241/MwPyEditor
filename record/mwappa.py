@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwAPPA(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -18,20 +19,20 @@ class MwAPPA(MwRecord):
         mwglobals.object_ids[self.id] = self
     
     def wiki_entry(self):
-        return "|-\n" \
-        "|[[File:TD3-icon-tool-" + self.icon + ".png]]\n" \
-        "|'''{{Anchor|" + self.name + "}}'''<br>{{Small|" + self.id + "}}\n" \
-        "|" + mwglobals.decimal_format(self.weight) + "||" + str(self.value) + "||" + mwglobals.decimal_format(self.quality)
+        return ("|-\n"
+                "|[[File:TD3-icon-tool-" + self.icon + ".png]]\n"
+                "|'''{{Anchor|" + self.name + "}}'''<br>{{Small|" + self.id + "}}\n"
+                "|" + mwglobals.decimal_format(self.weight) + "||" + str(self.value) + "||" + mwglobals.decimal_format(self.quality))
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Type|", "type"),
-        ("\n|Script|", "script"),
-        ("\n|Weight|    {:.2f}", "weight"),
-        ("\n|Value|", "value"),
-        ("\n|Quality|    {:.2f}", "quality"),
-        ("\n|Model|", "model"),
-        ("\n|Icon|", "icon")
+            ("\n|Type|", "type"),
+            ("\n|Script|", "script"),
+            ("\n|Weight|    {:.2f}", "weight"),
+            ("\n|Value|", "value"),
+            ("\n|Quality|    {:.2f}", "quality"),
+            ("\n|Model|", "model"),
+            ("\n|Icon|", "icon")
         ])
     
     def __str__(self):

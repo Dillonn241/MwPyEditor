@@ -4,6 +4,7 @@ import record.mwmgef as mwmgef
 
 do_autocalc = False
 
+
 class MwENCH(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -42,7 +43,8 @@ class MwENCH(MwRecord):
                 self.charge *= 10
     
     def charge_cost_uses(self):
-        return "Infinite" if type == "Constant Effect" else "{}/{} = {}".format(self.charge, self.enchantment_cost, self.charge, self.enchantment_cost)
+        return "Infinite" if type == "Constant Effect" else "{}/{} = {}".format(self.charge, self.enchantment_cost,
+                                                                                self.charge, self.enchantment_cost)
     
     def wiki_entry(self):
         string = self.type
@@ -52,12 +54,12 @@ class MwENCH(MwRecord):
     
     def record_details(self):
         return MwRecord.format_record_details(self, [
-        ("|ID|", "id"),
-        ("\n|Cast Type|", "type"),
-        ("\n|Charge Amount|", "charge"),
-        ("\n|Enchantment Cost|", "enchantment_cost"),
-        ("\n|Auto Calculcate|", "autocalc", False),
-        ("\n|Enchantments|", "enchantments", [])
+            ("|ID|", "id"),
+            ("\n|Cast Type|", "type"),
+            ("\n|Charge Amount|", "charge"),
+            ("\n|Enchantment Cost|", "enchantment_cost"),
+            ("\n|Auto Calculate|", "autocalc", False),
+            ("\n|Enchantments|", "enchantments", [])
         ])
     
     def __str__(self):
@@ -65,6 +67,7 @@ class MwENCH(MwRecord):
     
     def diff(self, other):
         MwRecord.diff(self, other, ["type", "enchantment_cost", "charge", "autocalc", "enchantments"])
+
 
 def load_enchantments(self):
     self.enchantments = []
@@ -79,6 +82,7 @@ def load_enchantments(self):
         enchantment.mag_min = self.get_subrecord_int("ENAM", index=i, start=16, length=4)
         enchantment.mag_max = self.get_subrecord_int("ENAM", index=i, start=20, length=4)
         self.enchantments += [enchantment]
+
 
 class MwENCHSingle:
     def __str__(self, add_template=False, add_type=True):
@@ -119,7 +123,7 @@ class MwENCHSingle:
                     string += " for {} {}".format(self.duration, "sec" if self.duration == 1 else "secs")
                 if self.area > 0:
                     string += " in {} ft".format(self.area)
-                if self.range_type != None:
+                if self.range_type is not None:
                     string += " on " + str(self.range_type)
         
         return string

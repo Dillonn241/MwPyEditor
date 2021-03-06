@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwSNDG(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -13,10 +14,10 @@ class MwSNDG(MwRecord):
     
     def record_details(self):
         return MwRecord.format_record_details(self, [
-        ("|ID|", "id"),
-        ("\n|Creature|", "creature"),
-        ("\n|Type|", "type"),
-        ("\n|SoundID|", "sound_id")
+            ("|ID|", "id"),
+            ("\n|Creature|", "creature"),
+            ("\n|Type|", "type"),
+            ("\n|SoundID|", "sound_id")
         ])
     
     def __str__(self):

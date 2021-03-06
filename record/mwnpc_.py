@@ -5,6 +5,7 @@ from mwrecord import MwRecord
 
 do_autocalc = False
 
+
 class MwNPC_(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -22,25 +23,25 @@ class MwNPC_(MwRecord):
         
         self.level = self.get_subrecord_int("NPDT", start=0, length=2)
         if len(self.get_subrecord("NPDT").data) == 12:
-            self.disposition = self.get_subrecord_int("NPDT", start=2, length=1, signed=False)
-            self.reputation = self.get_subrecord_int("NPDT", start=3, length=1, signed=False)
-            self.faction_rank = self.get_subrecord_int("NPDT", start=4, length=1, signed=False)
+            self.disposition = self.get_subrecord_uint("NPDT", start=2, length=1)
+            self.reputation = self.get_subrecord_uint("NPDT", start=3, length=1)
+            self.faction_rank = self.get_subrecord_uint("NPDT", start=4, length=1)
             self.barter_gold = self.get_subrecord_int("NPDT", start=8, length=4)
         else:
             self.attributes = {}
             for i in range(len(mwglobals.ATTRIBUTES)):
-                value = self.get_subrecord_int("NPDT", start=2 + i, length=1, signed=False)
+                value = self.get_subrecord_uint("NPDT", start=2 + i, length=1)
                 self.attributes[mwglobals.ATTRIBUTES[i]] = value
             self.skills = {}
             for i in range(len(mwglobals.SKILLS)):
-                value = self.get_subrecord_int("NPDT", start=10 + i, length=1, signed=False)
+                value = self.get_subrecord_uint("NPDT", start=10 + i, length=1)
                 self.skills[mwglobals.SKILLS[i]] = value
-            self.health = self.get_subrecord_int("NPDT", start=38, length=2, signed=False)
-            self.magicka = self.get_subrecord_int("NPDT", start=40, length=2, signed=False)
-            self.fatigue = self.get_subrecord_int("NPDT", start=42, length=2, signed=False)
-            self.disposition = self.get_subrecord_int("NPDT", start=44, length=1, signed=False)
-            self.reputation = self.get_subrecord_int("NPDT", start=45, length=1, signed=False)
-            self.faction_rank = self.get_subrecord_int("NPDT", start=46, length=1, signed=False)
+            self.health = self.get_subrecord_uint("NPDT", start=38, length=2)
+            self.magicka = self.get_subrecord_uint("NPDT", start=40, length=2)
+            self.fatigue = self.get_subrecord_uint("NPDT", start=42, length=2)
+            self.disposition = self.get_subrecord_uint("NPDT", start=44, length=1)
+            self.reputation = self.get_subrecord_uint("NPDT", start=45, length=1)
+            self.faction_rank = self.get_subrecord_uint("NPDT", start=46, length=1)
             self.barter_gold = self.get_subrecord_int("NPDT", start=48, length=4)
         flags = self.get_subrecord_int("FLAG")
         self.female = (flags & 0x1) == 0x1
@@ -93,10 +94,12 @@ class MwNPC_(MwRecord):
             health_mult += 1
         if "Endurance" in mw_class.primary_attributes:
             health_mult += 1
-        self.health = math.floor(0.5 * (self.attributes["Strength"]  + self.attributes["Endurance"]) + health_mult * (self.level - 1))
+        str_end_average = 0.5 * (self.attributes["Strength"] + self.attributes["Endurance"])
+        self.health = math.floor(str_end_average + health_mult * (self.level - 1))
         
-        self.magicka = math.floor(2 * self.attributes["Intelligence"]) # 2 = fNPCbaseMagickaMult
-        self.fatigue = self.attributes["Strength"] + self.attributes["Willpower"] + self.attributes["Agility"] + self.attributes["Endurance"]
+        self.magicka = math.floor(2 * self.attributes["Intelligence"])  # 2 = fNPCbaseMagickaMult
+        self.fatigue = (self.attributes["Strength"] + self.attributes["Willpower"] + self.attributes["Agility"] +
+                        self.attributes["Endurance"])
         
         self.skills = {}
         for mw_skill in mwglobals.records["SKIL"]:
@@ -116,7 +119,7 @@ class MwNPC_(MwRecord):
             self.skills[mw_skill.name] = round(base + k * (self.level - 1))
         
         if self.faction:
-            self.reputation = 2 * (self.faction_rank + 1) # 2 = iAutoRepFacMod
+            self.reputation = 2 * (self.faction_rank + 1)  # 2 = iAutoRepFacMod
             # formula technically adds
             # iAutoRepLevMod [0] * (level - 1)
             # which is always 0
@@ -133,7 +136,9 @@ class MwNPC_(MwRecord):
         return self.race
     
     def get_wiki_class(self):
-        if self.class_ == "Alchemist" or self.class_ == "Apothecary" or self.class_ == "Bookseller" or self.class_ == "Buoyant Armiger" or self.class_ == "Clothier" or self.class_ == "Enchanter" or self.class_ == "Guard" or self.class_ == "Guild Guide" or self.class_ == "Ordinator" or self.class_ == "Pawnbroker" or self.class_ == "Priest" or self.class_ == "Savant" or self.class_ == "Slave" or self.class_ == "Smith" or self.class_ == "Trader":
+        classes = ["Alchemist", "Apothecary", "Bookseller", "Buoyant Armiger", "Clothier", "Enchanter", "Guard",
+                   "Guild Guide", "Ordinator", "Pawnbroker", "Priest", "Savant", "Slave", "Smith", "Trader"]
+        if self.class_ in classes:
             return self.class_ + " (class)"
         return self.class_
     
@@ -197,35 +202,35 @@ class MwNPC_(MwRecord):
     
     def trained_skills(self):
         if self.service_training:
-            return sorted(self.skills.items(), key=lambda x:x[1], reverse=True)[:3]
+            return sorted(self.skills.items(), key=lambda x: x[1], reverse=True)[:3]
         return []
     
     def record_details(self):
         string = "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Script|", "script"),
-        ("\n|Race|", "race"), ("    |Sex|", "sex"),
-        ("\n|Class|", "class"), ("    |Level|", "level"),
-        ("\n|Faction|", "faction", ""), ("    |Rank|", "faction_rank", 0 if self.faction == "" else None),
-        ("\n|Essential|", "essential", False),
-        ("\n|Respawn|", "respawn", False),
-        ("\n|Head Model|", "head_model"),
-        ("\n|Hair Model|", "hair_model"),
-        ("\n|Animation File|", "animation_file"),
-        ("\n|Attributes|", "attributes"),
-        ("\n|Skills|", "skills"),
-        ("\n|Health|", "health"),
-        ("\n|Magicka|", "magicka"),
-        ("\n|Fatigue|", "fatigue"),
-        ("\n|Disposition|", "disposition"),
-        ("\n|Reputation|", "reputation"),
-        ("\n|Blood Texture|", "get_blood", "Default (Red)"),
-        ("\n|Auto Calculate Stats|", "autocalc", False),
-        ("\n|Items|", "items", {}),
-        ("\n|Spells|", "spells", []),
-        ("\n|Fight|", "fight"), ("    |Flee|", "flee"), ("    |Alarm|", "alarm"), ("    |Hello|", "hello"),
-        ("\n|Barter Gold|", "barter_gold", 0),
-        ("\n|Buys / Sells|", "buys_sells", []),
-        ("\n|Other Services|", "other_services", [])
+            ("\n|Script|", "script"),
+            ("\n|Race|", "race"), ("    |Sex|", "sex"),
+            ("\n|Class|", "class"), ("    |Level|", "level"),
+            ("\n|Faction|", "faction", ""), ("    |Rank|", "faction_rank", 0 if self.faction == "" else None),
+            ("\n|Essential|", "essential", False),
+            ("\n|Respawn|", "respawn", False),
+            ("\n|Head Model|", "head_model"),
+            ("\n|Hair Model|", "hair_model"),
+            ("\n|Animation File|", "animation_file"),
+            ("\n|Attributes|", "attributes"),
+            ("\n|Skills|", "skills"),
+            ("\n|Health|", "health"),
+            ("\n|Magicka|", "magicka"),
+            ("\n|Fatigue|", "fatigue"),
+            ("\n|Disposition|", "disposition"),
+            ("\n|Reputation|", "reputation"),
+            ("\n|Blood Texture|", "get_blood", "Default (Red)"),
+            ("\n|Auto Calculate Stats|", "autocalc", False),
+            ("\n|Items|", "items", {}),
+            ("\n|Spells|", "spells", []),
+            ("\n|Fight|", "fight"), ("    |Flee|", "flee"), ("    |Alarm|", "alarm"), ("    |Hello|", "hello"),
+            ("\n|Barter Gold|", "barter_gold", 0),
+            ("\n|Buys / Sells|", "buys_sells", []),
+            ("\n|Other Services|", "other_services", [])
         ])
         if len(self.destinations) > 0:
             string += "\n|Travel Services|"
@@ -241,13 +246,23 @@ class MwNPC_(MwRecord):
         return "{} [{}]".format(self.name, self.id)
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["animation_file", "name", "race", "class_", "faction", "head_model", "hair_model", "script", "level", "attributes", "skills", "health", "magicka", "fatigue", "disposition", "reputation", "faction_rank", "barter_gold", "female", "essential", "respawn", "autocalc", "white_blood", "gold_blood", "spells", "items", "hello", "fight", "flee", "alarm", "service_weapons", "service_armor", "service_clothing", "service_books", "service_ingredients", "service_picks", "service_probes", "service_lights", "service_apparatus", "service_repair_items", "service_miscellaneous", "service_spells", "service_magic_items", "service_potions", "service_training", "service_spellmaking", "service_enchanting", "service_repair", "destinations", "ai_packages"])
+        MwRecord.diff(self, other, ["animation_file", "name", "race", "class_", "faction", "head_model", "hair_model",
+                                    "script", "level", "attributes", "skills", "health", "magicka", "fatigue",
+                                    "disposition", "reputation", "faction_rank", "barter_gold", "female", "essential",
+                                    "respawn", "autocalc", "white_blood", "gold_blood", "spells", "items", "hello",
+                                    "fight", "flee", "alarm", "service_weapons", "service_armor", "service_clothing",
+                                    "service_books", "service_ingredients", "service_picks", "service_probes",
+                                    "service_lights", "service_apparatus", "service_repair_items",
+                                    "service_miscellaneous", "service_spells", "service_magic_items", "service_potions",
+                                    "service_training", "service_spellmaking", "service_enchanting", "service_repair",
+                                    "destinations", "ai_packages"])
+
 
 def load_ai(self):
-    self.hello = self.get_subrecord_int("AIDT", start=0, length=1, signed=False)
-    self.fight = self.get_subrecord_int("AIDT", start=2, length=1, signed=False)
-    self.flee = self.get_subrecord_int("AIDT", start=3, length=1, signed=False)
-    self.alarm = self.get_subrecord_int("AIDT", start=4, length=1, signed=False)
+    self.hello = self.get_subrecord_uint("AIDT", start=0, length=1)
+    self.fight = self.get_subrecord_uint("AIDT", start=2, length=1)
+    self.flee = self.get_subrecord_uint("AIDT", start=3, length=1)
+    self.alarm = self.get_subrecord_uint("AIDT", start=4, length=1)
     ai_flags = self.get_subrecord_int("AIDT", start=8, length=4)
     if not ai_flags:
         ai_flags = 0x0
@@ -299,7 +314,7 @@ def load_ai(self):
             ai_package.x = subrecord.get_float(start=0, length=4)
             ai_package.y = subrecord.get_float(start=4, length=4)
             ai_package.z = subrecord.get_float(start=8, length=4)
-            ai_package.duration = subrecord.get_int(start=12, length=2, signed=False)
+            ai_package.duration = subrecord.get_uint(start=12, length=2)
             ai_package.target = subrecord.get_string(start=14, length=32)
             self.ai_packages += [ai_package]
         elif subrecord.record_type == "AI_F":
@@ -308,7 +323,7 @@ def load_ai(self):
             ai_package.x = subrecord.get_float(start=0, length=4)
             ai_package.y = subrecord.get_float(start=4, length=4)
             ai_package.z = subrecord.get_float(start=8, length=4)
-            ai_package.duration = subrecord.get_int(start=12, length=2, signed=False)
+            ai_package.duration = subrecord.get_uint(start=12, length=2)
             ai_package.target = subrecord.get_string(start=14, length=32)
             self.ai_packages += [ai_package]
         elif subrecord.record_type == "AI_T":
@@ -321,20 +336,22 @@ def load_ai(self):
         elif subrecord.record_type == "AI_W":
             ai_package = MwNPCAIPackage()
             ai_package.type = "Wander"
-            ai_package.distance = subrecord.get_int(start=0, length=2, signed=False)
-            ai_package.duration = subrecord.get_int(start=2, length=2, signed=False)
-            ai_package.time_of_day = subrecord.get_int(start=4, length=1, signed=False)
+            ai_package.distance = subrecord.get_uint(start=0, length=2)
+            ai_package.duration = subrecord.get_uint(start=2, length=2)
+            ai_package.time_of_day = subrecord.get_uint(start=4, length=1)
             ai_package.idles = []
             for i in range(8):
-                ai_package.idles += [subrecord.get_int(start=5 + i, length=1, signed=False)]
+                ai_package.idles += [subrecord.get_uint(start=5 + i, length=1)]
             self.ai_packages += [ai_package]
         elif subrecord.record_type == "CNDT":
             ai_package.cell = subrecord.get_string()
 
+
 class MwNPCDestination:
     def record_details(self):
         return MwRecord.format_record_details(self, [
-        ("|Position|    {:.3f}", "pos_x"), (", {:.3f}", "pos_y"), (", {:.3f}", "pos_z"), (" [{:.3f}", "rot_x"), (", {:.3f}", "rot_y"), (", {:.3f}]", "rot_z"), (" {}", "__str__")
+            ("|Position|    {:.3f}", "pos_x"), (", {:.3f}", "pos_y"), (", {:.3f}", "pos_z"), (" [{:.3f}", "rot_x"),
+            (", {:.3f}", "rot_y"), (", {:.3f}]", "rot_z"), (" {}", "__str__")
         ])
     
     def __str__(self):
@@ -350,19 +367,20 @@ class MwNPCDestination:
     def __repr__(self):
         return self.record_details()
 
+
 class MwNPCAIPackage:
     def record_details(self):
         details = [
-        ("|Type|", "type"),
-        ("\n|Target|", "target")
+            ("|Type|", "type"),
+            ("\n|Target|", "target")
         ]
         if self.type == "Travel" or hasattr(self, "cell"):
             details += [("\n|Position|    {:.3f}", "x"), (", {:.3f}", "y"), (", {:.3f}", "z"), (" {}", "cell")]
         details += [
-        ("\n|Distance|", "distance"),
-        ("\n|Duration|", "duration"),
-        ("\n|Time of Day|", "time_of_day"),
-        ("\n|Idles|", "idles")
+            ("\n|Distance|", "distance"),
+            ("\n|Duration|", "duration"),
+            ("\n|Time of Day|", "time_of_day"),
+            ("\n|Idles|", "idles")
         ]
         return MwRecord.format_record_details(self, details)
     

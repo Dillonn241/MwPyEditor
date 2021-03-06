@@ -1,13 +1,14 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwMGEF(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
     
     def load(self):
         self.index = self.get_subrecord_int("INDX")
-        self.name = mwglobals.MAGIC_NAMES[self.index] # sEffect + MAGIC_EFFECTS
+        self.name = mwglobals.MAGIC_NAMES[self.index]  # sEffect + MAGIC_EFFECTS
         self.school = mwglobals.MAGIC_SCHOOLS[self.get_subrecord_int("MEDT", start=0, length=4)]
         self.base_cost = self.get_subrecord_float("MEDT", start=4, length=4)
         
@@ -66,39 +67,39 @@ class MwMGEF(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|School|", "school"),
-        ("\n|Base Cost|    {:.2f}", "base_cost"),
-        ("\n|Spellmaking|", "spellmaking", False),
-        ("\n|Enchanting|", "enchanting", False),
-        ("\n|Particle Texture|", "particle_texture"),
-        ("\n|Effect Icon|", "effect_icon"),
-        ("\n|Description|", "description"),
-        ("\n|Casting Sound|", "casting_sound"),
-        ("\n|Casting Visual|", "casting_visual"),
-        ("\n|Bolt Sound|", "bolt_sound"),
-        ("\n|Bolt Visual|", "bolt_visual"),
-        ("\n|Hit Sound|", "hit_sound"),
-        ("\n|Hit Visual|", "hit_visual"),
-        ("\n|Area Sound|", "area_sound"),
-        ("\n|Area Visual|", "area_visual"),
-        ("\n|SpeedX|", "speed_x"),
-        ("\n|SizeX|", "size_x"),
-        ("\n|Size Cap|", "size_cap"),
-        ("\n|Lighting Color|", "red"), (", {}", "green"), (", {}", "blue"),
-        ("\n|Lighting Negative|", "negative", False),
-        ("\n|Target Skill|", "target_skill", False),
-        ("\n|Target Attribute|", "target_attribute", False),
-        ("\n|No Duration|", "no_duration", False),
-        ("\n|No Magnitude|", "no_magnitude", False),
-        ("\n|Harmful|", "harmful", False),
-        ("\n|Continuous VFX|", "continuous_vfx", False),
-        ("\n|Cast Self|", "cast_self", False),
-        ("\n|Cast Touch|", "cast_touch", False),
-        ("\n|Cast Target|", "cast_target", False),
-        ("\n|Uncapped Damage|", "uncapped_damage", False),
-        ("\n|Non Recastable|", "non_recastable", False),
-        ("\n|Unreflectable|", "unreflectable", False),
-        ("\n|Caster Linked|", "caster_linked", False)
+            ("\n|School|", "school"),
+            ("\n|Base Cost|    {:.2f}", "base_cost"),
+            ("\n|Spellmaking|", "spellmaking", False),
+            ("\n|Enchanting|", "enchanting", False),
+            ("\n|Particle Texture|", "particle_texture"),
+            ("\n|Effect Icon|", "effect_icon"),
+            ("\n|Description|", "description"),
+            ("\n|Casting Sound|", "casting_sound"),
+            ("\n|Casting Visual|", "casting_visual"),
+            ("\n|Bolt Sound|", "bolt_sound"),
+            ("\n|Bolt Visual|", "bolt_visual"),
+            ("\n|Hit Sound|", "hit_sound"),
+            ("\n|Hit Visual|", "hit_visual"),
+            ("\n|Area Sound|", "area_sound"),
+            ("\n|Area Visual|", "area_visual"),
+            ("\n|SpeedX|", "speed_x"),
+            ("\n|SizeX|", "size_x"),
+            ("\n|Size Cap|", "size_cap"),
+            ("\n|Lighting Color|", "red"), (", {}", "green"), (", {}", "blue"),
+            ("\n|Lighting Negative|", "negative", False),
+            ("\n|Target Skill|", "target_skill", False),
+            ("\n|Target Attribute|", "target_attribute", False),
+            ("\n|No Duration|", "no_duration", False),
+            ("\n|No Magnitude|", "no_magnitude", False),
+            ("\n|Harmful|", "harmful", False),
+            ("\n|Continuous VFX|", "continuous_vfx", False),
+            ("\n|Cast Self|", "cast_self", False),
+            ("\n|Cast Touch|", "cast_touch", False),
+            ("\n|Cast Target|", "cast_target", False),
+            ("\n|Uncapped Damage|", "uncapped_damage", False),
+            ("\n|Non Recastable|", "non_recastable", False),
+            ("\n|Unreflectable|", "unreflectable", False),
+            ("\n|Caster Linked|", "caster_linked", False)
         ])
     
     def __str__(self):
@@ -108,23 +109,32 @@ class MwMGEF(MwRecord):
         return self.index
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["name", "school", "base_cost", "spellmaking", "enchanting", "negative", "target_skill", "target_attribute", "no_duration", "no_magnitude", "harmful", "continuous_vfx", "cast_self", "cast_touch", "cast_target", "uncapped_damage", "non_recastable", "unreflectable", "caster_linked", "red", "green", "blue", "speed_x", "size_x", "size_cap", "effect_icon", "particle_texture", "bolt_sound", "casting_sound", "hit_sound", "area_sound", "casting_visual", "bolt_visual", "hit_visual", "area_visual", "description"])
+        MwRecord.diff(self, other, ["name", "school", "base_cost", "spellmaking", "enchanting", "negative",
+                                    "target_skill", "target_attribute", "no_duration", "no_magnitude", "harmful",
+                                    "continuous_vfx", "cast_self", "cast_touch", "cast_target", "uncapped_damage",
+                                    "non_recastable", "unreflectable", "caster_linked", "red", "green", "blue",
+                                    "speed_x", "size_x", "size_cap", "effect_icon", "particle_texture", "bolt_sound",
+                                    "casting_sound", "hit_sound", "area_sound", "casting_visual", "bolt_visual",
+                                    "hit_visual", "area_visual", "description"])
+
 
 def get_magnitude_type(index):
     if has_no_magnitude(index):
         return mwglobals.MagnitudeType.NONE
     if index == 84:
         return mwglobals.MagnitudeType.TIMES_INT
-    if index == 59 or (index >= 64 and index <= 66):
+    if index == 59 or (64 <= index <= 66):
         return mwglobals.MagnitudeType.FEET
     if index == 118 or index == 119:
         return mwglobals.MagnitudeType.LEVEL
-    if (index >= 28 and index <= 36) or (index >= 90 and index <= 99) or index == 40 or index == 47 or index == 57 or index == 68:
+    if (28 <= index <= 36) or (90 <= index <= 99) or index == 40 or index == 47 or index == 57 or index == 68:
         return mwglobals.MagnitudeType.PERCENTAGE
     return mwglobals.MagnitudeType.POINTS
 
+
 def has_no_duration(index):
     return index in [12, 13, 57, 60, 61, 62, 63, 69, 70, 71, 72, 73, 133]
+
 
 def has_no_magnitude(index):
     if index < 102:
@@ -132,8 +142,10 @@ def has_no_magnitude(index):
     else:
         return index not in [117, 118, 119, 135]
 
+
 def requires_attribute(index):
     return index == 17 or index == 22 or index == 74 or index == 79 or index == 85
+
 
 def requires_skill(index):
     return index == 21 or index == 26 or index == 78 or index == 83 or index == 89

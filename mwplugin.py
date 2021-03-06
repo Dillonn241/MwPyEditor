@@ -52,82 +52,85 @@ import record.mwsscr as mwsscr
 
 auto_load_masters = True
 
+
 def init():
     """Choose at most one: list of records loaded by default for every plugin. TES3 should always be loaded."""
-    #mwglobals.default_records = mwglobals.RECORDS_MIN # minimum types required for autocalc: MGEF, CLAS, RACE, SKIL
-    #mwglobals.default_records = mwglobals.RECORDS_MOST # all types except: DIAL, INFO, CELL, LAND
-    mwglobals.default_records = mwglobals.RECORDS_ALL # all types
+    # mwglobals.default_records = mwglobals.RECORDS_MIN # minimum types required for autocalc: MGEF, CLAS, RACE, SKIL
+    # mwglobals.default_records = mwglobals.RECORDS_MOST # all types except: DIAL, INFO, CELL, LAND
+    mwglobals.default_records = mwglobals.RECORDS_ALL  # all types
     
     """Expand list of records loaded by default for every plugin."""
     mwglobals.default_records += []
     
     """Choose any: load large data for CELL and LAND."""
-    mwcell.init_references = True # statics and other references placed in the world
-    #mwland.init_lod = True # lod to show global map
-    #mwland.init_terrain = True # normals, heights, colors, and textures of landscape (long load time)
+    mwcell.init_references = True  # statics and other references placed in the world
+    # mwland.init_lod = True # lod to show global map
+    # mwland.init_terrain = True # normals, heights, colors, and textures of landscape (long load time)
     
     """Choose any: run algorithms to autocalc stats for ALCH, ENCH, SPEL, and NPC_."""
-    mwalch.do_autocalc = True # requires MGEF
-    mwench.do_autocalc = True # requires MGEF
-    mwspel.do_autocalc = True # requires MGEF
-    mwnpc_.do_autocalc = True # requires CLAS, RACE, SKIL
+    mwalch.do_autocalc = True  # requires MGEF
+    mwench.do_autocalc = True  # requires MGEF
+    mwspel.do_autocalc = True  # requires MGEF
+    mwnpc_.do_autocalc = True  # requires CLAS, RACE, SKIL
     
     """Load any plugins you want. Masters are automatically loaded."""
     # Vanilla
-    #load_plugin("Morrowind.esm")
-    #load_plugin("Tribunal.esm")
-    #load_plugin("Bloodmoon.esm")
+    # load_plugin("Morrowind.esm")
+    # load_plugin("Tribunal.esm")
+    # load_plugin("Bloodmoon.esm")
     
     # DLC
-    #load_plugin("adamantiumarmor.esp")
-    #load_plugin("AreaEffectArrows.esp")
-    #load_plugin("bcsounds.esp")
-    #load_plugin("EBQ_Artifact.esp")
-    #load_plugin("entertainers.esp")
-    #load_plugin("LeFemmArmor.esp")
-    #load_plugin("master_index.esp")
-    #load_plugin("Siege at Firemoth.esp")
+    # load_plugin("adamantiumarmor.esp")
+    # load_plugin("AreaEffectArrows.esp")
+    # load_plugin("bcsounds.esp")
+    # load_plugin("EBQ_Artifact.esp")
+    # load_plugin("entertainers.esp")
+    # load_plugin("LeFemmArmor.esp")
+    # load_plugin("master_index.esp")
+    # load_plugin("Siege at Firemoth.esp")
     
     # Tamriel Data
-    #load_plugin("Tamriel_Data_6.esm")
-    #load_plugin("Tamriel_Data_7.esm")
-    #load_plugin("Tamriel_Data_7.1.esm")
-    #load_plugin("Tamriel_Data.esm")
+    # load_plugin("Tamriel_Data_6.esm")
+    # load_plugin("Tamriel_Data_7.esm")
+    # load_plugin("Tamriel_Data_7.1.esm")
+    # load_plugin("Tamriel_Data.esm")
     
     # Released versions of province mods
-    #load_plugin("TR_Mainland_1809.esm")
-    #load_plugin("TR_Mainland_1912.esm")
-    #load_plugin("TR_Mainland_2002.esm")
-    #load_plugin("Cyrodiil_Main_0.2.esm")
-    #load_plugin("Sky_Main_02.esp")
-    #load_plugin("Sky_Main_1812.esm")
-    #load_plugin("Sky_Main_1903.esm")
-    #load_plugin("Sky_Main_2001.esm")
+    # load_plugin("TR_Mainland_1809.esm")
+    # load_plugin("TR_Mainland_1912.esm")
+    # load_plugin("TR_Mainland_2002.esm")
+    # load_plugin("Cyrodiil_Main_0.2.esm")
+    # load_plugin("Sky_Main_02.esp")
+    # load_plugin("Sky_Main_1812.esm")
+    # load_plugin("Sky_Main_1903.esm")
+    # load_plugin("Sky_Main_2001.esm")
     
     # Tamriel Rebuilt
-    #load_plugin("TR_Mainland.esp")
-    #load_plugin("TR_Factions.esp")
-    #load_plugin("TR_Travels.esp")
-    #load_plugin("TR_Travels_(Preview_and_Mainland).esp")
-    #load_plugin("TR_Andothren_v.0050.esp")
-    #load_plugin("TR_RorynsBluff_v0209.esp")
-    #load_plugin("TR_ArmunAshlands_v0040.esp")
-    #load_plugin("TR_SouthernVelothis_v.0009.esp")
-    #load_plugin("TR_ThirrValley_v0070.ESP")
-    #load_plugin("TR_Kartur_v0021.esp")
-    #load_plugin("TR_RestExterior.esp")
+    # load_plugin("TR_Mainland.esp")
+    # load_plugin("TR_Factions.esp")
+    # load_plugin("TR_Travels.esp")
+    # load_plugin("TR_Travels_(Preview_and_Mainland).esp")
+    # load_plugin("TR_Andothren_v0064.ESP")
+    # load_plugin("TR_RorynsBluff_v0211.esp")
+    # load_plugin("TR_ArmunAshlands_v0047.esp")
+    # load_plugin("TR_SouthernVelothis_v.0009.esp")
+    # load_plugin("TR_ThirrValley_v0073.ESP")
+    # load_plugin("TR_Kartur_v0022.ESP")
+    # load_plugin("TR_RestExterior.esp")
+    # load_plugin("TR_ShipalShin_v0003.ESP")
     
     # Skyrim: Home of the Nords
-    #load_plugin("Sky_Main_2020_12_31.esp")
-    #load_plugin("Sky_Markarth_2020-12-21.ESP")
-    #load_plugin("Sky_Falkheim_2020-10-10.ESP")
+    # load_plugin("Sky_Main_2020_12_31.esp")
+    # load_plugin("Sky_Markarth_2021_01_31.ESP")
+    # load_plugin("Sky_Falkheim_2021_01_31.ESP")
     
     # Province: Cyrodiil
-    #load_plugin("Cyrodiil_Main_2020_12_10.ESP")
-    #load_plugin("PC_Anvil_v0058.ESP")
-    #load_plugin("PC_Sutch_v0015.ESP")
+    # load_plugin("Cyrodiil_Main_2020_12_10.ESP")
+    # load_plugin("PC_Anvil_v0069.ESP")
+    # load_plugin("PC_Sutch_v0017.ESP")
     
     print()
+
 
 def handle_args(args):
     if args.command == "diff":
@@ -135,14 +138,15 @@ def handle_args(args):
     elif args.command == "dump":
         args_dump(args)
 
+
 def args_diff(args):
     if len(args.plugins) != 2:
         sys.exit("Exactly two plugins can be diffed!")
     if args.file:
         sys.stdout = open(args.file, "w")
     
-    plugin1 = args.plugins[0] # "Tamriel_Data_6.esm"
-    plugin2 = args.plugins[1] # "Tamriel_Data.esm"
+    plugin1 = args.plugins[0]  # "Tamriel_Data_6.esm"
+    plugin2 = args.plugins[1]  # "Tamriel_Data.esm"
     record_types = args.type if args.type else mwglobals.RECORDS_ALL
     load_plugin(plugin1, records_to_load=record_types, print_loading=not args.file)
     load_plugin(plugin2, records_to_load=record_types, print_loading=not args.file)
@@ -157,6 +161,7 @@ def args_diff(args):
     if args.file:
         sys.stdout.close()
         sys.stdout = sys.__stdout__
+
 
 def args_dump(args):
     if args.file:
@@ -177,7 +182,8 @@ def args_dump(args):
         sys.stdout.close()
         sys.stdout = sys.__stdout__
 
-def load_plugin(file_name, records_to_load=None, print_loading = True):
+
+def load_plugin(file_name, records_to_load=None, print_loading=True):
     # use default_records if no argument is provided for records_to_load
     if records_to_load is None:
         records_to_load = mwglobals.default_records
@@ -227,20 +233,21 @@ def load_plugin(file_name, records_to_load=None, print_loading = True):
             # if setting on, automatically load essential records from masters once they are known
             if auto_load_masters and record_type == "TES3":
                 for master in record.masters:
-                    load_plugin(master, records_to_load=mwglobals.RECORDS_MIN, print_loading=print_loading)
+                    load_plugin(master, records_to_load=records_to_load, print_loading=print_loading)
             # print a progress message
             if print_loading:
                 print("** Loading", file_name + ":", records_to_load, "**")
                 print_loading = False
 
-def save_plugin(file_name, other_files=[]):
+
+def save_plugin(file_name, active_file, *merge_files):
     print(file_name)
-    files = other_files + [file_name]
+    files = (active_file,) + merge_files
     with open(file_name, mode='wb') as file:
         for record in mwglobals.ordered_records:
             if record.file_name in files:
                 flags = record.save_flags()
-                if hasattr(record, "save"): # temporary until all are implemented
+                if hasattr(record, "save"):  # temporary until all are implemented
                     record.save()
                     record.save_deleted()
                 length = 0
@@ -250,6 +257,7 @@ def save_plugin(file_name, other_files=[]):
                 for subrecord in record.ordered_subrecords:
                     file.write(struct.pack("<4si", subrecord.record_type.encode("mbcs"), len(subrecord.data)))
                     file.write(subrecord.data)
+
 
 def create_record(record_type):
     if record_type == "TES3":
@@ -343,6 +351,7 @@ def create_record(record_type):
     elif record_type == "SSCR":
         return mwsscr.MwSSCR()
 
+
 def diff_plugins(plugin1, plugin2, record_type, added=True, removed=True, changed=True):
     object_ids1 = {}
     object_ids2 = {}
@@ -372,6 +381,7 @@ def diff_plugins(plugin1, plugin2, record_type, added=True, removed=True, change
                     record2 = object_ids2[record.get_id()]
                     record.diff(record2)
 
+
 def diff_locations(plugin1, file_names1, plugin2, file_names2, record_type):
     file_names1 += [plugin1]
     file_names2 += [plugin2]
@@ -400,23 +410,30 @@ def diff_locations(plugin1, file_names1, plugin2, file_names2, record_type):
                             first_print = False
                         print("+", loc)
 
+
 def init_args():
     parser = argparse.ArgumentParser(description="Analyze a plugin file."
-    "\n\nThe following commands are available:"
-    "\ndiff\tfind the difference between two plugins"
-    "\ndump\toutput readable record data", formatter_class=argparse.RawDescriptionHelpFormatter)
+                                                 "\n\nThe following commands are available:"
+                                                 "\ndiff\tfind the difference between two plugins"
+                                                 "\ndump\toutput readable record data",
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("command", help="name of the action to take")
     parser.add_argument("plugins", nargs="+", help="list of plugins to load and provide as arguments")
-    parser.add_argument("-f", "--file", "->", help="output to a given <file name> instead of the command line", metavar="<file name>")
+    parser.add_argument("-f", "--file", "->", help="output to a given <file name> instead of the command line",
+                        metavar="<file name>")
     parser.add_argument("-t", "--type", nargs="+", help="limit to given <record type>s", metavar="<record type>")
     parser.add_argument("-l", "--list", action="store_true", help="show only identifying data for each record")
-    parser.add_argument("--diff_added", action="store_true", help="report records in plugin2 that do not exist in plugin1")
-    parser.add_argument("--diff_removed", action="store_true", help="report records in plugin1 that do not exist in plugin2")
-    parser.add_argument("--diff_ignore_changed", action="store_true", help="do not report changes between records that exist in plugin1 and plugin2")
+    parser.add_argument("--diff_added", action="store_true", help="report records in plugin2 that do not exist in"
+                                                                  "plugin1")
+    parser.add_argument("--diff_removed", action="store_true", help="report records in plugin1 that do not exist in"
+                                                                    "plugin2")
+    parser.add_argument("--diff_ignore_changed", action="store_true", help="do not report changes between records that"
+                                                                           "exist in plugin1 and plugin2")
     args = parser.parse_args()
     if args.type:
         args.type = [x.upper() for x in args.type]
     return args
+
 
 def main():
     start_time = time.time()
@@ -425,14 +442,15 @@ def main():
         args = init_args()
         handle_args(args)
         
-    #Python commands
-    #mwjobs.find_creatures(file='files/SHOTN_Creas.csv')
-    #mwjobs.ref_map(file='files/SHOTN_Creas.csv', img='files/SHOTN_CellExport.png', top=23, bottom=-3, left=-120, right=-94)
-    #mwjobs.exterior_doors(file='files/PC_Doors.csv')
-    #mwjobs.ref_map(file='files/PC_Doors.csv', img='files/PC_CellExport.png', top=-35, bottom=-58, left=-141, right=-108)
+    # Python commands
+    # mwjobs.find_creatures(file='files/SHOTN_Creas.csv')
+    # mwjobs.ref_map(file='files/SHOTN_Creas.csv', img='files/SHOTN_CellExport.png', top=23, bottom=-3, left=-120, right=-94)
+    # mwjobs.exterior_doors(file='files/PC_Doors.csv')
+    # mwjobs.ref_map(file='files/PC_Doors.csv', img='files/PC_CellExport.png', top=-35, bottom=-58, left=-141, right=-108)
     
     time_spent = time.time() - start_time
     print("\n** Time spent: {:.3f} seconds **".format(time_spent))
+
 
 if __name__ == "__main__":
     main()

@@ -4,6 +4,7 @@ from record.mwench import load_enchantments
 
 do_autocalc = False
 
+
 class MwSPEL(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -50,16 +51,17 @@ class MwSPEL(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Type|", "type"),
-        ("\n|Spell Cost|", "spell_cost"),
-        ("\n|Auto Calculate Cost|", "autocalc", False),
-        ("\n|PC Start Spell|", "pc_start_spell", False),
-        ("\n|Always Succeeds|", "always_succeeds", False),
-        ("\n|Enchantments|", "enchantments", [])
+            ("\n|Type|", "type"),
+            ("\n|Spell Cost|", "spell_cost"),
+            ("\n|Auto Calculate Cost|", "autocalc", False),
+            ("\n|PC Start Spell|", "pc_start_spell", False),
+            ("\n|Always Succeeds|", "always_succeeds", False),
+            ("\n|Enchantments|", "enchantments", [])
         ])
     
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["name", "type", "spell_cost", "autocalc", "pc_start_spell", "always_succeeds", "enchantments"])
+        MwRecord.diff(self, other, ["name", "type", "spell_cost", "autocalc", "pc_start_spell", "always_succeeds",
+                                    "enchantments"])

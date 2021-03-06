@@ -1,6 +1,7 @@
 import math
 import struct
 
+
 class MwRecord:
     def __init__(self):
         self.clear_subrecords()
@@ -19,7 +20,16 @@ class MwRecord:
         self.blocked = (flags & 0x2000) == 0x2000
     
     def load_deleted(self):
-        self.deleted = "DELE" in self.subrecords
+        if self.get_record_type() == "CELL":
+            self.deleted = False
+            for subrecord in self.ordered_subrecords:
+                if subrecord == "DELE":
+                    self.deleted = True
+                    break
+                elif subrecord == "FRMR":
+                    break
+        else:
+            self.deleted = "DELE" in self.subrecords
 
     def save_flags(self):
         flags = 0x0
@@ -34,7 +44,10 @@ class MwRecord:
         return flags
     
     def save_deleted(self):
+        if self.deleted:
             self.add_subrecord_int(0, "DELE")
+    
+    def add_subrecord(self, subtype, subdata=b""):
         subrecord = Subrecord(subtype, subdata)
         if subtype not in self.subrecords:
             self.subrecords[subtype] = []
@@ -44,36 +57,46 @@ class MwRecord:
     
     def get_subrecord(self, subtype, index=0):
         subarray = self.subrecords.get(subtype, None)
-        if subarray != None:
+        if subarray is not None:
             return subarray[index]
     
     def get_subrecord_data(self, subtype, index=0, start=None, length=None):
         subarray = self.subrecords.get(subtype, None)
-        if subarray != None:
+        if subarray is not None:
             subrecord = subarray[index]
             return subrecord.get_data(start=start, length=length)
     
-    def get_subrecord_int(self, subtype, index=0, start=None, length=None, signed=True):
+    def get_subrecord_int(self, subtype, index=0, start=None, length=None):
         subarray = self.subrecords.get(subtype, None)
-        if subarray != None:
+        if subarray is not None:
             subrecord = subarray[index]
-            return subrecord.get_int(start=start, length=length, signed=signed)
+            return subrecord.get_int(start=start, length=length)
+    
+    def get_subrecord_uint(self, subtype, index=0, start=None, length=None):
+        subarray = self.subrecords.get(subtype, None)
+        if subarray is not None:
+            subrecord = subarray[index]
+            return subrecord.get_uint(start=start, length=length)
     
     def get_subrecord_float(self, subtype, index=0, start=None, length=None):
         subarray = self.subrecords.get(subtype, None)
-        if subarray != None:
+        if subarray is not None:
             subrecord = subarray[index]
             return subrecord.get_float(start=start, length=length)
     
     def get_subrecord_string(self, subtype, index=0, start=None, length=None):
         subarray = self.subrecords.get(subtype, None)
-        if subarray != None:
+        if subarray is not None:
             subrecord = subarray[index]
             return subrecord.get_string(start=start, length=length)
     
-    def add_subrecord_int(self, value, subtype, length=4, signed=True):
+    def add_subrecord_int(self, value, subtype, length=4):
         if value is not None:
-            self.add_subrecord(subtype).add_int(value, length=length, signed=signed)
+            self.add_subrecord(subtype).add_int(value, length=length)
+    
+    def add_subrecord_uint(self, value, subtype, length=4):
+        if value is not None:
+            self.add_subrecord(subtype).add_uint(value, length=length)
     
     def add_subrecord_float(self, value, subtype):
         if value is not None:
@@ -85,15 +108,15 @@ class MwRecord:
     
     def num_subrecords(self, subtype):
         subarray = self.subrecords.get(subtype, None)
-        if subarray != None:
+        if subarray is not None:
             return len(subarray)
         return 0
     
     def format_record_details(self, record_detail_list):
         record_detail_list += [
-        ("\n|Deleted|", "deleted", False),
-        ("\n|Persists|", "persists", False),
-        ("\n|Blocked|", "blocked", False),
+            ("\n|Deleted|", "deleted", False),
+            ("\n|Persists|", "persists", False),
+            ("\n|Blocked|", "blocked", False)
         ]
         string = []
         for record_detail in record_detail_list:
@@ -131,24 +154,29 @@ class MwRecord:
         if string:
             print("Changed", str(self) + "".join(string))
 
+
 class Subrecord:
     def __init__(self, subtype, subdata):
         self.record_type = subtype
         self.data = subdata
     
     def get_data(self, start=None, length=None):
-        if start != None:
-            if length != None:
+        if start is not None:
+            if length is not None:
                 return self.data[start:start + length]
             else:
                 return self.data[start:]
-        elif length != None:
+        elif length is not None:
             return self.data[:length]
         return self.data
     
-    def get_int(self, start=None, length=None, signed=True):
+    def get_int(self, start=None, length=None):
         subdata = self.get_data(start=start, length=length)
-        return int.from_bytes(subdata, byteorder="little", signed=signed)
+        return int.from_bytes(subdata, byteorder="little", signed=True)
+    
+    def get_uint(self, start=None, length=None):
+        subdata = self.get_data(start=start, length=length)
+        return int.from_bytes(subdata, byteorder="little", signed=False)
     
     def get_float(self, start=None, length=None):
         subdata = self.get_data(start=start, length=length)
@@ -159,13 +187,16 @@ class Subrecord:
     
     def get_string(self, start=None, length=None):
         subdata = self.get_data(start=start, length=length)
-        if 0x00 in subdata: # zstring
+        if 0x00 in subdata:  # zstring
             subdata = subdata[:subdata.index(0x00)]
         format_str = str(len(subdata)) + "s"
         return struct.unpack(format_str, subdata)[0].decode("mbcs")
     
-    def add_int(self, value, length=4, signed=True):
-        self.data += int.to_bytes(value, byteorder="little", length=length, signed=signed)
+    def add_int(self, value, length=4):
+        self.data += int.to_bytes(value, byteorder="little", length=length, signed=True)
+    
+    def add_uint(self, value, length=4):
+        self.data += int.to_bytes(value, byteorder="little", length=length, signed=False)
     
     def add_float(self, value):
         self.data += struct.pack("<f", value)
@@ -176,3 +207,6 @@ class Subrecord:
         if terminator:
             subdata += struct.pack("b", 0x00)
         self.data += subdata
+    
+    def __repr__(self):
+        return "{}: {}".format(self.record_type, self.data)

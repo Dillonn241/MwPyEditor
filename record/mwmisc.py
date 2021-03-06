@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwMISC(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -18,12 +19,12 @@ class MwMISC(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Script|", "script"),
-        ("\n|Weight|    {:.2f}", "weight"),
-        ("\n|Value|", "value"),
-        ("\n|Model|", "model"),
-        ("\n|Icon|", "icon"),
-        ("\n|Is Key|", "is_key", False)
+            ("\n|Script|", "script"),
+            ("\n|Weight|    {:.2f}", "weight"),
+            ("\n|Value|", "value"),
+            ("\n|Model|", "model"),
+            ("\n|Icon|", "icon"),
+            ("\n|Is Key|", "is_key", False)
         ])
     
     def __str__(self):

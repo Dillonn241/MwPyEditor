@@ -2,6 +2,7 @@ import mwglobals
 from mwrecord import MwRecord
 from record.mwlevi import MwLEVIItem
 
+
 class MwLEVC(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -20,10 +21,10 @@ class MwLEVC(MwRecord):
     
     def record_details(self):
         return MwRecord.format_record_details(self, [
-        ("|ID|", "id"),
-        ("\n|Calculate from all levels <= PC's level|", "calc_less_than_pc_level", False),
-        ("\n|Chance None|", "chance_none"),
-        ("\n|Creatures|", "creatures", [])
+            ("|ID|", "id"),
+            ("\n|Calculate from all levels <= PC's level|", "calc_less_than_pc_level", False),
+            ("\n|Chance None|", "chance_none"),
+            ("\n|Creatures|", "creatures", [])
         ])
     
     def __str__(self):

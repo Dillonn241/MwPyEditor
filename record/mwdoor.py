@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwDOOR(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -16,10 +17,10 @@ class MwDOOR(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Script|", "script"),
-        ("\n|Model|", "model"),
-        ("\n|Open Sound ID|", "sound_open"),
-        ("\n|Close Sound ID|", "sound_close")
+            ("\n|Script|", "script"),
+            ("\n|Model|", "model"),
+            ("\n|Open Sound ID|", "sound_open"),
+            ("\n|Close Sound ID|", "sound_close")
         ])
     
     def __str__(self):

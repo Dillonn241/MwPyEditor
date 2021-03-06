@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwBSGN(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -17,9 +18,9 @@ class MwBSGN(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Texture|", "texture"),
-        ("\n|Description|", "description"),
-        ("\n|Spells|", "spells", [])
+            ("\n|Texture|", "texture"),
+            ("\n|Description|", "description"),
+            ("\n|Spells|", "spells", [])
         ])
     
     def __str__(self):

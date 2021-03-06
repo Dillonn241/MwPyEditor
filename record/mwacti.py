@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwACTI(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -14,8 +15,8 @@ class MwACTI(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Script|", "script"),
-        ("\n|Model|", "model")
+            ("\n|Script|", "script"),
+            ("\n|Model|", "model")
         ])
     
     def __str__(self):

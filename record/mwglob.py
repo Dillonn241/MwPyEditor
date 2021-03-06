@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwGLOB(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -26,9 +27,9 @@ class MwGLOB(MwRecord):
     
     def record_details(self):
         return MwRecord.format_record_details(self, [
-        ("|Name|", "name"),
-        ("\n|Type|", "type"),
-        ("\n|Value|    {:.4f}", "value")
+            ("|Name|", "name"),
+            ("\n|Type|", "type"),
+            ("\n|Value|    {:.4f}", "value")
         ])
     
     def __str__(self):

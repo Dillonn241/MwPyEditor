@@ -49,6 +49,7 @@ import record.mwdial as mwdial
 import record.mwinfo as mwinfo
 import record.mwsscr as mwsscr
 
+
 def region_location_changes(plugin1, plugin2):
     locations1 = []
     locations2 = []
@@ -57,17 +58,18 @@ def region_location_changes(plugin1, plugin2):
             if cell.file_name == plugin1:
                 for ref in cell.references:
                     if hasattr(ref, "door_cell"):
-                        locations1 += [cell.region + ": " + ref.door_cell]
+                        locations1 += [cell.get_region() + ": " + ref.door_cell]
             elif cell.file_name == plugin2:
                 for ref in cell.references:
                     if hasattr(ref, "door_cell"):
-                        locations2 += [cell.region + ": " + ref.door_cell]
+                        locations2 += [cell.get_region() + ": " + ref.door_cell]
     for loc in locations1:
         if loc not in locations2:
             print("-" + loc)
     for loc in locations2:
         if loc not in locations1:
             print("+" + loc)
+
 
 def find_usage(id):
     for npc in mwglobals.records["NPC_"]:
@@ -103,6 +105,7 @@ def find_usage(id):
     for script in mwglobals.records["SCPT"]:
         if id in script.text:
             print(str(script))
+
 
 def find_item_usage(id, file_names=None):
     usages = []
@@ -155,6 +158,7 @@ def find_item_usage(id, file_names=None):
                     break
     return usages
 
+
 def faction_members(faction, file_name):
     npcs = [npc for npc in mwglobals.records["NPC_"] if npc.faction == faction and npc.file_name == file_name]
     npcs.sort(key=lambda x: x.name)
@@ -186,13 +190,15 @@ def faction_members(faction, file_name):
         data += ", ".join(service_str)
         print(data)
 
+
 def all_record_details(file_name=None):
     for rcd_type in mwglobals.records:
         print("## Record Details record type", rcd_type, "##\n")
         for record in mwglobals.records[rcd_type]:
-            if file_name == None or record.file_name == file_name:
+            if file_name is None or record.file_name == file_name:
                 print(record.record_details())
                 print()
+
 
 def filtered_dialogue(actor="", race="", class_="", faction="", cell="", pc_faction=""):
     for info in mwglobals.records["INFO"]:
@@ -200,8 +206,9 @@ def filtered_dialogue(actor="", race="", class_="", faction="", cell="", pc_fact
             print(info.record_details())
             print()
 
+
 def exterior_doors(file):
-    doorfile = open('exceptions/mwdoor.txt','r')
+    doorfile = open('exceptions/mwdoor.txt', 'r')
     doorlist = doorfile.read().splitlines()
     cols = ['Name', 'GridX', 'GridY', 'PosX', 'PosY', 'ID', 'Check']
     data = []
@@ -219,10 +226,11 @@ def exterior_doors(file):
     doors = pd.DataFrame(data, columns=cols)
     doors.to_csv(file, index=False, header=True)
 
+
 def find_creatures(file):
-    creafile = open('exceptions/mwcrea.txt','r')
+    creafile = open('exceptions/mwcrea.txt', 'r')
     crealist = creafile.read().splitlines()
-    levcfile = open('exceptions/mwlevc.txt','r')
+    levcfile = open('exceptions/mwlevc.txt', 'r')
     levclist = levcfile.read().splitlines()
     cols = ['Name', 'GridX', 'GridY', 'PosX', 'PosY', 'ID', 'Check']
     data = []
@@ -242,11 +250,12 @@ def find_creatures(file):
     creas = pd.DataFrame(data, columns=cols)
     creas.to_csv(file, index=False, header=True)
 
+
 def ref_map(file, img, top, bottom, left, right):
     ref_locs = pd.read_csv(file)
     ref_locs = ref_locs[ref_locs.Check != 2]
-    ref_locs.PosX = ref_locs.PosX/pow(2,13)
-    ref_locs.PosY = ref_locs.PosY/pow(2,13)
+    ref_locs.PosX = ref_locs.PosX/pow(2, 13)
+    ref_locs.PosY = ref_locs.PosY/pow(2, 13)
     cellexp = plt.imread(img)
     h, w, _ = cellexp.shape
     h = h/256
@@ -263,9 +272,10 @@ def ref_map(file, img, top, bottom, left, right):
     ax.get_xaxis().set_minor_locator(MultipleLocator(1))
     ax.get_yaxis().set_minor_locator(MultipleLocator(1))
     ax.imshow(cellexp, extent=(left, right+1, bottom, top+1))
-    g = sns.scatterplot(x='PosX', y='PosY', hue='Check', data=ref_locs, ax=ax, marker='.', size=2, edgecolor=None, palette=sns.color_palette('bright',3))
-    g.legend([],[], frameon=False)
+    g = sns.scatterplot(x='PosX', y='PosY', hue='Check', data=ref_locs, ax=ax, marker='.', size=2, edgecolor=None, palette=sns.color_palette('bright', 3))
+    g.legend([], [], frameon=False)
     fig.savefig("Refs.png", dpi=256)
+
 
 def print_trainers_by_skill():
     trainers = {}
@@ -275,11 +285,12 @@ def print_trainers_by_skill():
         for skill, value in npc.trained_skills():
             trainers[skill] += [(npc.name, value)]
     for skill in trainers:
-        trainers[skill] = sorted(trainers[skill], key=lambda x:x[1], reverse=True)
+        trainers[skill] = sorted(trainers[skill], key=lambda x: x[1], reverse=True)
         print(skill)
         for trainer, value in trainers[skill]:
             print(trainer, value)
         print()
+
 
 def deprecated_check():
     deprecated_ids = []
@@ -325,16 +336,17 @@ def deprecated_check():
             if id in script.text:
                 print(script.id + ":", id)
     print("\n## Deprecated Leveled List Items: ##")
-    for list in mwglobals.records["LEVI"]:
-        for item in list.items:
+    for lev_item in mwglobals.records["LEVI"]:
+        for item in lev_item.items:
             if item.id in deprecated_ids:
-                print(list.id + ":", item.id)
+                print(lev_item.id + ":", item.id)
     print("\n## Deprecated Leveled List Creatures: ##")
-    for list in mwglobals.records["LEVC"]:
-        for creature in list.creatures:
+    for lev_crea in mwglobals.records["LEVC"]:
+        for creature in lev_crea.creatures:
             if creature.id in deprecated_ids:
-                print(list.id + ":", creature.id)
+                print(lev_crea.id + ":", creature.id)
     print()
+
 
 def mod_shortcut(obj):
     if obj.file_name.startswith("Tamriel_"):
@@ -345,6 +357,7 @@ def mod_shortcut(obj):
         return "SHOTN"
     elif obj.file_name.startswith("Cyrodiil_"):
         return "PC3"
+
 
 def view_heightmap(window_width=800, window_height=600, downscale=5, lod=False):
     min_x = 0
@@ -361,9 +374,9 @@ def view_heightmap(window_width=800, window_height=600, downscale=5, lod=False):
         elif land.grid_y > max_y:
             max_y = land.grid_y
     if lod:
-        cell_size = LAND_LOD_SIZE
+        cell_size = mwglobals.LAND_LOD_SIZE
     else:
-        cell_size = int(LAND_SIZE / downscale)
+        cell_size = int(mwglobals.LAND_SIZE / downscale)
     world_width = (max_x - min_x) * cell_size
     world_height = (max_y - min_y) * cell_size
     half_width = int(world_width / 2)
@@ -383,9 +396,9 @@ def view_heightmap(window_width=800, window_height=600, downscale=5, lod=False):
         for i in range(cell_size):
             for j in range(cell_size):
                 if lod:
-                    height = land.lod_heights[i + j * LAND_LOD_SIZE]
+                    height = land.lod_heights[i + j * mwglobals.LAND_LOD_SIZE]
                 else:
-                    height = int(land.heights[i * downscale + j * downscale * LAND_SIZE] / 10)
+                    height = int(land.heights[i * downscale + j * downscale * mwglobals.LAND_SIZE] / 10)
                 color = "#{0:02x}{0:02x}{0:02x}".format(height) if height >= 0 else "#{0:02x}{0:02x}{1:02x}".format(255 + height, 255)
                 img.put(color, (x + i, y + cell_size - j))
     canvas.create_image((half_width, half_height), image=img, state="normal")

@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwCONT(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -25,12 +26,12 @@ class MwCONT(MwRecord):
     
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Script|", "script"),
-        ("\n|Organic|", "organic", False),
-        ("\n|Respawns|", "respawns", False),
-        ("\n|Max Weight|    {:.2f}", "max_weight"),
-        ("\n|Model|", "model"),
-        ("\n|Items|", "items")
+            ("\n|Script|", "script"),
+            ("\n|Organic|", "organic", False),
+            ("\n|Respawns|", "respawns", False),
+            ("\n|Max Weight|    {:.2f}", "max_weight"),
+            ("\n|Model|", "model"),
+            ("\n|Items|", "items")
         ])
     
     def __str__(self):

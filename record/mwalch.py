@@ -4,10 +4,11 @@ from record.mwench import MwENCHSingle
 
 do_autocalc = False
 
+
 class MwALCH(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
-    
+
     def load(self):
         self.id = self.get_subrecord_string("NAME")
         self.model = self.get_subrecord_string("MODL")
@@ -15,7 +16,7 @@ class MwALCH(MwRecord):
         self.weight = self.get_subrecord_float("ALDT", start=0, length=4)
         self.value = self.get_subrecord_int("ALDT", start=4, length=4)
         self.autocalc = self.get_subrecord_int("ALDT", start=8, length=4) == 1
-        
+
         self.enchantments = []
         for i in range(self.num_subrecords("ENAM")):
             enchantment = MwENCHSingle()
@@ -28,14 +29,14 @@ class MwALCH(MwRecord):
             enchantment.mag_min = self.get_subrecord_int("ENAM", index=i, start=16, length=4)
             enchantment.mag_max = enchantment.mag_min
             self.enchantments += [enchantment]
-        
+
         self.icon = self.get_subrecord_string("TEXT")
         self.script = self.get_subrecord_string("SCRI")
-        
+
         if do_autocalc and self.autocalc:
             self.autocalc_stats()
         mwglobals.object_ids[self.id] = self
-    
+
     def autocalc_stats(self):
         cost = 0
         for enchantment in self.enchantments:
@@ -46,7 +47,7 @@ class MwALCH(MwRecord):
                 base_cost += (enchantment.duration + enchantment.mag_min) * multiplier
             cost += base_cost
         self.value = round(cost)
-    
+
     def wiki_entry(self, is_beverage=True):
         enchantment_list = ""
         num_enchantments = len(self.enchantments)
@@ -55,31 +56,31 @@ class MwALCH(MwRecord):
             if i != num_enchantments - 1:
                 enchantment_list += "<br>\n"
         if is_beverage:
-            return "|-\n" \
-            "|[[File:TD3-icon-potion-" + self.icon + ".png]]\n" \
-            "|'''{{Anchor|" + self.name + "}}'''<br>{{Small|" + self.id + "}}\n" \
-            "| style=\"text-align:left;\" |\n" + enchantment_list + "\n" \
-            "|" + mwglobals.decimal_format(self.weight) + "||" + str(self.value)
-        return "|-\n" \
-        "|[[File:TD3-icon-potion-" + self.icon + ".png]]\n" \
-        "|'''{{Anchor|" + self.name + "}}'''\n" \
-        "|" + self.id + "\n" \
-        "| style=\"text-align:left;\" |\n" + enchantment_list + "\n" \
-        "|" + mwglobals.decimal_format(self.weight) + "||" + str(self.value)
-    
+            return ("|-\n"
+                    "|[[File:TD3-icon-potion-" + self.icon + ".png]]\n"
+                    "|'''{{Anchor|" + self.name + "}}'''<br>{{Small|" + self.id + "}}\n"
+                    "| style=\"text-align:left;\" |\n" + enchantment_list + "\n"
+                    "|" + mwglobals.decimal_format(self.weight) + "||" + str(self.value))
+        return ("|-\n"
+                "|[[File:TD3-icon-potion-" + self.icon + ".png]]\n"
+                "|'''{{Anchor|" + self.name + "}}'''\n"
+                "|" + self.id + "\n"
+                "| style=\"text-align:left;\" |\n" + enchantment_list + "\n"
+                "|" + mwglobals.decimal_format(self.weight) + "||" + str(self.value))
+
     def record_details(self):
         return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Script|", "script"),
-        ("\n|Model|", "model"),
-        ("\n|Icon|", "icon"),
-        ("\n|Weight|    {:.2f}", "weight"),
-        ("\n|Value|", "value"),
-        ("\n|Auto Calculate Value|", "autocalc", False),
-        ("\n|Enchantments|", "enchantments", [])
+            ("\n|Script|", "script"),
+            ("\n|Model|", "model"),
+            ("\n|Icon|", "icon"),
+            ("\n|Weight|    {:.2f}", "weight"),
+            ("\n|Value|", "value"),
+            ("\n|Auto Calculate Value|", "autocalc", False),
+            ("\n|Enchantments|", "enchantments", [])
         ])
-    
+
     def __str__(self):
         return "{} [{}]".format(self.name, self.id)
-    
+
     def diff(self, other):
         MwRecord.diff(self, other, ["model", "name", "weight", "value", "autocalc", "enchantments", "icon", "script"])

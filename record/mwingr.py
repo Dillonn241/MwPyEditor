@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwINGR(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -32,16 +33,16 @@ class MwINGR(MwRecord):
     
     def record_details(self):
         string = "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-        ("\n|Script|", "script"),
-        ("\n|Weight|    {:.2f}", "weight"),
-        ("\n|Value|", "value"),
-        ("\n|Model|", "model"),
-        ("\n|Icon|", "icon"),
+            ("\n|Script|", "script"),
+            ("\n|Weight|    {:.2f}", "weight"),
+            ("\n|Value|", "value"),
+            ("\n|Model|", "model"),
+            ("\n|Icon|", "icon")
         ])
         for i in range(4):
-            if self.effects[i] != None:
+            if self.effects[i] is not None:
                 string += "\n|Effect " + str(i + 1) + "|    " + self.effects[i]
-                if self.skill_attributes[i] != None:
+                if self.skill_attributes[i] is not None:
                     string += " " + str(self.skill_attributes[i])
         return string
     
@@ -49,4 +50,5 @@ class MwINGR(MwRecord):
         return "{} [{}]".format(self.name, self.id)
     
     def diff(self, other):
-        MwRecord.diff(self, other, ["model", "name", "weight", "value", "effects", "skill_attributes", "script", "icon"])
+        MwRecord.diff(self, other, ["model", "name", "weight", "value", "effects", "skill_attributes", "script",
+                                    "icon"])

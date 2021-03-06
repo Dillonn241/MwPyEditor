@@ -1,6 +1,7 @@
 import mwglobals
 from mwrecord import MwRecord
 
+
 class MwSTAT(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
@@ -12,8 +13,8 @@ class MwSTAT(MwRecord):
     
     def record_details(self):
         return MwRecord.format_record_details(self, [
-        ("|ID|", "id"),
-        ("\n|Model|", "model")
+            ("|ID|", "id"),
+            ("\n|Model|", "model")
         ])
     
     def __str__(self):
