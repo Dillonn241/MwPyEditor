@@ -129,6 +129,9 @@ IGNORE AFTER THIS
 def main():
     start_time = time.time()
 
+    with open('mwpyeditor_settings.txt') as file:
+        line = file.readline().split('=')
+        setattr(sys.modules['mwpyeditor.core.mwglobals'], line[0], line[1])
     init_settings()
     init_plugins()
     testing_area()

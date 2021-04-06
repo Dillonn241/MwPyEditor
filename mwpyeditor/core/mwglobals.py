@@ -1,7 +1,7 @@
 from collections import defaultdict
 from enum import Enum
 
-DATA_PATH = "C:/Games/Morrowind/Data Files/"
+DATA_PATH = ''
 
 RECORDS_ALL = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', 'MGEF', 'SCPT', 'REGN', 'BSGN', 'LTEX',
                'STAT', 'DOOR', 'MISC', 'WEAP', 'CONT', 'SPEL', 'CREA', 'BODY', 'LIGH', 'ENCH', 'NPC_', 'ARMO', 'CLOT',
@@ -12,9 +12,8 @@ RECORDS_MOST = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', 
                 'STAT', 'DOOR', 'MISC', 'WEAP', 'CONT', 'SPEL', 'CREA', 'BODY', 'LIGH', 'ENCH', 'NPC_', 'ARMO', 'CLOT',
                 'REPA', 'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'LEVC', 'SNDG', 'SSCR']
 
-RECORDS_REFS = ['TES3', 'CLAS', 'RACE', 'SKIL', 'MGEF', 'STAT', 'DOOR', 'MISC', 'WEAP', 'CONT', 'CREA', 'BODY',
-                   'LIGH', 'NPC_', 'ARMO', 'CLOT', 'REPA', 'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH',
-                   'LEVC', 'CELL']
+RECORDS_REFS = ['TES3', 'CLAS', 'RACE', 'SKIL', 'MGEF', 'STAT', 'DOOR', 'MISC', 'WEAP', 'CONT', 'CREA', 'BODY', 'LIGH',
+                'NPC_', 'ARMO', 'CLOT', 'REPA', 'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVC', 'CELL']
 
 RECORDS_ITEMS = ['TES3', 'CLAS', 'RACE', 'SKIL', 'MGEF', 'MISC', 'WEAP', 'CONT', 'CREA', 'LIGH', 'NPC_', 'ARMO', 'CLOT',
                  'REPA', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'CELL']
