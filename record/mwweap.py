@@ -1,5 +1,5 @@
-import mwglobals
-from mwrecord import MwRecord
+from core import mwglobals
+from core.mwrecord import MwRecord
 
 
 class MwWEAP(MwRecord):
@@ -31,6 +31,7 @@ class MwWEAP(MwRecord):
         self.id_ = self.parse_string('NAME')
         self.model = self.parse_string('MODL')
         self.name = self.parse_string('FNAM')
+
         self.weight = self.parse_float('WPDT')
         self.value = self.parse_uint('WPDT', start=4)
         self.type_id = self.parse_uint('WPDT', start=8, length=2)
@@ -44,7 +45,6 @@ class MwWEAP(MwRecord):
         self.slash_max = self.parse_uint('WPDT', start=25, length=1)
         self.thrust_min = self.parse_uint('WPDT', start=26, length=1)
         self.thrust_max = self.parse_uint('WPDT', start=27, length=1)
-
         flags = self.parse_uint('WPDT', start=28)
         self.ignores_normal_weapon_resistance = (flags & 0x1) == 0x1
         self.silver_weapon = (flags & 0x2) == 0x2
@@ -54,6 +54,38 @@ class MwWEAP(MwRecord):
         self.script = self.parse_string('SCRI')
 
         mwglobals.object_ids[self.id_] = self
+
+    def save(self):
+        self.clear_subrecords()
+        self.add_string(self.id_, 'NAME')
+        self.add_string(self.model, 'MODL')
+        self.add_string(self.name, 'FNAM')
+
+        sub_wpdt = self.add_subrecord('WPDT')
+        sub_wpdt.add_float(self.weight)
+        sub_wpdt.add_uint(self.value)
+        sub_wpdt.add_uint(self.type_id, length=2)
+        sub_wpdt.add_uint(self.health, length=2)
+        sub_wpdt.add_float(self.speed)
+        sub_wpdt.add_float(self.reach)
+        sub_wpdt.add_uint(self.enchantment, length=2)
+        sub_wpdt.add_uint(self.chop_min, length=1)
+        sub_wpdt.add_uint(self.chop_max, length=1)
+        sub_wpdt.add_uint(self.slash_min, length=1)
+        sub_wpdt.add_uint(self.slash_max, length=1)
+        sub_wpdt.add_uint(self.thrust_min, length=1)
+        sub_wpdt.add_uint(self.thrust_max, length=1)
+        flags = 0x0
+        if self.ignores_normal_weapon_resistance:
+            flags |= 0x1
+        if self.silver_weapon:
+            flags |= 0x2
+        sub_wpdt.add_uint(flags)
+
+        self.add_string(self.icon, 'ITEX')
+        self.add_string(self.enchanting, 'ENAM')
+        self.add_string(self.script, 'SCRI')
+        self.save_deleted()
 
     def get_type(self):
         return mwglobals.WEAP_TYPES[self.type_id]

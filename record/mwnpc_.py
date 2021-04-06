@@ -1,7 +1,7 @@
 import math
 
-import mwglobals
-from mwrecord import MwRecord
+from core import mwglobals
+from core.mwrecord import MwRecord
 
 
 class MwNPC_(MwRecord):

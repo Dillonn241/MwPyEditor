@@ -1,5 +1,5 @@
-import mwglobals
-from mwrecord import MwRecord
+from core import mwglobals
+from core.mwrecord import MwRecord
 from record.mwench import load_enchantments
 
 

@@ -85,6 +85,7 @@ class MwRecord:
         subarray = self.subrecords.get(subtype, None)
         if subarray:
             return [x.parse_int() for x in subarray]
+        return []
 
     def parse_uint(self, subtype, index=0, start=0, length=4):
         subarray = self.subrecords.get(subtype, None)
@@ -96,6 +97,7 @@ class MwRecord:
         subarray = self.subrecords.get(subtype, None)
         if subarray:
             return [x.parse_uint() for x in subarray]
+        return []
 
     def parse_float(self, subtype, index=0, start=0):
         subarray = self.subrecords.get(subtype, None)
@@ -107,6 +109,7 @@ class MwRecord:
         subarray = self.subrecords.get(subtype, None)
         if subarray:
             return [x.parse_float() for x in subarray]
+        return []
 
     def parse_string(self, subtype, index=0, start=0, length=None):
         subarray = self.subrecords.get(subtype, None)
@@ -118,6 +121,7 @@ class MwRecord:
         subarray = self.subrecords.get(subtype, None)
         if subarray:
             return [x.parse_string() for x in subarray]
+        return []
 
     def add_int(self, value, subtype, length=4):
         if value is not None:
@@ -139,11 +143,11 @@ class MwRecord:
         return len(self.subrecords.get(subtype, []))
 
     def format_record_details(self, record_detail_list):
-        record_detail_list.extend([
+        record_detail_list += [
             ("\n|Deleted|", 'deleted', False),
             ("\n|Persists|", 'persists', False),
             ("\n|Blocked|", 'blocked', False)
-        ])
+        ]
         string = []
         for record_detail in record_detail_list:
             if hasattr(self, record_detail[1]):

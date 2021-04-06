@@ -1,8 +1,8 @@
 import copy
 from collections import defaultdict
 
-import mwglobals
-from mwrecord import MwRecord
+from core import mwglobals
+from core.mwrecord import MwRecord
 from record import mwligh
 
 init_references = False
@@ -173,7 +173,7 @@ class MwCELL(MwRecord):
                                         x for x in cell_copy.references]
         return cell_copy
 
-    def save(self):
+    """def save(self):
         self.clear_subrecords()
         self.add_string(self.id_, 'NAME')
         sub_data = self.add_subrecord('DATA')
@@ -274,7 +274,7 @@ class MwCELL(MwRecord):
                 nam0 = num_refs - i
                 self.add_uint(nam0, 'NAM0')
             save_reference()
-        self.save_deleted()
+        self.save_deleted()"""
 
     def get_region(self):
         if not self.is_interior and self.region is None:

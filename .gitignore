@@ -1,5 +1,4 @@
 
-.idea/MwEspReader.iml
-.idea/modules.xml
-.idea/misc.xml
-.idea/inspectionProfiles/profiles_settings.xml
+*.iml
+*.xml
+*.pyc

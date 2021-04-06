@@ -1,4 +1,4 @@
-from mwrecord import MwRecord
+from core.mwrecord import MwRecord
 
 
 class MwSSCR(MwRecord):

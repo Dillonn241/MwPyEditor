@@ -8,11 +8,22 @@ RECORDS_ALL = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', '
                'REPA', 'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'LEVC', 'CELL', 'LAND', 'PGRD',
                'SNDG', 'DIAL', 'INFO', 'SSCR']
 
-RECORDS_MOST = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', 'MGEF', 'SCPT', 'REGN', 'BSGN', 'LTEX', 'STAT',
-                'DOOR', 'MISC', 'WEAP', 'CONT', 'SPEL', 'CREA', 'BODY', 'LIGH', 'ENCH', 'NPC_', 'ARMO', 'CLOT', 'REPA',
-                'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'LEVC', 'SNDG', 'SSCR']
+RECORDS_MOST = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', 'MGEF', 'SCPT', 'REGN', 'BSGN', 'LTEX',
+                'STAT', 'DOOR', 'MISC', 'WEAP', 'CONT', 'SPEL', 'CREA', 'BODY', 'LIGH', 'ENCH', 'NPC_', 'ARMO', 'CLOT',
+                'REPA', 'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'LEVC', 'SNDG', 'SSCR']
+
+RECORDS_REFS = ['TES3', 'CLAS', 'RACE', 'SKIL', 'MGEF', 'STAT', 'DOOR', 'MISC', 'WEAP', 'CONT', 'CREA', 'BODY',
+                   'LIGH', 'NPC_', 'ARMO', 'CLOT', 'REPA', 'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH',
+                   'LEVC', 'CELL']
+
+RECORDS_ITEMS = ['TES3', 'CLAS', 'RACE', 'SKIL', 'MGEF', 'MISC', 'WEAP', 'CONT', 'CREA', 'LIGH', 'NPC_', 'ARMO', 'CLOT',
+                 'REPA', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'CELL']
 
 RECORDS_MIN = ['TES3', 'CLAS', 'RACE', 'SKIL', 'MGEF']
+
+RECORDS_DIALOGUE = ['TES3', 'DIAL', 'INFO']
+
+RECORDS_NONE = ['TES3']
 
 ATTRIBUTES = ["Strength", "Intelligence", "Willpower", "Agility", "Speed", "Endurance", "Personality", "Luck"]
 SPECIALIZATIONS = ["Magic", "Stealth", "Combat"]
