@@ -5,41 +5,50 @@ from mwrecord import MwRecord
 class MwGMST(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
-    
+        self.id_ = ''
+        self.value = None
+
     def load(self):
-        self.name = self.get_subrecord_string("NAME")
-        if "STRV" in self.subrecords:
-            self.type = "String"
-            self.value = self.get_subrecord_string("STRV")
-        elif "INTV" in self.subrecords:
-            self.type = "Integer"
-            self.value = self.get_subrecord_int("INTV")
-        elif "FLTV" in self.subrecords:
-            self.type = "Float"
-            self.value = self.get_subrecord_float("FLTV")
+        self.id_ = self.parse_string('NAME')
+        if 'FLTV' in self.subrecords:
+            self.value = self.parse_float('FLTV')
+        elif 'INTV' in self.subrecords:
+            self.value = self.parse_int('INTV')
         else:
-            self.type = "String"
-            self.value = None
-        mwglobals.game_settings[self.name] = self.value
-    
+            self.value = self.parse_string('STRV')
+
+        mwglobals.game_settings[self.id_] = self.value
+
+    def save(self):
+        self.clear_subrecords()
+        self.add_string(self.id_, 'NAME', terminator=False)
+        if type(self.value) == float:
+            self.add_float(self.value, 'FLTV')
+        elif type(self.value) == int:
+            self.add_int(self.value, 'INTV')
+        else:
+            self.add_string(self.value, 'STRV', terminator=False)
+        self.save_deleted()
+
+    def set_game_setting(self, value):
+        self.value = value
+        mwglobals.game_settings[self.id_] = self.value
+
     def record_details(self):
-        if self.type == "Integer":
-            f = ":d"
-        elif self.type == "Float":
-            f = ":.4f"
+        if 'FLTV' in self.subrecords:
+            format_str = ':.4f'
+        elif 'INTV' in self.subrecords:
+            format_str = ':d'
         else:
-            f = ""
+            format_str = ''
         return MwRecord.format_record_details(self, [
-            ("|Name|", "name"),
-            ("\n|Type|", "type"),
-            ("\n|Value|    {" + f + "}", "value")
+            ("|ID|", 'id_'),
+            ("\n|Type|", 'type'),
+            (f"\n|Value|    {{{format_str}}}", 'value')
         ])
-    
+
     def __str__(self):
-        return "{} = {}".format(self.name, self.value)
-    
-    def get_id(self):
-        return self.name
-    
+        return f"{self.id_} = {self.value}"
+
     def diff(self, other):
-        MwRecord.diff(self, other, ["type", "value"])
+        return MwRecord.diff(self, other, ['type', 'value'])

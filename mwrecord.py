@@ -3,33 +3,42 @@ import struct
 
 
 class MwRecord:
+    diff_list = ['deleted', 'persists', 'blocked']
+
     def __init__(self):
-        self.clear_subrecords()
-    
+        self.subrecords = {}
+        self.ordered_subrecords = []
+        self.file_name = ''
+        self.marked_deleted = False
+        self.persists = False
+        self.initially_disabled = False
+        self.blocked = False
+        self.deleted = False
+
     def clear_subrecords(self):
         self.subrecords = {}
         self.ordered_subrecords = []
-    
+
     def get_record_type(self):
         return self.__class__.__name__[2:]
-    
+
     def load_flags(self, flags):
         self.marked_deleted = (flags & 0x20) == 0x20
         self.persists = (flags & 0x400) == 0x400
         self.initially_disabled = (flags & 0x800) == 0x800
         self.blocked = (flags & 0x2000) == 0x2000
-    
+
     def load_deleted(self):
-        if self.get_record_type() == "CELL":
+        if self.get_record_type() == 'CELL':
             self.deleted = False
             for subrecord in self.ordered_subrecords:
-                if subrecord == "DELE":
+                if subrecord == 'DELE':
                     self.deleted = True
                     break
-                elif subrecord == "FRMR":
+                elif subrecord == 'FRMR':
                     break
         else:
-            self.deleted = "DELE" in self.subrecords
+            self.deleted = 'DELE' in self.subrecords
 
     def save_flags(self):
         flags = 0x0
@@ -42,82 +51,99 @@ class MwRecord:
         if self.blocked:
             flags |= 0x2000
         return flags
-    
+
     def save_deleted(self):
         if self.deleted:
-            self.add_subrecord_int(0, "DELE")
-    
-    def add_subrecord(self, subtype, subdata=b""):
+            self.add_int(0, 'DELE')
+
+    def add_subrecord(self, subtype, subdata=b''):
         subrecord = Subrecord(subtype, subdata)
         if subtype not in self.subrecords:
             self.subrecords[subtype] = []
-        self.subrecords[subtype] += [subrecord]
-        self.ordered_subrecords += [subrecord]
+        self.subrecords[subtype].append(subrecord)
+        self.ordered_subrecords.append(subrecord)
         return subrecord
-    
+
     def get_subrecord(self, subtype, index=0):
         subarray = self.subrecords.get(subtype, None)
-        if subarray is not None:
+        if subarray and 0 <= index < len(subarray):
             return subarray[index]
-    
-    def get_subrecord_data(self, subtype, index=0, start=None, length=None):
+
+    def get_subrecord_data(self, subtype, index=0, start=0, length=None):
         subarray = self.subrecords.get(subtype, None)
-        if subarray is not None:
+        if subarray and 0 <= index < len(subarray):
             subrecord = subarray[index]
             return subrecord.get_data(start=start, length=length)
-    
-    def get_subrecord_int(self, subtype, index=0, start=None, length=None):
+
+    def parse_int(self, subtype, index=0, start=0, length=4):
         subarray = self.subrecords.get(subtype, None)
-        if subarray is not None:
+        if subarray and 0 <= index < len(subarray):
             subrecord = subarray[index]
-            return subrecord.get_int(start=start, length=length)
-    
-    def get_subrecord_uint(self, subtype, index=0, start=None, length=None):
+            return subrecord.parse_int(start=start, length=length)
+
+    def parse_int_array(self, subtype):
         subarray = self.subrecords.get(subtype, None)
-        if subarray is not None:
-            subrecord = subarray[index]
-            return subrecord.get_uint(start=start, length=length)
-    
-    def get_subrecord_float(self, subtype, index=0, start=None, length=None):
+        if subarray:
+            return [x.parse_int() for x in subarray]
+
+    def parse_uint(self, subtype, index=0, start=0, length=4):
         subarray = self.subrecords.get(subtype, None)
-        if subarray is not None:
+        if subarray and 0 <= index < len(subarray):
             subrecord = subarray[index]
-            return subrecord.get_float(start=start, length=length)
-    
-    def get_subrecord_string(self, subtype, index=0, start=None, length=None):
+            return subrecord.parse_uint(start=start, length=length)
+
+    def parse_uint_array(self, subtype):
         subarray = self.subrecords.get(subtype, None)
-        if subarray is not None:
+        if subarray:
+            return [x.parse_uint() for x in subarray]
+
+    def parse_float(self, subtype, index=0, start=0):
+        subarray = self.subrecords.get(subtype, None)
+        if subarray and 0 <= index < len(subarray):
             subrecord = subarray[index]
-            return subrecord.get_string(start=start, length=length)
-    
-    def add_subrecord_int(self, value, subtype, length=4):
+            return subrecord.parse_float(start=start)
+
+    def parse_float_array(self, subtype):
+        subarray = self.subrecords.get(subtype, None)
+        if subarray:
+            return [x.parse_float() for x in subarray]
+
+    def parse_string(self, subtype, index=0, start=0, length=None):
+        subarray = self.subrecords.get(subtype, None)
+        if subarray and 0 <= index < len(subarray):
+            subrecord = subarray[index]
+            return subrecord.parse_string(start=start, length=length)
+
+    def parse_string_array(self, subtype):
+        subarray = self.subrecords.get(subtype, None)
+        if subarray:
+            return [x.parse_string() for x in subarray]
+
+    def add_int(self, value, subtype, length=4):
         if value is not None:
             self.add_subrecord(subtype).add_int(value, length=length)
-    
-    def add_subrecord_uint(self, value, subtype, length=4):
+
+    def add_uint(self, value, subtype, length=4):
         if value is not None:
             self.add_subrecord(subtype).add_uint(value, length=length)
-    
-    def add_subrecord_float(self, value, subtype):
+
+    def add_float(self, value, subtype):
         if value is not None:
             self.add_subrecord(subtype).add_float(value)
-    
-    def add_subrecord_string(self, value, subtype, terminator=True):
+
+    def add_string(self, value, subtype, length=None, terminator=True):
         if value is not None:
-            self.add_subrecord(subtype).add_string(value, terminator=terminator)
-    
+            self.add_subrecord(subtype).add_string(value, length=length, terminator=terminator)
+
     def num_subrecords(self, subtype):
-        subarray = self.subrecords.get(subtype, None)
-        if subarray is not None:
-            return len(subarray)
-        return 0
-    
+        return len(self.subrecords.get(subtype, []))
+
     def format_record_details(self, record_detail_list):
-        record_detail_list += [
-            ("\n|Deleted|", "deleted", False),
-            ("\n|Persists|", "persists", False),
-            ("\n|Blocked|", "blocked", False)
-        ]
+        record_detail_list.extend([
+            ("\n|Deleted|", 'deleted', False),
+            ("\n|Persists|", 'persists', False),
+            ("\n|Blocked|", 'blocked', False)
+        ])
         string = []
         for record_detail in record_detail_list:
             if hasattr(self, record_detail[1]):
@@ -126,87 +152,99 @@ class MwRecord:
                     value = value()
                 default = record_detail[2] if len(record_detail) > 2 else None
                 if value != default:
-                    display = record_detail[0]
-                    if "{" not in record_detail[0]:
-                        display += "    {}"
-                    string.append(display.format(value))
-        return "".join(string)
-    
+                    if '{' in record_detail[0]:
+                        string.append(record_detail[0].format(value))
+                    else:
+                        string.append(f"{record_detail[0]}    {value}")
+        return ''.join(string)
+
     def get_id(self):
-        return self.id
-    
-    def diff(self, other, attrs=[]):
-        all_attrs = attrs + ["deleted", "persists", "blocked"]
-        string = []
-        for attr in all_attrs:
-            has_attr_self = hasattr(self, attr)
-            has_attr_other = hasattr(other, attr)
+        return getattr(self, 'id_', str(self))
+
+    def diff(self, other, attr_names=None):
+        def diff_attr():
+            has_attr_self = hasattr(self, attr_name)
+            has_attr_other = hasattr(other, attr_name)
             if has_attr_self:
+                attr_self = getattr(self, attr_name)
+                if callable(attr_self):
+                    attr_self = attr_self()
                 if has_attr_other:
-                    get_attr_self = str(getattr(self, attr))
-                    get_attr_other = str(getattr(other, attr))
-                    if get_attr_self != get_attr_other:
-                        string.append("\n\t{0}: {1}\n\t{0}: {2}".format(attr, get_attr_self, get_attr_other))
+                    attr_other = getattr(other, attr_name)
+                    if callable(attr_other):
+                        attr_other = attr_other()
+                    if attr_self != attr_other:
+                        string.append(f"\n\t{attr_name}: {attr_self}\n\t{attr_name}: {attr_other}")
                 else:
-                    string.append("\n\tRemoved {}: {}".format(attr, getattr(self, attr)))
+                    string.append(f"\n\tRemoved {attr_name}: {attr_self}")
             elif has_attr_other:
-                string.append("\n\tAdded {}: {}".format(attr, getattr(other, attr)))
+                attr_other = getattr(other, attr_name)
+                if callable(attr_other):
+                    attr_other = attr_other()
+                string.append(f"\n\tAdded {attr_name}: {attr_other}")
+
+        string = []
+        for attr_name in MwRecord.diff_list:
+            diff_attr()
+        if attr_names:
+            for attr_name in attr_names:
+                diff_attr()
         if string:
-            print("Changed", str(self) + "".join(string))
+            return f"Changed {self}{''.join(string)}"
 
 
 class Subrecord:
     def __init__(self, subtype, subdata):
         self.record_type = subtype
         self.data = subdata
-    
-    def get_data(self, start=None, length=None):
-        if start is not None:
-            if length is not None:
-                return self.data[start:start + length]
-            else:
-                return self.data[start:]
-        elif length is not None:
-            return self.data[:length]
-        return self.data
-    
-    def get_int(self, start=None, length=None):
-        subdata = self.get_data(start=start, length=length)
-        return int.from_bytes(subdata, byteorder="little", signed=True)
-    
-    def get_uint(self, start=None, length=None):
-        subdata = self.get_data(start=start, length=length)
-        return int.from_bytes(subdata, byteorder="little", signed=False)
-    
-    def get_float(self, start=None, length=None):
-        subdata = self.get_data(start=start, length=length)
-        f = struct.unpack("<f", subdata)[0]
-        if math.isnan(f):
-            return 0.0
-        return f
-    
-    def get_string(self, start=None, length=None):
+
+    def get_data(self, start=0, length=None):
+        return self.data[start:start + length] if length else self.data[start:]
+
+    def parse_int(self, start=0, length=4):
+        subdata = self.data[start:start + length]
+        return int.from_bytes(subdata, byteorder='little', signed=True)
+
+    def parse_uint(self, start=0, length=4):
+        subdata = self.data[start:start + length]
+        return int.from_bytes(subdata, byteorder='little', signed=False)
+
+    def parse_float(self, start=0):
+        subdata = self.data[start:start + 4]
+        f = struct.unpack('<f', subdata)[0]
+        return 0.0 if math.isnan(f) else f
+
+    def parse_string(self, start=0, length=None):
         subdata = self.get_data(start=start, length=length)
         if 0x00 in subdata:  # zstring
             subdata = subdata[:subdata.index(0x00)]
-        format_str = str(len(subdata)) + "s"
-        return struct.unpack(format_str, subdata)[0].decode("mbcs")
-    
+        format_str = f"{len(subdata)}s"
+        return struct.unpack(format_str, subdata)[0].decode('mbcs')
+
     def add_int(self, value, length=4):
-        self.data += int.to_bytes(value, byteorder="little", length=length, signed=True)
-    
+        if value is not None:
+            self.data += int.to_bytes(value, byteorder='little', length=length, signed=True)
+
     def add_uint(self, value, length=4):
-        self.data += int.to_bytes(value, byteorder="little", length=length, signed=False)
-    
+        if value is not None:
+            self.data += int.to_bytes(value, byteorder='little', length=length, signed=False)
+
     def add_float(self, value):
-        self.data += struct.pack("<f", value)
-    
-    def add_string(self, value, terminator=True):
-        format_str = str(len(value)) + "s"
-        subdata = struct.pack(format_str, value.encode("mbcs"))
-        if terminator:
-            subdata += struct.pack("b", 0x00)
-        self.data += subdata
-    
+        if value is not None:
+            self.data += struct.pack('<f', value)
+
+    def add_string(self, value, length=None, terminator=True):
+        if value is not None:
+            if length:
+                if length < len(value):
+                 value = value[:length]
+                elif length > len(value):
+                    value = f"{value:\x00<{length}}"
+            format_str = f"{len(value)}s"
+            subdata = struct.pack(format_str, value.encode('mbcs'))
+            if terminator and not length:
+                subdata += struct.pack('b', 0x00)
+            self.data += subdata
+
     def __repr__(self):
-        return "{}: {}".format(self.record_type, self.data)
+        return f"{self.record_type}: {self.data}"

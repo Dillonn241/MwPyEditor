@@ -3,16 +3,16 @@ from enum import Enum
 
 DATA_PATH = "C:/Games/Morrowind/Data Files/"
 
-RECORDS_ALL = ["TES3", "GMST", "GLOB", "CLAS", "FACT", "RACE", "SOUN", "SKIL", "MGEF", "SCPT", "REGN", "BSGN", "LTEX",
-               "STAT", "DOOR", "MISC", "WEAP", "CONT", "SPEL", "CREA", "BODY", "LIGH", "ENCH", "NPC_", "ARMO", "CLOT",
-               "REPA", "ACTI", "APPA", "LOCK", "PROB", "INGR", "BOOK", "ALCH", "LEVI", "LEVC", "CELL", "LAND", "PGRD",
-               "SNDG", "DIAL", "INFO", "SSCR"]
+RECORDS_ALL = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', 'MGEF', 'SCPT', 'REGN', 'BSGN', 'LTEX',
+               'STAT', 'DOOR', 'MISC', 'WEAP', 'CONT', 'SPEL', 'CREA', 'BODY', 'LIGH', 'ENCH', 'NPC_', 'ARMO', 'CLOT',
+               'REPA', 'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'LEVC', 'CELL', 'LAND', 'PGRD',
+               'SNDG', 'DIAL', 'INFO', 'SSCR']
 
-RECORDS_MOST = ["TES3", "GMST", "GLOB", "CLAS", "FACT", "RACE", "SOUN", "SKIL", "MGEF", "SCPT", "REGN", "BSGN", "LTEX",
-                "STAT", "DOOR", "MISC", "WEAP", "CONT", "SPEL", "CREA", "BODY", "LIGH", "ENCH", "NPC_", "ARMO", "CLOT",
-                "REPA", "ACTI", "APPA", "LOCK", "PROB", "INGR", "BOOK", "ALCH", "LEVI", "LEVC", "SNDG", "SSCR"]
+RECORDS_MOST = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', 'MGEF', 'SCPT', 'REGN', 'BSGN', 'LTEX', 'STAT',
+                'DOOR', 'MISC', 'WEAP', 'CONT', 'SPEL', 'CREA', 'BODY', 'LIGH', 'ENCH', 'NPC_', 'ARMO', 'CLOT', 'REPA',
+                'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'LEVC', 'SNDG', 'SSCR']
 
-RECORDS_MIN = ["TES3", "CLAS", "RACE", "SKIL", "MGEF"]
+RECORDS_MIN = ['TES3', 'CLAS', 'RACE', 'SKIL', 'MGEF']
 
 ATTRIBUTES = ["Strength", "Intelligence", "Willpower", "Agility", "Speed", "Endurance", "Personality", "Luck"]
 SPECIALIZATIONS = ["Magic", "Stealth", "Combat"]
@@ -21,32 +21,32 @@ SKILLS = ["Block", "Armorer", "Medium Armor", "Heavy Armor", "Blunt Weapon", "Lo
           "Unarmored", "Security", "Sneak", "Acrobatics", "Light Armor", "Short Blade", "Marksman", "Mercantile",
           "Speechcraft", "Hand-to-hand"]
 
-MAGIC_EFFECTS = ["WaterBreathing", "SwiftSwim", "WaterWalking", "Shield", "FireShield", "LightningShield",
-                 "FrostShield", "Burden", "Feather", "Jump", "Levitate", "SlowFall", "Lock", "Open", "FireDamage",
-                 "ShockDamage", "FrostDamage", "DrainAttribute", "DrainHealth", "DrainSpellpoints", "DrainFatigue",
-                 "DrainSkill", "DamageAttribute", "DamageHealth", "DamageMagicka", "DamageFatigue", "DamageSkill",
-                 "Poison", "WeaknessToFire", "WeaknessToFrost", "WeaknessToShock", "WeaknessToMagicka",
-                 "WeaknessToCommonDisease", "WeaknessToBlightDisease", "WeaknessToCorprusDisease", "WeaknessToPoison",
-                 "WeaknessToNormalWeapons", "DisintegrateWeapon", "DisintegrateArmor", "Invisibility", "Chameleon",
-                 "Light", "Sanctuary", "NightEye", "Charm", "Paralyze", "Silence", "Blind", "Sound", "CalmHumanoid",
-                 "CalmCreature", "FrenzyHumanoid", "FrenzyCreature", "DemoralizeHumanoid", "DemoralizeCreature",
-                 "RallyHumanoid", "RallyCreature", "Dispel", "Soultrap", "Telekinesis", "Mark", "Recall",
-                 "DivineIntervention", "AlmsiviIntervention", "DetectAnimal", "DetectEnchantment", "DetectKey",
-                 "SpellAbsorption", "Reflect", "CureCommonDisease", "CureBlightDisease", "CureCorprusDisease",
-                 "CurePoison", "CureParalyzation", "RestoreAttribute", "RestoreHealth", "RestoreSpellPoints",
-                 "RestoreFatigue", "RestoreSkill", "FortifyAttribute", "FortifyHealth", "FortifySpellpoints",
-                 "FortifyFatigue", "FortifySkill", "FortifyMagickaMultiplier", "AbsorbAttribute", "AbsorbHealth",
-                 "AbsorbSpellPoints", "AbsorbFatigue", "AbsorbSkill", "ResistFire", "ResistFrost", "ResistShock",
-                 "ResistMagicka", "ResistCommonDisease", "ResistBlightDisease", "ResistCorprusDisease", "ResistPoison",
-                 "ResistNormalWeapons", "ResistParalysis", "RemoveCurse", "TurnUndead", "SummonScamp",
-                 "SummonClannfear", "SummonDaedroth", "SummonDremora", "SummonAncestralGhost", "SummonSkeletalMinion",
-                 "SummonLeastBonewalker", "SummonGreaterBonewalker", "SummonBonelord", "SummonWingedTwilight",
-                 "SummonHunger", "SummonGoldensaint", "SummonFlameAtronach", "SummonFrostAtronach",
-                 "SummonStormAtronach", "FortifyAttackBonus", "CommandCreatures", "CommandHumanoids", "BoundDagger",
-                 "BoundLongsword", "BoundMace", "BoundBattleAxe", "BoundSpear", "BoundLongbow", "ExtraSpell",
-                 "BoundCuirass", "BoundHelm", "BoundBoots", "BoundShield", "BoundGloves", "Corpus", "Vampirism",
-                 "SummonCenturionSphere", "SunDamage", "StuntedMagicka", "SummonFabricant", "SummonCreature01",
-                 "SummonCreature02", "SummonCreature03", "SummonCreature04", "SummonCreature05"]
+MAGIC_EFFECTS = ['WaterBreathing', 'SwiftSwim', 'WaterWalking', 'Shield', 'FireShield', 'LightningShield',
+                 'FrostShield', 'Burden', 'Feather', 'Jump', 'Levitate', 'SlowFall', 'Lock', 'Open', 'FireDamage',
+                 'ShockDamage', 'FrostDamage', 'DrainAttribute', 'DrainHealth', 'DrainSpellpoints', 'DrainFatigue',
+                 'DrainSkill', 'DamageAttribute', 'DamageHealth', 'DamageMagicka', 'DamageFatigue', 'DamageSkill',
+                 'Poison', 'WeaknessToFire', 'WeaknessToFrost', 'WeaknessToShock', 'WeaknessToMagicka',
+                 'WeaknessToCommonDisease', 'WeaknessToBlightDisease', 'WeaknessToCorprusDisease', 'WeaknessToPoison',
+                 'WeaknessToNormalWeapons', 'DisintegrateWeapon', 'DisintegrateArmor', 'Invisibility', 'Chameleon',
+                 'Light', 'Sanctuary', 'NightEye', 'Charm', 'Paralyze', 'Silence', 'Blind', 'Sound', 'CalmHumanoid',
+                 'CalmCreature', 'FrenzyHumanoid', 'FrenzyCreature', 'DemoralizeHumanoid', 'DemoralizeCreature',
+                 'RallyHumanoid', 'RallyCreature', 'Dispel', 'Soultrap', 'Telekinesis', 'Mark', 'Recall',
+                 'DivineIntervention', 'AlmsiviIntervention', 'DetectAnimal', 'DetectEnchantment', 'DetectKey',
+                 'SpellAbsorption', 'Reflect', 'CureCommonDisease', 'CureBlightDisease', 'CureCorprusDisease',
+                 'CurePoison', 'CureParalyzation', 'RestoreAttribute', 'RestoreHealth', 'RestoreSpellPoints',
+                 'RestoreFatigue', 'RestoreSkill', 'FortifyAttribute', 'FortifyHealth', 'FortifySpellpoints',
+                 'FortifyFatigue', 'FortifySkill', 'FortifyMagickaMultiplier', 'AbsorbAttribute', 'AbsorbHealth',
+                 'AbsorbSpellPoints', 'AbsorbFatigue', 'AbsorbSkill', 'ResistFire', 'ResistFrost', 'ResistShock',
+                 'ResistMagicka', 'ResistCommonDisease', 'ResistBlightDisease', 'ResistCorprusDisease', 'ResistPoison',
+                 'ResistNormalWeapons', 'ResistParalysis', 'RemoveCurse', 'TurnUndead', 'SummonScamp',
+                 'SummonClannfear', 'SummonDaedroth', 'SummonDremora', 'SummonAncestralGhost', 'SummonSkeletalMinion',
+                 'SummonLeastBonewalker', 'SummonGreaterBonewalker', 'SummonBonelord', 'SummonWingedTwilight',
+                 'SummonHunger', 'SummonGoldensaint', 'SummonFlameAtronach', 'SummonFrostAtronach',
+                 'SummonStormAtronach', 'FortifyAttackBonus', 'CommandCreatures', 'CommandHumanoids', 'BoundDagger',
+                 'BoundLongsword', 'BoundMace', 'BoundBattleAxe', 'BoundSpear', 'BoundLongbow', 'ExtraSpell',
+                 'BoundCuirass', 'BoundHelm', 'BoundBoots', 'BoundShield', 'BoundGloves', 'Corpus', 'Vampirism',
+                 'SummonCenturionSphere', 'SunDamage', 'StuntedMagicka', 'SummonFabricant', 'SummonCreature01',
+                 'SummonCreature02', 'SummonCreature03', 'SummonCreature04', 'SummonCreature05']
 
 MAGIC_NAMES = ["Water Breathing", "Swift Swim", "Water Walking", "Shield", "Fire Shield", "Lightning Shield",
                "Frost Shield", "Burden", "Feather", "Jump", "Levitate", "SlowFall", "Lock", "Open", "Fire Damage",
@@ -93,9 +93,9 @@ HARDCODED_FLAGS = [0x11c8, 0x11c0, 0x11c8, 0x11e0, 0x11e0, 0x11e0, 0x11e0, 0x11d
 
 WEATHERS = ["Clear", "Cloudy", "Foggy", "Overcast", "Rain", "Thunder", "Ash", "Blight", "Snow", "Blizzard"]
 
-WEAPON_TYPES = ["ShortBladeOneHand", "LongBladeOneHand", "LongBladeTwoClose", "BluntOneHand", "BluntTwoClose",
-                "BluntTwoWide", "SpearTwoWide", "AxeOneHand", "AxeTwoClose", "MarksmanBow", "MarksmanCrossbow",
-                "MarksmanThrown", "Arrow", "Bolt"]
+WEAP_TYPES = ['ShortBladeOneHand', 'LongBladeOneHand', 'LongBladeTwoClose', 'BluntOneHand', 'BluntTwoClose',
+              'BluntTwoWide', 'SpearTwoWide', 'AxeOneHand', 'AxeTwoClose', 'MarksmanBow', 'MarksmanCrossbow',
+              'MarksmanThrown', 'Arrow', 'Bolt']
 
 SPEL_TYPES = ["Spell", "Ability", "Blight", "Disease", "Curse", "Power"]
 
@@ -127,31 +127,32 @@ LAND_NUM_TEXTURES = LAND_TEXTURE_SIZE * LAND_TEXTURE_SIZE
 LAND_LOD_SIZE = 9
 LAND_NUM_LOD_VERTS = LAND_LOD_SIZE * LAND_LOD_SIZE
 
-SNDG_TYPES = ["Left", "Right", "SwimLeft", "SwimRight", "Moan", "Roar", "Scream", "Land"]
+SNDG_TYPES = ['Left', 'Right', 'SwimLeft', 'SwimRight', 'Moan', 'Roar', 'Scream', 'Land']
 
-DIAL_TYPES = ["Topic", "Voice", "Greeting", "Persuasion", "Journal"]
+DIAL_TYPES = ['Topic', 'Voice', 'Greeting', 'Persuasion', 'Journal']
 
-INFO_SCVR_TYPE = ["", "Function", "Global", "Local", "Journal", "Item", "Dead", "Not ID", "Not Faction", "Not Class",
-                  "Not Race", "Not Cell", "Not Local"]
-INFO_SCVR_FUNCTION = ["Rank Low", "Rank High", "Rank Requirement", "Reputation", "Health Percent", "PC Reputation",
-                      "PC Level", "PC Health Percent", "PC Magicka", "PC Fatigue", "PC Strength", "PC Block",
-                      "PC Armorer", "PC Medium Armor", "PC Heavy Armor", "PC Blunt Weapon", "PC Long Blade", "PC Axe",
-                      "PC Spear", "PC Athletics", "PC Enchant", "PC Detruction", "PC Alteration", "PC Illusion",
-                      "PC Conjuration", "PC Mysticism", "PC Restoration", "PC Alchemy", "PC Unarmored", "PC Security",
-                      "PC Sneak", "PC Acrobatics", "PC Light Armor", "PC Short Blade", "PC Marksman", "PC Merchantile",
-                      "PC Speechcraft", "PC Hand to Hand", "PC Sex", "PC Expelled", "PC Common Disease",
-                      "PC Blight Disease", "PC Clothing Modifier", "PC Crime Level", "Same Sex", "Same Race",
-                      "Same Faction", "Faction Rank Difference", "Detected", "Alarmed", "Choice", "PC Intelligence",
-                      "PC Willpower", "PC Agility", "PC Speed", "PC Endurance", "PC Personality", "PC Luck",
-                      "PC Corpus", "Weather", "PC Vampire", "Level", "Attacked", "Talked to PC", "PC Health",
-                      "Creature Target", "Friend Hit", "Fight", "Hello", "Alarm", "Flee", "Should Attack", "Werewolf",
-                      "PC Werewolf Kills"]
-INFO_SCVR_OPERATOR = ["=", "!=", ">", ">=", "<", "<="]
+INFO_SCVR_TYPE = ['', 'Function', 'Global', 'Local', 'Journal', 'Item', 'Dead', 'Not ID', 'Not Faction', 'Not Class',
+                  'Not Race', 'Not Cell', 'Not Local']
+# noinspection SpellCheckingInspection
+INFO_SCVR_FUNCTION = ['Rank Low', 'Rank High', 'Rank Requirement', 'Reputation', 'Health Percent', 'PC Reputation',
+                      'PC Level', 'PC Health Percent', 'PC Magicka', 'PC Fatigue', 'PC Strength', 'PC Block',
+                      'PC Armorer', 'PC Medium Armor', 'PC Heavy Armor', 'PC Blunt Weapon', 'PC Long Blade', 'PC Axe',
+                      'PC Spear', 'PC Athletics', 'PC Enchant', 'PC Detruction', 'PC Alteration', 'PC Illusion',
+                      'PC Conjuration', 'PC Mysticism', 'PC Restoration', 'PC Alchemy', 'PC Unarmored', 'PC Security',
+                      'PC Sneak', 'PC Acrobatics', 'PC Light Armor', 'PC Short Blade', 'PC Marksman', 'PC Merchantile',
+                      'PC Speechcraft', 'PC Hand to Hand', 'PC Sex', 'PC Expelled', 'PC Common Disease',
+                      'PC Blight Disease', 'PC Clothing Modifier', 'PC Crime Level', 'Same Sex', 'Same Race',
+                      'Same Faction', 'Faction Rank Difference', 'Detected', 'Alarmed', 'Choice', 'PC Intelligence',
+                      'PC Willpower', 'PC Agility', 'PC Speed', 'PC Endurance', 'PC Personality', 'PC Luck',
+                      'PC Corpus', 'Weather', 'PC Vampire', 'Level', 'Attacked', 'Talked to PC', 'PC Health',
+                      'Creature Target', 'Friend Hit', 'Fight', 'Hello', 'Alarm', 'Flee', 'Should Attack', 'Werewolf',
+                      'PC Werewolf Kills']
+INFO_SCVR_OPERATOR = ['=', '!=', '>', '>=', '<', '<=']
 
 records = defaultdict(list)
 ordered_records = []
 plugin_records = {}
-default_records = ["TES3"]
+default_records = ['TES3']
 game_settings = {}
 object_ids = {}
 info_ids = {}
@@ -174,11 +175,9 @@ class MagnitudeType(Enum):
     POINTS = 5
 
 
-def readable_object(id):
-    if id in object_ids:
-        return str(object_ids[id])
-    return id
+def readable_object(id_):
+    return str(object_ids[id_]) if id_ in object_ids else id_
 
 
 def decimal_format(num):
-    return "{:.2f}".format(num).rstrip("0").rstrip(".")
+    return f"{num:.2f}".rstrip('0').rstrip('.')

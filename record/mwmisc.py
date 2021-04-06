@@ -5,30 +5,40 @@ from mwrecord import MwRecord
 class MwMISC(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
-    
+        self.id_ = ''
+        self.model = ''
+        self.name = None
+        self.weight = 0.0
+        self.value = 0
+        self.is_key = False
+        self.script = None
+        self.icon = None
+
     def load(self):
-        self.id = self.get_subrecord_string("NAME")
-        self.model = self.get_subrecord_string("MODL")
-        self.name = self.get_subrecord_string("FNAM")
-        self.weight = self.get_subrecord_float("MCDT", start=0, length=4)
-        self.value = self.get_subrecord_int("MCDT", start=4, length=4)
-        self.is_key = self.get_subrecord_int("MCDT", start=8, length=4) == 1
-        self.script = self.get_subrecord_string("SCRI")
-        self.icon = self.get_subrecord_string("ITEX")
-        mwglobals.object_ids[self.id] = self
-    
+        self.id_ = self.parse_string('NAME')
+        self.model = self.parse_string('MODL')
+        self.name = self.parse_string('FNAM')
+        self.weight = self.parse_float('MCDT')
+        self.value = self.parse_uint('MCDT', start=4)
+        self.is_key = self.parse_uint('MCDT', start=8) == 1
+        self.script = self.parse_string('SCRI')
+        self.icon = self.parse_string('ITEX')
+
+        mwglobals.object_ids[self.id_] = self
+
     def record_details(self):
-        return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-            ("\n|Script|", "script"),
-            ("\n|Weight|    {:.2f}", "weight"),
-            ("\n|Value|", "value"),
-            ("\n|Model|", "model"),
-            ("\n|Icon|", "icon"),
-            ("\n|Is Key|", "is_key", False)
+        return MwRecord.format_record_details(self, [
+            ("|Name|", '__str__'),
+            ("\n|Model|", 'model'),
+            ("\n|Weight|    {:.2f}", 'weight'),
+            ("\n|Value|", 'value'),
+            ("\n|Is Key|", 'is_key', False),
+            ("\n|Script|", 'script'),
+            ("\n|Icon|", 'icon')
         ])
-    
+
     def __str__(self):
-        return "{} [{}]".format(self.name, self.id)
-    
+        return f"{self.name} [{self.id_}]"
+
     def diff(self, other):
-        MwRecord.diff(self, other, ["model", "name", "weight", "value", "is_key", "script", "icon"])
+        return MwRecord.diff(self, other, ['model', 'name', 'weight', 'value', 'is_key', 'script', 'icon'])

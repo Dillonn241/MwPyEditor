@@ -1,46 +1,45 @@
 import mwglobals
 from mwrecord import MwRecord
-from record.mwench import MwENCHSingle
-
-do_autocalc = False
+from record.mwench import load_enchantments
 
 
 class MwALCH(MwRecord):
+    do_autocalc = False
+
     def __init__(self):
         MwRecord.__init__(self)
+        self.id_ = ''
+        self.model = None
+        self.icon = None
+        self.script = None
+        self.name = None
+        self.weight = 0.0
+        self.value = 0
+        self.autocalc = False
+        self.enchantments = []
 
     def load(self):
-        self.id = self.get_subrecord_string("NAME")
-        self.model = self.get_subrecord_string("MODL")
-        self.name = self.get_subrecord_string("FNAM")
-        self.weight = self.get_subrecord_float("ALDT", start=0, length=4)
-        self.value = self.get_subrecord_int("ALDT", start=4, length=4)
-        self.autocalc = self.get_subrecord_int("ALDT", start=8, length=4) == 1
+        self.id_ = self.parse_string('NAME')
+        self.model = self.parse_string('MODL')
+        self.icon = self.parse_string('TEXT')
+        self.script = self.parse_string('SCRI')
+        self.name = self.parse_string('FNAM')
 
-        self.enchantments = []
-        for i in range(self.num_subrecords("ENAM")):
-            enchantment = MwENCHSingle()
-            enchantment.effect_id = self.get_subrecord_int("ENAM", index=i, start=0, length=2)
-            enchantment.skill_id = self.get_subrecord_int("ENAM", index=i, start=2, length=1)
-            enchantment.attribute_id = self.get_subrecord_int("ENAM", index=i, start=3, length=1)
-            enchantment.range_type = None
-            enchantment.area = 0
-            enchantment.duration = self.get_subrecord_int("ENAM", index=i, start=12, length=4)
-            enchantment.mag_min = self.get_subrecord_int("ENAM", index=i, start=16, length=4)
-            enchantment.mag_max = enchantment.mag_min
-            self.enchantments += [enchantment]
+        self.weight = self.parse_float('ALDT')
+        self.value = self.parse_uint('ALDT', start=4)
+        self.autocalc = self.parse_uint('ALDT', start=8) == 1
 
-        self.icon = self.get_subrecord_string("TEXT")
-        self.script = self.get_subrecord_string("SCRI")
+        load_enchantments(self)
 
-        if do_autocalc and self.autocalc:
+        if MwALCH.do_autocalc and self.autocalc:
             self.autocalc_stats()
-        mwglobals.object_ids[self.id] = self
+
+        mwglobals.object_ids[self.id_] = self
 
     def autocalc_stats(self):
         cost = 0
         for enchantment in self.enchantments:
-            base_cost = mwglobals.records["MGEF"][enchantment.effect_id].base_cost
+            base_cost = mwglobals.records['MGEF'][enchantment.effect_id].base_cost
             base_cost /= 10
             multiplier = base_cost * 2
             if enchantment.mag_min > 0:
@@ -49,30 +48,29 @@ class MwALCH(MwRecord):
         self.value = round(cost)
 
     def wiki_entry(self, is_beverage=True):
-        enchantment_list = ""
-        num_enchantments = len(self.enchantments)
-        for i in range(num_enchantments):
-            enchantment_list += self.enchantments[i].__str__(add_template=True)
-            if i != num_enchantments - 1:
-                enchantment_list += "<br>\n"
+        enchantment_string = []
+        for enchantment in self.enchantments:
+            enchantment_string.append(enchantment.__str__(add_template=True))
+        enchantment_string = "<br>\n".join(enchantment_string)
         if is_beverage:
-            return ("|-\n"
-                    "|[[File:TD3-icon-potion-" + self.icon + ".png]]\n"
-                    "|'''{{Anchor|" + self.name + "}}'''<br>{{Small|" + self.id + "}}\n"
-                    "| style=\"text-align:left;\" |\n" + enchantment_list + "\n"
-                    "|" + mwglobals.decimal_format(self.weight) + "||" + str(self.value))
-        return ("|-\n"
-                "|[[File:TD3-icon-potion-" + self.icon + ".png]]\n"
-                "|'''{{Anchor|" + self.name + "}}'''\n"
-                "|" + self.id + "\n"
-                "| style=\"text-align:left;\" |\n" + enchantment_list + "\n"
-                "|" + mwglobals.decimal_format(self.weight) + "||" + str(self.value))
+            return f"""|-\n
+                    |[[File:TD3-icon-potion-{self.icon}.png]]\n
+                    |'''{{{{Anchor|{self.name}}}}}'''<br>{{{{Small|{self.id_}}}}}\n
+                    | style=\"text-align:left;\" |\n{enchantment_string}\n
+                    |{mwglobals.decimal_format(self.weight)}||{self.value}"""
+        return f"""|-\n
+                |[[File:TD3-icon-potion-{self.icon}.png]]\n
+                |'''{{{{Anchor|{self.name}}}}}'''\n
+                |{self.id_}\n
+                | style=\"text-align:left;\" |\n{enchantment_string}\n
+                |{mwglobals.decimal_format(self.weight)}||{self.value}"""
 
     def record_details(self):
-        return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-            ("\n|Script|", "script"),
+        return MwRecord.format_record_details(self, [
+            ("|Name|", "__str__"),
             ("\n|Model|", "model"),
             ("\n|Icon|", "icon"),
+            ("\n|Script|", "script"),
             ("\n|Weight|    {:.2f}", "weight"),
             ("\n|Value|", "value"),
             ("\n|Auto Calculate Value|", "autocalc", False),
@@ -80,7 +78,8 @@ class MwALCH(MwRecord):
         ])
 
     def __str__(self):
-        return "{} [{}]".format(self.name, self.id)
+        return f"{self.name} [{self.id_}]"
 
     def diff(self, other):
-        MwRecord.diff(self, other, ["model", "name", "weight", "value", "autocalc", "enchantments", "icon", "script"])
+        return MwRecord.diff(self, other, ['model', 'name', 'icon', 'script', 'weight', 'value', 'autocalc',
+                                           'enchantments'])

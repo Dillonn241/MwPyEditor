@@ -5,24 +5,50 @@ from mwrecord import MwRecord
 class MwCLAS(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
-    
+        self.id_ = ''
+        self.name = ''
+        self.primary_attribute_ids = []
+        self.specialization_id = []
+        self.minor_skill_ids = []
+        self.major_skill_ids = []
+        self.playable = False
+        self.service_weapons = False
+        self.service_armor = False
+        self.service_clothing = False
+        self.service_books = False
+        self.service_ingredients = False
+        self.service_picks = False
+        self.service_probes = False
+        self.service_lights = False
+        self.service_apparatus = False
+        self.service_repair_items = False
+        self.service_miscellaneous = False
+        self.service_spells = False
+        self.service_magic_items = False
+        self.service_potions = False
+        self.service_training = False
+        self.service_spellmaking = False
+        self.service_enchanting = False
+        self.service_repair = False
+        self.description = None
+
     def load(self):
-        self.id = self.get_subrecord_string("NAME")
-        self.name = self.get_subrecord_string("FNAM")
-        self.primary_attributes = []
-        self.primary_attributes += [mwglobals.ATTRIBUTES[self.get_subrecord_int("CLDT", start=0, length=4)]]
-        self.primary_attributes += [mwglobals.ATTRIBUTES[self.get_subrecord_int("CLDT", start=4, length=4)]]
-        self.specialization = mwglobals.SPECIALIZATIONS[self.get_subrecord_int("CLDT", start=8, length=4)]
-        
-        self.minor_skills = []
-        self.major_skills = []
+        self.id_ = self.parse_string('NAME')
+        self.name = self.parse_string('FNAM')
+
+        self.primary_attribute_ids = [self.parse_uint('CLDT'),
+                                      self.parse_uint('CLDT', start=4)]
+        self.specialization_id = self.parse_uint('CLDT', start=8)
+
+        self.minor_skill_ids = []
+        self.major_skill_ids = []
         for i in range(5):
-            self.minor_skills += [mwglobals.SKILLS[self.get_subrecord_int("CLDT", start=12 + 8 * i, length=4)]]
-            self.major_skills += [mwglobals.SKILLS[self.get_subrecord_int("CLDT", start=16 + 8 * i, length=4)]]
-        
-        flags = self.get_subrecord_int("CLDT", start=52, length=4)
+            self.minor_skill_ids.append(self.parse_uint('CLDT', start=12 + 8 * i))
+            self.major_skill_ids.append(self.parse_uint('CLDT', start=16 + 8 * i))
+
+        flags = self.parse_uint('CLDT', start=52)
         self.playable = (flags & 0x1) == 0x1
-        ai_flags = self.get_subrecord_int("CLDT", start=56, length=4)
+        ai_flags = self.parse_uint('CLDT', start=56)
         self.service_weapons = (ai_flags & 0x1) == 0x1
         self.service_armor = (ai_flags & 0x2) == 0x2
         self.service_clothing = (ai_flags & 0x4) == 0x4
@@ -41,72 +67,95 @@ class MwCLAS(MwRecord):
         self.service_spellmaking = (ai_flags & 0x8000) == 0x8000
         self.service_enchanting = (ai_flags & 0x10000) == 0x10000
         self.service_repair = (ai_flags & 0x20000) == 0x20000
-        
-        self.description = self.get_subrecord_string("DESC")
-        
-        mwglobals.object_ids[self.id] = self
-    
+
+        self.description = self.parse_string('DESC')
+
+        mwglobals.object_ids[self.id_] = self
+
+    def get_primary_attributes(self):
+        return [mwglobals.ATTRIBUTES[x] for x in self.primary_attribute_ids]
+
+    def set_primary_attributes(self, array):
+        self.primary_attribute_ids = [mwglobals.ATTRIBUTES.index(x) if x in mwglobals.ATTRIBUTES else 0 for x in array]
+
+    def get_specialization(self):
+        return mwglobals.SPECIALIZATIONS[self.specialization_id]
+
+    def set_specialization(self, value):
+        if value in mwglobals.SPECIALIZATIONS:
+            self.specialization_id = mwglobals.SPECIALIZATIONS.index(value)
+
+    def get_minor_skills(self):
+        return [mwglobals.SKILLS[x] for x in self.minor_skill_ids]
+
+    def set_minor_skills(self, array):
+        self.minor_skill_ids = [mwglobals.SKILLS.index(x) if x in mwglobals.SKILLS else 0 for x in array]
+
+    def get_major_skills(self):
+        return [mwglobals.SKILLS[x] for x in self.major_skill_ids]
+
+    def set_major_skills(self, array):
+        self.major_skill_ids = [mwglobals.SKILLS.index(x) if x in mwglobals.SKILLS else 0 for x in array]
+
     def buys_sells(self):
         types = []
         if self.service_weapons:
-            types += ["WEAP"]
+            types.append('WEAP')
         if self.service_armor:
-            types += ["ARMO"]
+            types.append('ARMO')
         if self.service_clothing:
-            types += ["CLOT"]
+            types.append('CLOT')
         if self.service_books:
-            types += ["BOOK"]
+            types.append('BOOK')
         if self.service_ingredients:
-            types += ["INGR"]
+            types.append('INGR')
         if self.service_picks:
-            types += ["LOCK"]
+            types.append('LOCK')
         if self.service_probes:
-            types += ["PROB"]
+            types.append('PROB')
         if self.service_lights:
-            types += ["LIGH"]
+            types.append('LIGH')
         if self.service_apparatus:
-            types += ["APPA"]
+            types.append('APPA')
         if self.service_repair_items:
-            types += ["REPA"]
+            types.append('REPA')
         if self.service_miscellaneous:
-            types += ["MISC"]
+            types.append('MISC')
         if self.service_potions:
-            types += ["ALCH"]
+            types.append('ALCH')
         if self.service_magic_items:
-            types += ["Magic Items"]
+            types.append("Magic Items")
         return types
-    
+
     def other_services(self):
         types = []
         if self.service_training:
-            types += ["Training"]
+            types.append("Training")
         if self.service_spellmaking:
-            types += ["Spellmaking"]
+            types.append("Spellmaking")
         if self.service_enchanting:
-            types += ["Enchanting"]
+            types.append("Enchanting")
         if self.service_repair:
-            types += ["Repair"]
+            types.append("Repair")
         return types
-    
+
     def record_details(self):
-        return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-            ("\n|Primary Attributes|", "primary_attributes"),
-            ("\n|Specialization|", "specialization"),
-            ("\n|Major Skills|", "major_skills"),
-            ("\n|Minor Skills|", "minor_skills"),
-            ("\n|Description|", "description"),
-            ("\n|Playable|", "playable", False),
-            ("\n|Buys / Sells|", "buys_sells", []),
-            ("\n|Other Services|", "other_services", [])
+        return MwRecord.format_record_details(self, [
+            ("|Name|", '__str__'),
+            ("\n|Primary Attributes|", 'get_primary_attributes'),
+            ("\n|Specialization|", 'get_specialization'),
+            ("\n|Major Skills|", 'get_major_skills'),
+            ("\n|Minor Skills|", 'get_minor_skills'),
+            ("\n|Description|", 'description'),
+            ("\n|Playable|", 'playable', False),
+            ("\n|Buys / Sells|", 'buys_sells', []),
+            ("\n|Other Services|", 'other_services', [])
         ])
-    
+
     def __str__(self):
-        return "{} [{}]".format(self.name, self.id)
-    
+        return f"{self.name} [{self.id_}]"
+
     def diff(self, other):
-        MwRecord.diff(self, other, ["name", "primary_attributes", "specialization", "minor_skills", "major_skills",
-                                    "playable", "service_weapons", "service_armor", "service_clothing", "service_books",
-                                    "service_ingredients", "service_picks", "service_probes", "service_lights",
-                                    "service_apparatus", "service_repair_items", "service_miscellaneous",
-                                    "service_spells", "service_magic_items", "service_potions", "service_training",
-                                    "service_spellmaking", "service_enchanting", "service_repair", "description"])
+        return MwRecord.diff(self, other, ['name', 'get_primary_attributes', 'get_specialization', 'get_minor_skills',
+                                           'get_major_skills', 'playable', 'buys_sells', 'other_services',
+                                           'description'])

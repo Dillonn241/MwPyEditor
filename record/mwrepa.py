@@ -5,32 +5,45 @@ from mwrecord import MwRecord
 class MwREPA(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
-    
+        self.id_ = ''
+        self.model = ''
+        self.name = None
+        self.weight = 0.0
+        self.value = 0
+        self.uses = 0
+        self.quality = 0.0
+        self.icon = None
+        self.script = None
+
     def load(self):
-        self.id = self.get_subrecord_string("NAME")
-        self.model = self.get_subrecord_string("MODL")
-        self.name = self.get_subrecord_string("FNAM")
-        self.weight = self.get_subrecord_float("RIDT", start=0, length=4)
-        self.value = self.get_subrecord_int("RIDT", start=4, length=4)
-        self.uses = self.get_subrecord_int("RIDT", start=8, length=4)
-        self.quality = self.get_subrecord_float("RIDT", start=12, length=4)
-        self.icon = self.get_subrecord_string("ITEX")
-        self.script = self.get_subrecord_string("SCRI")
-        mwglobals.object_ids[self.id] = self
-    
+        self.id_ = self.parse_string('NAME')
+        self.model = self.parse_string('MODL')
+        self.name = self.parse_string('FNAM')
+
+        self.weight = self.parse_float('RIDT')
+        self.value = self.parse_uint('RIDT', start=4)
+        self.uses = self.parse_uint('RIDT', start=8)
+        self.quality = self.parse_float('RIDT', start=12)
+
+        self.icon = self.parse_string('ITEX')
+        self.script = self.parse_string('SCRI')
+
+        mwglobals.object_ids[self.id_] = self
+
     def record_details(self):
-        return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-            ("\n|Script|", "script"),
-            ("\n|Weight|    {:.2f}", "weight"),
-            ("\n|Value|", "value"),
-            ("\n|Uses|", "uses"),
-            ("\n|Quality|    {:.2f}", "quality"),
-            ("\n|Model|", "model"),
-            ("\n|Icon|", "icon")
+        return MwRecord.format_record_details(self, [
+            ("|Name|", '__str__'),
+            ("\n|Script|", 'script'),
+            ("\n|Weight|    {:.2f}", 'weight'),
+            ("\n|Value|", 'value'),
+            ("\n|Uses|", 'uses'),
+            ("\n|Quality|    {:.2f}", 'quality'),
+            ("\n|Model|", 'model'),
+            ("\n|Icon|", 'icon')
         ])
-    
+
     def __str__(self):
-        return "{} [{}]".format(self.name, self.id)
-    
+        return f"{self.name} [{self.id_}]"
+
     def diff(self, other):
-        MwRecord.diff(self, other, ["model", "name", "weight", "value", "uses", "quality", "icon", "script"])
+        return MwRecord.diff(self, other, ['model', 'name', 'weight', 'value', 'uses', 'quality', 'icon', 'script'])

@@ -5,74 +5,109 @@ from mwrecord import MwRecord
 class MwRACE(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
-    
+        self.id_ = ''
+        self.name = ''
+        self.skill_bonus_ids = []
+        self.male_attributes = []
+        self.female_attributes = []
+        self.male_height = 0.0
+        self.female_height = 0.0
+        self.male_weight = 0.0
+        self.female_weight = 0.0
+        self.playable = False
+        self.beast_race = False
+        self.specials = []
+        self.description = None
+
     def load(self):
-        self.id = self.get_subrecord_string("NAME")
-        self.name = self.get_subrecord_string("FNAM")
-        
-        self.skill_bonuses = {}
-        for i in range(7):
-            skill_id = self.get_subrecord_int("RADT", start=i * 8, length=4)
-            if skill_id != -1:
-                bonus = self.get_subrecord_int("RADT", start=4 + i * 8, length=4)
-                self.skill_bonuses[mwglobals.SKILLS[skill_id]] = bonus
-        self.male_attributes = {}
-        self.female_attributes = {}
-        for i in range(len(mwglobals.ATTRIBUTES)):
-            attribute = mwglobals.ATTRIBUTES[i]
-            male_value = self.get_subrecord_int("RADT", start=56 + i * 8, length=4)
-            female_value = self.get_subrecord_int("RADT", start=60 + i * 8, length=4)
-            self.male_attributes[attribute] = male_value
-            self.female_attributes[attribute] = female_value
-        self.male_height = self.get_subrecord_float("RADT", start=120, length=4)
-        self.female_height = self.get_subrecord_float("RADT", start=124, length=4)
-        self.male_weight = self.get_subrecord_float("RADT", start=128, length=4)
-        self.female_weight = self.get_subrecord_float("RADT", start=132, length=4)
-        
-        flags = self.get_subrecord_int("RADT", start=136, length=4)
+        self.id_ = self.parse_string('NAME')
+        self.name = self.parse_string('FNAM')
+        self.skill_bonus_ids = [(self.parse_int('RADT', start=i * 8),
+                                 self.parse_int('RADT', start=4 + i * 8))
+                                for i in range(7)]
+
+        self.male_attributes = []
+        self.female_attributes = []
+        for i in range(8):  # len(mwglobals.ATTRIBUTES)
+            self.male_attributes.append(self.parse_uint('RADT', start=56 + i * 8))
+            self.female_attributes.append(self.parse_uint('RADT', start=60 + i * 8))
+
+        self.male_height = self.parse_float('RADT', start=120)
+        self.female_height = self.parse_float('RADT', start=124)
+        self.male_weight = self.parse_float('RADT', start=128)
+        self.female_weight = self.parse_float('RADT', start=132)
+        flags = self.parse_uint('RADT', start=136)
         self.playable = (flags & 0x1) == 0x1
         self.beast_race = (flags & 0x2) == 0x2
-        
-        self.specials = []
-        for i in range(self.num_subrecords("NPCS")):
-            self.specials += [self.get_subrecord_string("NPCS", index=i)]
-        
-        self.description = self.get_subrecord_string("DESC")
-        mwglobals.object_ids[self.id] = self
-    
-    def get_skill_bonus(self, skill):
-        if skill in self.skill_bonuses:
-            return self.skill_bonuses[skill]
+
+        self.specials = self.parse_string_array('NPCS')
+        self.description = self.parse_string('DESC')
+
+        mwglobals.object_ids[self.id_] = self
+
+    def get_skill_bonuses(self):
+        return [self.get_skill_bonus(i) for i in range(len(self.skill_bonus_ids))]
+
+    def set_skill_bonuses(self, skill_tuples):
+        for i in range(len(self.skill_bonus_ids)):
+            self.set_skill_bonus(skill_tuples[i], i)
+
+    def get_skill_bonus(self, index):
+        skill_id = self.skill_bonus_ids[index][0]
+        skill_name = mwglobals.SKILLS[skill_id] if skill_id != -1 else None
+        skill_bonus = self.skill_bonus_ids[index][1]
+        return skill_name, skill_bonus
+
+    def set_skill_bonus(self, skill_tuple, index):
+        skill_id = mwglobals.SKILLS.index(skill_tuple[0]) if skill_tuple[0] in mwglobals.SKILLS else -1
+        self.skill_bonus_ids[index] = (skill_id, skill_tuple[1])
+
+    def skill_bonus_from_id(self, skill_id):
+        for skill_tuple in self.skill_bonus_ids:
+            if skill_tuple[0] == skill_id:
+                return skill_tuple[1]
         return 0
-    
-    def get_sex_attribute(self, attribute, female):
-        return self.female_attributes[attribute] if female else self.male_attributes[attribute]
-    
+
+    def skill_bonus_from_name(self, skill_name):
+        if skill_name in mwglobals.SKILLS:
+            skill_id = mwglobals.SKILLS.index(skill_name)
+            return self.get_skill_bonus(skill_id)
+        return 0
+
+    def attribute_base_from_id(self, attribute_id, female):
+        return self.female_attributes[attribute_id] if female else self.male_attributes[attribute_id]
+
+    def attribute_base_from_name(self, attribute_name, female):
+        if attribute_name in mwglobals.ATTRIBUTES:
+            attribute_id = mwglobals.ATTRIBUTES.index(attribute_name)
+            return self.attribute_base_from_id(attribute_id, female)
+
     def get_height(self, female):
         return self.female_height if female else self.male_height
-    
+
     def get_weight(self, female):
         return self.female_weight if female else self.male_weight
-    
+
     def record_details(self):
-        return "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-            ("\n|Skill Bonuses|", "skill_bonuses"),
-            ("\n|Male Attributes|", "male_attributes"),
-            ("\n|Female Attributes|", "female_attributes"),
-            ("\n|Male Height|", "male_height"),
-            ("\n|Female Height|", "female_height"),
-            ("\n|Male Weight|", "male_weight"),
-            ("\n|Female Weight|", "female_weight"),
-            ("\n|Playable|", "playable", False),
-            ("\n|Beast Race|", "beast_race", False),
-            ("\n|Specials|", "specials", []),
-            ("\n|Description|", "description")
+        return MwRecord.format_record_details(self, [
+            ("|Name|", '__str__'),
+            ("\n|Skill Bonuses|", 'get_skill_bonuses'),
+            ("\n|Male Attributes|", 'male_attributes'),
+            ("\n|Female Attributes|", 'female_attributes'),
+            ("\n|Male Height|", 'male_height'),
+            ("\n|Female Height|", 'female_height'),
+            ("\n|Male Weight|", 'male_weight'),
+            ("\n|Female Weight|", 'female_weight'),
+            ("\n|Playable|", 'playable', False),
+            ("\n|Beast Race|", 'beast_race', False),
+            ("\n|Specials|", 'specials', []),
+            ("\n|Description|", 'description')
         ])
-    
+
     def __str__(self):
-        return "{} [{}]".format(self.name, self.id)
-    
+        return f"{self.name} [{self.id_}]"
+
     def diff(self, other):
-        MwRecord.diff(self, other, ["name", "skill_bonuses", "male_attributes", "female_attributes", "male_height",
-                                    "female_height", "male_weight", "female_weight", "playable", "beast_race",
-                                    "specials", "description"])
+        return MwRecord.diff(self, other, ['name', 'get_skill_bonuses', 'male_attributes', 'female_attributes',
+                                           'male_height', 'female_height', 'male_weight', 'female_weight', 'playable',
+                                           'beast_race', 'specials', 'description'])

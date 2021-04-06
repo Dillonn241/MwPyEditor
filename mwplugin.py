@@ -1,54 +1,15 @@
 import argparse
-from collections import defaultdict
 import struct
 import sys
 import time
+from collections import defaultdict
 
 import mwglobals
 import mwjobs
-import record.mwtes3 as mwtes3
-import record.mwgmst as mwgmst
-import record.mwglob as mwglob
-import record.mwclas as mwclas
-import record.mwfact as mwfact
-import record.mwrace as mwrace
-import record.mwsoun as mwsoun
-import record.mwskil as mwskil
-import record.mwmgef as mwmgef
-import record.mwscpt as mwscpt
-import record.mwregn as mwregn
-import record.mwbsgn as mwbsgn
-import record.mwltex as mwltex
-import record.mwstat as mwstat
-import record.mwdoor as mwdoor
-import record.mwmisc as mwmisc
-import record.mwweap as mwweap
-import record.mwcont as mwcont
-import record.mwspel as mwspel
-import record.mwcrea as mwcrea
-import record.mwbody as mwbody
-import record.mwligh as mwligh
-import record.mwench as mwench
-import record.mwnpc_ as mwnpc_
-import record.mwarmo as mwarmo
-import record.mwclot as mwclot
-import record.mwrepa as mwrepa
-import record.mwacti as mwacti
-import record.mwappa as mwappa
-import record.mwlock as mwlock
-import record.mwprob as mwprob
-import record.mwingr as mwingr
-import record.mwbook as mwbook
-import record.mwalch as mwalch
-import record.mwlevi as mwlevi
-import record.mwlevc as mwlevc
-import record.mwcell as mwcell
-import record.mwland as mwland
-import record.mwpgrd as mwpgrd
-import record.mwsndg as mwsndg
-import record.mwdial as mwdial
-import record.mwinfo as mwinfo
-import record.mwsscr as mwsscr
+from record import (mwacti, mwalch, mwappa, mwarmo, mwbody, mwbook, mwbsgn, mwcell, mwclas, mwclot, mwcont, mwcrea,
+                    mwdial, mwdoor, mwench, mwfact, mwglob, mwgmst, mwinfo, mwingr, mwland, mwlevc, mwlevi, mwligh,
+                    mwlock, mwltex, mwmgef, mwmisc, mwnpc_, mwpgrd, mwprob, mwrace, mwregn, mwrepa, mwscpt, mwskil,
+                    mwsndg, mwsoun, mwspel, mwsscr, mwstat, mwtes3, mwweap)
 
 auto_load_masters = True
 
@@ -58,141 +19,141 @@ def init():
     # mwglobals.default_records = mwglobals.RECORDS_MIN # minimum types required for autocalc: MGEF, CLAS, RACE, SKIL
     # mwglobals.default_records = mwglobals.RECORDS_MOST # all types except: DIAL, INFO, CELL, LAND
     mwglobals.default_records = mwglobals.RECORDS_ALL  # all types
-    
+
     """Expand list of records loaded by default for every plugin."""
     mwglobals.default_records += []
-    
+
     """Choose any: load large data for CELL and LAND."""
     mwcell.init_references = True  # statics and other references placed in the world
     # mwland.init_lod = True # lod to show global map
     # mwland.init_terrain = True # normals, heights, colors, and textures of landscape (long load time)
-    
+
     """Choose any: run algorithms to autocalc stats for ALCH, ENCH, SPEL, and NPC_."""
-    mwalch.do_autocalc = True  # requires MGEF
-    mwench.do_autocalc = True  # requires MGEF
-    mwspel.do_autocalc = True  # requires MGEF
-    mwnpc_.do_autocalc = True  # requires CLAS, RACE, SKIL
-    
+    mwalch.MwALCH.do_autocalc = True  # requires MGEF
+    mwench.MwENCH.do_autocalc = True  # requires MGEF
+    mwspel.MwSPEL.do_autocalc = True  # requires MGEF
+    mwnpc_.MwNPC_.do_autocalc = True  # requires CLAS, RACE, SKIL
+
     """Load any plugins you want. Masters are automatically loaded."""
     # Vanilla
-    # load_plugin("Morrowind.esm")
-    # load_plugin("Tribunal.esm")
-    # load_plugin("Bloodmoon.esm")
-    
+    load_plugin('Morrowind.esm')
+    # load_plugin('Tribunal.esm')
+    # load_plugin('Bloodmoon.esm')
+
     # DLC
-    # load_plugin("adamantiumarmor.esp")
-    # load_plugin("AreaEffectArrows.esp")
-    # load_plugin("bcsounds.esp")
-    # load_plugin("EBQ_Artifact.esp")
-    # load_plugin("entertainers.esp")
-    # load_plugin("LeFemmArmor.esp")
-    # load_plugin("master_index.esp")
-    # load_plugin("Siege at Firemoth.esp")
-    
+    # load_plugin('adamantiumarmor.esp')
+    # load_plugin('AreaEffectArrows.esp')
+    # load_plugin('bcsounds.esp')
+    # load_plugin('EBQ_Artifact.esp')
+    # load_plugin('entertainers.esp')
+    # load_plugin('LeFemmArmor.esp')
+    # load_plugin('master_index.esp')
+    # load_plugin('Siege at Firemoth.esp')
+
     # Tamriel Data
-    # load_plugin("Tamriel_Data_6.esm")
-    # load_plugin("Tamriel_Data_7.esm")
-    # load_plugin("Tamriel_Data_7.1.esm")
-    # load_plugin("Tamriel_Data.esm")
-    
+    # load_plugin('Tamriel_Data_6.esm')
+    # load_plugin('Tamriel_Data_7.esm')
+    # load_plugin('Tamriel_Data_7.1.esm')
+    # load_plugin('Tamriel_Data.esm')
+    # load_plugin('TD_Addon.esp')
+
     # Released versions of province mods
-    # load_plugin("TR_Mainland_1809.esm")
-    # load_plugin("TR_Mainland_1912.esm")
-    # load_plugin("TR_Mainland_2002.esm")
-    # load_plugin("Cyrodiil_Main_0.2.esm")
-    # load_plugin("Sky_Main_02.esp")
-    # load_plugin("Sky_Main_1812.esm")
-    # load_plugin("Sky_Main_1903.esm")
-    # load_plugin("Sky_Main_2001.esm")
-    
+    # load_plugin('TR_Mainland_1809.esm')
+    # load_plugin('TR_Mainland_1912.esm')
+    # load_plugin('TR_Mainland_2002.esm')
+    # load_plugin('Cyrodiil_Main_0.2.esm')
+    # load_plugin('Sky_Main_02.esp')
+    # load_plugin('Sky_Main_1812.esm')
+    # load_plugin('Sky_Main_1903.esm')
+    # load_plugin('Sky_Main_2001.esm')
+
     # Tamriel Rebuilt
-    # load_plugin("TR_Mainland.esp")
-    # load_plugin("TR_Factions.esp")
-    # load_plugin("TR_Travels.esp")
-    # load_plugin("TR_Travels_(Preview_and_Mainland).esp")
-    # load_plugin("TR_Andothren_v0064.ESP")
-    # load_plugin("TR_RorynsBluff_v0211.esp")
-    # load_plugin("TR_ArmunAshlands_v0047.esp")
-    # load_plugin("TR_SouthernVelothis_v.0009.esp")
-    # load_plugin("TR_ThirrValley_v0073.ESP")
-    # load_plugin("TR_Kartur_v0022.ESP")
-    # load_plugin("TR_RestExterior.esp")
-    # load_plugin("TR_ShipalShin_v0003.ESP")
-    
+    # load_plugin('TR_Mainland.esp')
+    # load_plugin('TR_Factions.esp')
+    # load_plugin('TR_Travels.esp')
+    # load_plugin('TR_Travels_(Preview_and_Mainland).esp')
+    # load_plugin('TR_Andothren_v0067.ESP')
+    # load_plugin('TR_RorynsBluff_v0213.esp')
+    # load_plugin('TR_ArmunAshlands_v0052.ESP')
+    # load_plugin('TR_SouthernVelothis_v.0011.esp')
+    # load_plugin('TR_ThirrValley_v0073.ESP')
+    # load_plugin('TR_Kartur_v0022.ESP')
+    # load_plugin('TR_RestExterior.esp')
+    # load_plugin('TR_ShipalShin_v0004.ESP')
+
     # Skyrim: Home of the Nords
-    # load_plugin("Sky_Main_2020_12_31.esp")
-    # load_plugin("Sky_Markarth_2021_01_31.ESP")
-    # load_plugin("Sky_Falkheim_2021_01_31.ESP")
-    
+    # load_plugin('Sky_Main_2021_03_29.ESP')
+    # load_plugin('Sky_Markarth_2021_01_31.ESP')
+    # load_plugin('Sky_Falkheim_2021_01_31.ESP')
+
     # Province: Cyrodiil
-    # load_plugin("Cyrodiil_Main_2020_12_10.ESP")
-    # load_plugin("PC_Anvil_v0069.ESP")
-    # load_plugin("PC_Sutch_v0017.ESP")
-    
+    # load_plugin('Cyrodiil_Main_2021_03_12b.ESP')
+    # load_plugin('PC_Anvil_v0073.ESP')
+    # load_plugin('PC_Sutch_v0017.ESP')
+
+    save_plugin('test.esp', 'Morrowind.esm')
+
     print()
 
 
 def handle_args(args):
-    if args.command == "diff":
+
+    if args.command == 'diff':
         args_diff(args)
-    elif args.command == "dump":
+    elif args.command == 'dump':
         args_dump(args)
 
 
 def args_diff(args):
     if len(args.plugins) != 2:
         sys.exit("Exactly two plugins can be diffed!")
-    if args.file:
-        sys.stdout = open(args.file, "w")
-    
-    plugin1 = args.plugins[0]  # "Tamriel_Data_6.esm"
-    plugin2 = args.plugins[1]  # "Tamriel_Data.esm"
-    record_types = args.type if args.type else mwglobals.RECORDS_ALL
-    load_plugin(plugin1, records_to_load=record_types, print_loading=not args.file)
-    load_plugin(plugin2, records_to_load=record_types, print_loading=not args.file)
-    print("# Diff plugin", plugin1, "with", str(plugin2) + ": #\n")
-    
+
+    plugin1 = args.plugins[0]  # 'Tamriel_Data_6.esm'
+    plugin2 = args.plugins[1]  # 'Tamriel_Data.esm'
+    record_types = mwglobals.RECORDS_MIN + args.type if args.type else mwglobals.RECORDS_ALL
+    load_plugin(plugin1, records_to_load=record_types)
+    load_plugin(plugin2, records_to_load=record_types)
+    print(f"# Diff plugin {plugin1} with {plugin2}: #\n")
+
+    diff_changed = not args.diff_ignore_changed if args.diff_ignore_changed else True
+    diff_equal = args.diff_equal if args.diff_equal else False
     diff_added = args.diff_added if args.diff_added else False
     diff_removed = args.diff_removed if args.diff_removed else False
-    diff_changed = not args.diff_ignore_changed if args.diff_ignore_changed else True
     for rcd_type in record_types:
-        print("## Diff record type", str(rcd_type) + ": ##\n")
-        diff_plugins(plugin1, plugin2, rcd_type, added=diff_added, removed=diff_removed, changed=diff_changed)
-    if args.file:
-        sys.stdout.close()
-        sys.stdout = sys.__stdout__
+        print(f"## Diff record type {rcd_type}: ##\n")
+        diff_plugins(plugin1, plugin2, rcd_type, changed=diff_changed, equal=diff_equal, added=diff_added,
+                     removed=diff_removed)
 
 
 def args_dump(args):
-    if args.file:
-        sys.stdout = open(args.file, "w")
     for plugin in args.plugins:
-        record_types = args.type if args.type else mwglobals.RECORDS_ALL
-        load_plugin(plugin, records_to_load=record_types, print_loading=not args.file)
-        print("# Dump plugin", plugin + ": #\n")
+        record_types = mwglobals.RECORDS_MIN + args.type if args.type else mwglobals.RECORDS_ALL
+        load_plugin(plugin, records_to_load=record_types)
+        print(f"# Dump plugin {plugin}: #\n")
         for rcd_type in record_types:
-            print("## Dump record type", rcd_type + ": ##\n")
+            print(f"## Dump record type {rcd_type}: ##\n")
             if args.list:
                 for rcd in mwglobals.plugin_records[plugin][rcd_type]:
                     print(rcd)
             else:
                 for rcd in mwglobals.plugin_records[plugin][rcd_type]:
                     print(rcd.record_details())
-    if args.file:
-        sys.stdout.close()
-        sys.stdout = sys.__stdout__
 
 
-def load_plugin(file_name, records_to_load=None, print_loading=True):
+def load_plugin(file_name, records_to_load=None, masters_loaded=None):
     # use default_records if no argument is provided for records_to_load
-    if records_to_load is None:
+    if not records_to_load:
         records_to_load = mwglobals.default_records
     # if automatically loading masters, TES3 is required
-    if auto_load_masters and "TES3" not in records_to_load:
-        records_to_load = ["TES3"] + records_to_load
+    if auto_load_masters:
+        if 'TES3' not in records_to_load:
+            records_to_load.append('TES3')
+        # keep track of masters loaded to avoid chain reaction
+        if not masters_loaded:
+            masters_loaded = []
     # DIAL should always be loaded with INFO
-    if "INFO" in records_to_load and "DIAL" not in records_to_load:
-        records_to_load = records_to_load + ["DIAL"]
+    if 'INFO' in records_to_load and 'DIAL' not in records_to_load:
+        records_to_load.append('DIAL')
     # if the plugin has been loaded before, only load what is still unloaded
     if file_name in mwglobals.plugin_records:
         records_to_load = [x for x in records_to_load if x not in mwglobals.plugin_records[file_name]]
@@ -202,42 +163,49 @@ def load_plugin(file_name, records_to_load=None, print_loading=True):
     # nothing to do if records_to_load is empty
     if not records_to_load:
         return
+
     # read the plugin file
-    with open(mwglobals.DATA_PATH + file_name, mode="rb") as file:
-        while (header := file.read(16)) != b"":
+    with open(mwglobals.DATA_PATH + file_name, mode='rb') as file:
+        def load_record():
             # 4 bytes make up a header
-            record_type, length, unknown, flags = struct.unpack("<4siii", header)
-            record_type = record_type.decode("mbcs")
+            record_type, length, unknown, flags = struct.unpack('<4siii', header)
+            record_type = record_type.decode('mbcs')
             length_left = length
             # skip record if it's not a type being loaded
             if record_type not in records_to_load:
-                file.seek(length_left, 1)
-                continue
+                file.seek(length, 1)
+                return
             # create record and associate it with this plugin name
             record = create_record(record_type)
             record.file_name = file_name
             # add to global record data structures
-            mwglobals.records[record_type] += [record]
-            mwglobals.ordered_records += [record]
-            mwglobals.plugin_records[file_name][record_type] += [record]
+            mwglobals.records[record_type].append(record)
+            mwglobals.ordered_records.append(record)
+            mwglobals.plugin_records[file_name][record_type].append(record)
             # split up the data into subrecords
             while length_left > 0:
-                subtype, sublength = struct.unpack("<4si", file.read(8))
-                subtype = subtype.decode("mbcs")
+                subtype, sublength = struct.unpack('<4si', file.read(8))
+                subtype = subtype.decode('mbcs')
                 record.add_subrecord(subtype, subdata=file.read(sublength))
                 length_left -= 8 + sublength
             # send flags and data off to class to parse
             record.load_flags(flags)
             record.load()
             record.load_deleted()
-            # if setting on, automatically load essential records from masters once they are known
-            if auto_load_masters and record_type == "TES3":
-                for master in record.masters:
-                    load_plugin(master, records_to_load=records_to_load, print_loading=print_loading)
-            # print a progress message
-            if print_loading:
-                print("** Loading", file_name + ":", records_to_load, "**")
-                print_loading = False
+            return record
+
+        # if setting on, automatically load records from masters; skip if TES3 has been loaded previously
+        if auto_load_masters and 'TES3' in records_to_load:
+            if header := file.read(16):  # same as single iteration of load_record loop
+                for master in load_record().masters:  # first record must be TES3
+                    if master not in masters_loaded:
+                        masters_loaded.append(master)
+                        load_plugin(master, records_to_load=records_to_load, masters_loaded=masters_loaded)
+        # print a loading message
+        print(f"** Loading {file_name}: {records_to_load} **")
+        # load_record loop
+        while header := file.read(16):
+            load_record()
 
 
 def save_plugin(file_name, active_file, *merge_files):
@@ -247,112 +215,111 @@ def save_plugin(file_name, active_file, *merge_files):
         for record in mwglobals.ordered_records:
             if record.file_name in files:
                 flags = record.save_flags()
-                if hasattr(record, "save"):  # temporary until all are implemented
+                if hasattr(record, 'save'):  # temporary until all are implemented
                     record.save()
-                    record.save_deleted()
                 length = 0
                 for subrecord in record.ordered_subrecords:
                     length += 8 + len(subrecord.data)
-                file.write(struct.pack("<4siii", record.get_record_type().encode("mbcs"), length, 0, flags))
+                file.write(struct.pack('<4siii', record.get_record_type().encode('mbcs'), length, 0, flags))
                 for subrecord in record.ordered_subrecords:
-                    file.write(struct.pack("<4si", subrecord.record_type.encode("mbcs"), len(subrecord.data)))
+                    file.write(struct.pack('<4si', subrecord.record_type.encode('mbcs'), len(subrecord.data)))
                     file.write(subrecord.data)
 
 
 def create_record(record_type):
-    if record_type == "TES3":
+    if record_type == 'TES3':
         return mwtes3.MwTES3()
-    elif record_type == "GMST":
+    elif record_type == 'GMST':
         return mwgmst.MwGMST()
-    elif record_type == "GLOB":
+    elif record_type == 'GLOB':
         return mwglob.MwGLOB()
-    elif record_type == "CLAS":
+    elif record_type == 'CLAS':
         return mwclas.MwCLAS()
-    elif record_type == "FACT":
+    elif record_type == 'FACT':
         return mwfact.MwFACT()
-    elif record_type == "RACE":
+    elif record_type == 'RACE':
         return mwrace.MwRACE()
-    elif record_type == "SOUN":
+    elif record_type == 'SOUN':
         return mwsoun.MwSOUN()
-    elif record_type == "SKIL":
+    elif record_type == 'SKIL':
         return mwskil.MwSKIL()
-    elif record_type == "MGEF":
+    elif record_type == 'MGEF':
         return mwmgef.MwMGEF()
-    elif record_type == "SCPT":
+    elif record_type == 'SCPT':
         return mwscpt.MwSCPT()
-    elif record_type == "REGN":
+    elif record_type == 'REGN':
         return mwregn.MwREGN()
-    elif record_type == "BSGN":
+    elif record_type == 'BSGN':
         return mwbsgn.MwBSGN()
-    elif record_type == "LTEX":
+    elif record_type == 'LTEX':
         return mwltex.MwLTEX()
-    elif record_type == "STAT":
+    elif record_type == 'STAT':
         return mwstat.MwSTAT()
-    elif record_type == "DOOR":
+    elif record_type == 'DOOR':
         return mwdoor.MwDOOR()
-    elif record_type == "MISC":
+    elif record_type == 'MISC':
         return mwmisc.MwMISC()
-    elif record_type == "WEAP":
+    elif record_type == 'WEAP':
         return mwweap.MwWEAP()
-    elif record_type == "CONT":
+    elif record_type == 'CONT':
         return mwcont.MwCONT()
-    elif record_type == "SPEL":
+    elif record_type == 'SPEL':
         return mwspel.MwSPEL()
-    elif record_type == "CREA":
+    elif record_type == 'CREA':
         return mwcrea.MwCREA()
-    elif record_type == "BODY":
+    elif record_type == 'BODY':
         return mwbody.MwBODY()
-    elif record_type == "LIGH":
+    elif record_type == 'LIGH':
         return mwligh.MwLIGH()
-    elif record_type == "ENCH":
+    elif record_type == 'ENCH':
         return mwench.MwENCH()
-    elif record_type == "NPC_":
+    elif record_type == 'NPC_':
         return mwnpc_.MwNPC_()
-    elif record_type == "ARMO":
+    elif record_type == 'ARMO':
         return mwarmo.MwARMO()
-    elif record_type == "CLOT":
+    elif record_type == 'CLOT':
         return mwclot.MwCLOT()
-    elif record_type == "REPA":
+    elif record_type == 'REPA':
         return mwrepa.MwREPA()
-    elif record_type == "ACTI":
+    elif record_type == 'ACTI':
         return mwacti.MwACTI()
-    elif record_type == "APPA":
+    elif record_type == 'APPA':
         return mwappa.MwAPPA()
-    elif record_type == "LOCK":
+    elif record_type == 'LOCK':
         return mwlock.MwLOCK()
-    elif record_type == "PROB":
+    elif record_type == 'PROB':
         return mwprob.MwPROB()
-    elif record_type == "INGR":
+    elif record_type == 'INGR':
         return mwingr.MwINGR()
-    elif record_type == "BOOK":
+    elif record_type == 'BOOK':
         return mwbook.MwBOOK()
-    elif record_type == "ALCH":
+    elif record_type == 'ALCH':
         return mwalch.MwALCH()
-    elif record_type == "LEVI":
+    elif record_type == 'LEVI':
         return mwlevi.MwLEVI()
-    elif record_type == "LEVC":
+    elif record_type == 'LEVC':
         return mwlevc.MwLEVC()
-    elif record_type == "CELL":
+    elif record_type == 'CELL':
         return mwcell.MwCELL()
-    elif record_type == "LAND":
+    elif record_type == 'LAND':
         return mwland.MwLAND()
-    elif record_type == "PGRD":
+    elif record_type == 'PGRD':
         return mwpgrd.MwPGRD()
-    elif record_type == "SNDG":
+    elif record_type == 'SNDG':
         return mwsndg.MwSNDG()
-    elif record_type == "DIAL":
+    elif record_type == 'DIAL':
         return mwdial.MwDIAL()
-    elif record_type == "INFO":
+    elif record_type == 'INFO':
         info = mwinfo.MwINFO()
-        last_dial = mwglobals.records["DIAL"][-1]
-        last_dial.infos += [info]
+        last_dial = mwglobals.records['DIAL'][-1]
+        last_dial.infos.append(info)
         info.dial = last_dial
         return info
-    elif record_type == "SSCR":
+    elif record_type == 'SSCR':
         return mwsscr.MwSSCR()
 
 
-def diff_plugins(plugin1, plugin2, record_type, added=True, removed=True, changed=True):
+def diff_plugins(plugin1, plugin2, record_type, changed=True, equal=False, added=False, removed=False):
     object_ids1 = {}
     object_ids2 = {}
     for record in mwglobals.records[record_type]:
@@ -360,26 +327,34 @@ def diff_plugins(plugin1, plugin2, record_type, added=True, removed=True, change
             object_ids1[record.get_id()] = record
         elif record.file_name == plugin2:
             object_ids2[record.get_id()] = record
-    
+
+    if changed or equal:
+        for record in mwglobals.records[record_type]:
+            if record.file_name == plugin1:
+                if record.get_id() in object_ids2:
+                    record2 = object_ids2[record.get_id()]
+                    diff = record.diff(record2)
+                    if changed and diff:
+                        print(diff)
+                        print()
+                    if equal and not diff:
+                        print(f"Identical records: {record.get_id()} = {record2.get_id()}")
+                        print()
+
     if added:
         for record in mwglobals.records[record_type]:
             if record.file_name == plugin2:
                 if record.get_id() not in object_ids1:
                     print("\nAdded", record)
                     print(record.record_details())
-    
+                    print()
+
     if removed:
         for record in mwglobals.records[record_type]:
             if record.file_name == plugin1:
                 if record.get_id() not in object_ids2:
                     print("\nRemoved", record)
-    
-    if changed:
-        for record in mwglobals.records[record_type]:
-            if record.file_name == plugin1:
-                if record.get_id() in object_ids2:
-                    record2 = object_ids2[record.get_id()]
-                    record.diff(record2)
+                    print()
 
 
 def diff_locations(plugin1, file_names1, plugin2, file_names2, record_type):
@@ -389,7 +364,7 @@ def diff_locations(plugin1, file_names1, plugin2, file_names2, record_type):
     for record in mwglobals.records[record_type]:
         if record.file_name == plugin2:
             object_ids2[record.get_id()] = record
-    
+
     for record in mwglobals.records[record_type]:
         if record.file_name == plugin1:
             if record.get_id() in object_ids2:
@@ -402,33 +377,33 @@ def diff_locations(plugin1, file_names1, plugin2, file_names2, record_type):
                         if first_print:
                             print(record)
                             first_print = False
-                        print("-", loc)
+                        print('-', loc)
                 for loc in locations2:
                     if loc not in locations1:
                         if first_print:
                             print(record)
                             first_print = False
-                        print("+", loc)
+                        print('+', loc)
 
 
 def init_args():
-    parser = argparse.ArgumentParser(description="Analyze a plugin file."
-                                                 "\n\nThe following commands are available:"
-                                                 "\ndiff\tfind the difference between two plugins"
-                                                 "\ndump\toutput readable record data",
+    parser = argparse.ArgumentParser(description="""Analyze a plugin file.
+                                                 \n\nThe following commands are available:
+                                                 \ndiff\tfind the difference between two plugins
+                                                 \ndump\toutput readable record data""",
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("command", help="name of the action to take")
-    parser.add_argument("plugins", nargs="+", help="list of plugins to load and provide as arguments")
-    parser.add_argument("-f", "--file", "->", help="output to a given <file name> instead of the command line",
-                        metavar="<file name>")
-    parser.add_argument("-t", "--type", nargs="+", help="limit to given <record type>s", metavar="<record type>")
-    parser.add_argument("-l", "--list", action="store_true", help="show only identifying data for each record")
-    parser.add_argument("--diff_added", action="store_true", help="report records in plugin2 that do not exist in"
-                                                                  "plugin1")
-    parser.add_argument("--diff_removed", action="store_true", help="report records in plugin1 that do not exist in"
-                                                                    "plugin2")
-    parser.add_argument("--diff_ignore_changed", action="store_true", help="do not report changes between records that"
-                                                                           "exist in plugin1 and plugin2")
+    parser.add_argument('command', help="name of the action to take")
+    parser.add_argument('plugins', nargs='+', help="list of plugins to load and provide as arguments")
+    parser.add_argument('-t', '--type', nargs='+', help="limit to given <record type>s", metavar="<record type>")
+    parser.add_argument('-l', '--list', action='store_true', help="show only identifying data for each record")
+    parser.add_argument('--diff_ignore_changed', action='store_true', help="""do not report changes between records that
+                                                                           exist in plugin1 and plugin2""")
+    parser.add_argument('--diff_equal', action='store_true', help="""report records in plugin1 that are identical in
+                                                                    plugin2""")
+    parser.add_argument('--diff_added', action='store_true', help="""report records in plugin2 that do not exist in
+                                                                  plugin1""")
+    parser.add_argument('--diff_removed', action='store_true', help="""report records in plugin1 that do not exist in
+                                                                    plugin2""")
     args = parser.parse_args()
     if args.type:
         args.type = [x.upper() for x in args.type]
@@ -438,19 +413,22 @@ def init_args():
 def main():
     start_time = time.time()
     init()
-    if len(sys.argv) > 2 or "-h" in sys.argv or "--help" in sys.argv:
+    if len(sys.argv) > 2 or '-h' in sys.argv or '--help' in sys.argv:
         args = init_args()
         handle_args(args)
-        
+
     # Python commands
-    # mwjobs.find_creatures(file='files/SHOTN_Creas.csv')
-    # mwjobs.ref_map(file='files/SHOTN_Creas.csv', img='files/SHOTN_CellExport.png', top=23, bottom=-3, left=-120, right=-94)
-    # mwjobs.exterior_doors(file='files/PC_Doors.csv')
-    # mwjobs.ref_map(file='files/PC_Doors.csv', img='files/PC_CellExport.png', top=-35, bottom=-58, left=-141, right=-108)
-    
+    """
+    mwjobs.find_creatures(file='files/SHOTN_Creas.csv')
+    mwjobs.ref_map(file='files/SHOTN_Creas.csv', img='files/SHOTN_CellExport.png', top=23, bottom=-3, left=-120,
+                   right=-94)
+    mwjobs.exterior_doors(file='files/PC_Doors.csv')
+    mwjobs.ref_map(file='files/PC_Doors.csv', img='files/PC_CellExport.png', top=-35, bottom=-58, left=-141,right=-108)
+    """
+
     time_spent = time.time() - start_time
-    print("\n** Time spent: {:.3f} seconds **".format(time_spent))
+    print(f"\n** Time spent: {time_spent:.3f} seconds **")
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

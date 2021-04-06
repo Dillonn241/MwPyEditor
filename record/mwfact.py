@@ -5,72 +5,88 @@ from mwrecord import MwRecord
 class MwFACT(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
-    
-    def load(self):
-        self.id = self.get_subrecord_string("NAME")
-        self.name = self.get_subrecord_string("FNAM")
-        
+        self.id_ = ''
+        self.name = ''
+        self.favored_attribute_ids = []
         self.ranks = []
-        for i in range(self.num_subrecords("RNAM")):
-            faction_rank = MwFACTRank()
-            faction_rank.name = self.get_subrecord_string("RNAM", index=i)
-            faction_rank.attributes = []
-            faction_rank.attributes += [self.get_subrecord_int("FADT", start=8 + 20 * i, length=4)]
-            faction_rank.attributes += [self.get_subrecord_int("FADT", start=12 + 20 * i, length=4)]
-            faction_rank.skills = []
-            faction_rank.skills += [self.get_subrecord_int("FADT", start=16 + 20 * i, length=4)]
-            faction_rank.skills += [self.get_subrecord_int("FADT", start=20 + 20 * i, length=4)]
-            faction_rank.fact_rep = self.get_subrecord_int("FADT", start=24 + 20 * i, length=4)
-            self.ranks += [faction_rank]
-        
-        self.favored_attributes = []
-        self.favored_attributes += [mwglobals.ATTRIBUTES[self.get_subrecord_int("FADT", start=0, length=4)]]
-        self.favored_attributes += [mwglobals.ATTRIBUTES[self.get_subrecord_int("FADT", start=4, length=4)]]
-        self.favored_skills = []
-        for i in range(7):
-            skill_id = self.get_subrecord_int("FADT", start=208 + i * 4, length=4)
-            if skill_id < len(mwglobals.SKILLS):
-                self.favored_skills += [mwglobals.SKILLS[skill_id]]
-        
-        flags = self.get_subrecord_int("FADT", start=236, length=4)
+        self.favored_skill_ids = []
+        self.hidden = False
+        self.faction_reactions = []
+
+    def load(self):
+        self.id_ = self.parse_string('NAME')
+        self.name = self.parse_string('FNAM')
+
+        self.favored_attribute_ids = [self.parse_uint('FADT'),
+                                      self.parse_uint('FADT', start=4)]
+
+        self.ranks = [MwFACTRank(self.parse_string('RNAM', index=i),  # name
+                                 [self.parse_uint('FADT', start=8 + 20 * i),  # attribute 1
+                                  self.parse_uint('FADT', start=12 + 20 * i)],  # attribute 2
+                                 [self.parse_uint('FADT', start=16 + 20 * i),  # skill 1
+                                  self.parse_uint('FADT', start=20 + 20 * i)],  # skill 2
+                                 self.parse_uint('FADT', start=24 + 20 * i))  # fact rep
+                      for i in range(self.num_subrecords('RNAM'))]
+
+        self.favored_skill_ids = [self.parse_int('FADT', start=208 + i * 4)
+                                  for i in range(7)]
+
+        flags = self.parse_uint('FADT', start=236)
         self.hidden = (flags & 0x1) == 0x1
-        
-        self.faction_reactions = {}
-        for i in range(self.num_subrecords("ANAM")):
-            reaction_id = self.get_subrecord_string("ANAM", index=i)
-            reaction_value = self.get_subrecord_int("INTV", index=i)
-            self.faction_reactions[reaction_id] = reaction_value
-        
-        mwglobals.object_ids[self.id] = self
-    
+
+        self.faction_reactions = {self.parse_string('ANAM', index=i):
+                                  self.parse_int('INTV', index=i)
+                                  for i in range(self.num_subrecords('ANAM'))}
+
+        mwglobals.object_ids[self.id_] = self
+
+    def get_favored_attributes(self):
+        return [mwglobals.ATTRIBUTES[x] for x in self.favored_attribute_ids]
+
+    def set_favored_attributes(self, array):
+        self.favored_attribute_ids = [mwglobals.ATTRIBUTES.index(x) if x in mwglobals.ATTRIBUTES else 0 for x in array]
+
+    def get_favored_skills(self):
+        return [mwglobals.SKILLS[x] if x != -1 else "" for x in self.favored_skill_ids]
+
+    def set_favored_skills(self, array):
+        self.favored_skill_ids = [mwglobals.SKILLS.index(x) if x in mwglobals.SKILLS else -1 for x in array]
+
     def record_details(self):
-        string = "|Name|    " + str(self) + MwRecord.format_record_details(self, [
-            ("\n|Hidden from PC|", "hidden", False),
-            ("\n|Favored Attributes|", "favored_attributes"),
-            ("\n|Favored Skills|", "favored_skills"),
-            ("\n|Faction Reactions|", "faction_reactions", {})
-        ])
+        string = [MwRecord.format_record_details(self, [
+            ("|Name|", "__str__"),
+            ("\n|Hidden from PC|", 'hidden', False),
+            ("\n|Favored Attributes|", 'get_favored_attributes'),
+            ("\n|Favored Skills|", 'get_favored_skills'),
+            ("\n|Faction Reactions|", 'faction_reactions', {})
+        ])]
         if len(self.ranks) > 0:
-            string += "\n|Ranks|    Rank Name (Attrib 1, Attrib 2, Pri Skill, Fav Skill, Fact Rep)"
+            string.append("\n|Ranks|    Rank Name (Attrib 1, Attrib 2, Pri Skill, Fav Skill, Fact Rep)")
             for rank in self.ranks:
-                string += "\n" + rank.record_details()
-        return string
-    
+                string.append(f"\n{rank.record_details()}")
+        return ''.join(string)
+
     def __str__(self):
-        return "{} [{}]".format(self.name, self.id)
-    
+        return f"{self.name} [{self.id_}]"
+
     def diff(self, other):
-        MwRecord.diff(self, other, ["name", "ranks", "favored_attributes", "favored_skills", "hidden",
-                                    "faction_reactions"])
+        return MwRecord.diff(self, other, ['name', 'get_favored_attributes', 'ranks', 'get_favored_skills', 'hidden',
+                                           'faction_reactions'])
 
 
 class MwFACTRank:
+    def __init__(self, name, attributes, skills, fact_rep):
+        self.name = name
+        self.attributes = attributes
+        self.skills = skills
+        self.fact_rep = fact_rep
+
     def record_details(self):
-        return self.name + " ({}, {}, {}, {}, {})".format(self.attributes[0], self.attributes[1], self.skills[0],
-                                                          self.skills[1], self.fact_rep)
-    
+        return f"""{self.name} ({self.attributes[0]}, {self.attributes[1]}, {self.skills[0]}, {self.skills[1]},
+                {self.fact_rep})"""
+
     def __str__(self):
         return self.name
-    
+
     def __repr__(self):
         return self.record_details()
