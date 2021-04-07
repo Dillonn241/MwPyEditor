@@ -43,7 +43,7 @@ def init_plugins():
     """Choose common plugins to load for TR and PT devs. Versions likely out of date."""
 
     """Vanilla"""
-    load_plugin('Morrowind.esm')
+    # load_plugin('Morrowind.esm')
     # load_plugin('Tribunal.esm')
     # load_plugin('Bloodmoon.esm')
 
@@ -114,11 +114,7 @@ def testing_area():
     #                top=-35, bottom=-58, left=-141, right=-108)
 
     """Start"""
-    for record in mwglobals.ordered_records:
-        print(record)
-    mwjobs.deprecated_check()
-    for info in mwutil.filtered_dialogue(actor='fargoth'):
-        print(info)
+    pass
 
 
 """
