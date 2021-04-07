@@ -117,7 +117,7 @@ class MwNPC_(MwRecord):
     def autocalc_stats(self):
         mw_race = mwglobals.object_ids[self.race]
         mw_class = mwglobals.object_ids[self.class_]
-        self.attributes = {}
+        self.attributes = []
         for attribute_id in range(8):  # len(mwglobals.ATTRIBUTES)
             base = mw_race.attribute_base_from_id(attribute_id, self.female)
             if attribute_id in mw_class.primary_attribute_ids:
@@ -132,7 +132,7 @@ class MwNPC_(MwRecord):
                         k += 0.5
                     else:
                         k += 0.2
-            self.attributes[attribute_id] = round(base + k * (self.level - 1))
+            self.attributes.append(round(base + k * (self.level - 1)))
 
         health_mult = 3
         if mw_class.specialization_id == 2:  # Combat
@@ -148,7 +148,7 @@ class MwNPC_(MwRecord):
         # Strength + Willpower + Agility + Endurance
         self.fatigue = self.attributes[0] + self.attributes[2] + self.attributes[3] + self.attributes[5]
 
-        self.skills = {}
+        self.skills = []
         for mw_skill in mwglobals.records['SKIL']:
             if mw_skill.id_ in mw_class.major_skill_ids:
                 k = 1
@@ -163,7 +163,7 @@ class MwNPC_(MwRecord):
                 base += 5
                 k += 0.5
             base += mw_race.skill_bonus_from_id(mw_skill.id_)
-            self.skills[mw_skill.id_] = round(base + k * (self.level - 1))
+            self.skills.append(round(base + k * (self.level - 1)))
 
         if self.faction:
             self.reputation = 2 * (self.faction_rank + 1)  # 2 = iAutoRepFacMod
@@ -190,17 +190,28 @@ class MwNPC_(MwRecord):
         return self.class_
 
     def get_faction_rank_name(self):
-        return mwglobals.object_ids[self.faction].ranks[self.faction_rank].name
+        if self.faction and self.faction in mwglobals.object_ids:
+            ranks = mwglobals.object_ids[self.faction].ranks
+            if 0 <= self.faction_rank < len(ranks):
+                return ranks[self.faction_rank].name
 
     def get_attribute(self, attribute_name):
         if attribute_name in mwglobals.ATTRIBUTES:
             attribute_id = mwglobals.ATTRIBUTES.index(attribute_name)
             return self.attributes[attribute_id]
+    
+    def get_attributes_dict(self):
+        return {mwglobals.ATTRIBUTES[attribute_id]: self.attributes[attribute_id]
+                for attribute_id in range(8)}
 
     def get_skill(self, skill_name):
         if skill_name in mwglobals.SKILLS:
             skill_id = mwglobals.SKILLS.index(skill_name)
             return self.skills[skill_id]
+    
+    def get_skills_dict(self):
+        return {mwglobals.SKILLS[skill_id]: self.skills[skill_id]
+                for skill_id in range(27)}
 
     def get_sex(self):
         return "Female" if self.female else "Male"
@@ -267,16 +278,20 @@ class MwNPC_(MwRecord):
         string = [MwRecord.format_record_details(self, [
             ("|Name|", '__str__'),
             ("\n|Script|", 'script'),
-            ("\n|Race|", 'race'), ("    |Sex|", 'sex'),
-            ("\n|Class|", 'class'), ("    |Level|", 'level'),
-            ("\n|Faction|", 'faction', ""), ("    |Rank|", 'faction_rank', 0 if self.faction == '' else None),
+            ("\n|Race|", 'race'),
+            ("\n|Sex|", 'sex'),
+            ("\n|Class|", 'class'),
+            ("\n|Level|", 'level'),
+            ("\n|Faction|", 'faction', ''),
+            ("\n|Faction Rank|", 'get_faction_rank_name', 0 if self.faction == '' else None),
+            (" ({})", 'faction_rank'),
             ("\n|Essential|", 'essential', False),
             ("\n|Respawn|", 'respawn', False),
             ("\n|Head Model|", 'head_model'),
             ("\n|Hair Model|", 'hair_model'),
             ("\n|Animation File|", 'animation_file'),
-            ("\n|Attributes|", 'attributes'),
-            ("\n|Skills|", 'skills'),
+            ("\n|Attributes|", 'get_attributes_dict'),
+            ("\n|Skills|", 'get_skills_dict'),
             ("\n|Health|", 'health'),
             ("\n|Magicka|", 'magicka'),
             ("\n|Fatigue|", 'fatigue'),
@@ -286,7 +301,10 @@ class MwNPC_(MwRecord):
             ("\n|Auto Calculate Stats|", 'autocalc', False),
             ("\n|Items|", 'items', {}),
             ("\n|Spells|", 'spells', []),
-            ("\n|Fight|", 'fight'), ("    |Flee|", 'flee'), ("    |Alarm|", 'alarm'), ("    |Hello|", 'hello'),
+            ("\n|Hello|", 'hello'),
+            ("\n|Fight|", 'fight'),
+            ("\n|Flee|", 'flee'),
+            ("\n|Alarm|", 'alarm'),
             ("\n|Barter Gold|", 'barter_gold', 0),
             ("\n|Buys / Sells|", 'buys_sells', []),
             ("\n|Other Services|", 'other_services', [])
@@ -306,11 +324,11 @@ class MwNPC_(MwRecord):
 
     def diff(self, other):
         return MwRecord.diff(self, other, ['animation_file', 'name', 'race', 'class_', 'faction', 'head_model',
-                                           'hair_model', 'script', 'level', 'attributes', 'skills', 'health', 'magicka',
-                                           'fatigue', 'disposition', 'reputation', 'faction_rank', 'barter_gold',
-                                           'female', 'essential', 'respawn', 'autocalc', 'white_blood', 'gold_blood',
-                                           'spells', 'items', 'hello', 'fight', 'flee', 'alarm', 'buys_sells',
-                                           'other_services', 'destinations', 'ai_packages'])
+                                           'hair_model', 'script', 'level', 'get_attributes_dict', 'get_skills_dict',
+                                           'health', 'magicka', 'fatigue', 'disposition', 'reputation', 'faction_rank',
+                                           'barter_gold', 'female', 'essential', 'respawn', 'autocalc', 'white_blood',
+                                           'gold_blood', 'spells', 'items', 'hello', 'fight', 'flee', 'alarm',
+                                           'buys_sells', 'other_services', 'destinations', 'ai_packages'])
 
 
 def load_ai(self):

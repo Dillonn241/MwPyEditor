@@ -133,6 +133,10 @@ class MwCREA(MwRecord):
             attribute_id = mwglobals.ATTRIBUTES.index(attribute_name)
             return self.attributes[attribute_id]
 
+    def get_attributes_dict(self):
+        return {mwglobals.ATTRIBUTES[attribute_id]: self.attributes[attribute_id]
+                for attribute_id in range(8)}
+
     def get_blood(self):
         if self.white_blood:
             return "Skeleton (White)"
@@ -190,7 +194,7 @@ class MwCREA(MwRecord):
             ("\n|Script|", 'script'),
             ("\n|Type|", 'get_type'),
             ("\n|Level|", 'level'),
-            ("\n|Attributes|", 'attributes'),
+            ("\n|Attributes|", 'get_attributes_dict'),
             ("\n|Health|", 'health'),
             ("\n|Spell Pts|", 'spell_pts'),
             ("\n|Fatigue|", 'fatigue'),
@@ -214,7 +218,10 @@ class MwCREA(MwRecord):
             ("\n|Scale|    {:.2f}", 'scale'),
             ("\n|Items|", 'items', {}),
             ("\n|Spells|", 'spells', []),
-            ("\n|Hello|", 'hello'), ("    |Fight|", 'fight'), ("    |Flee|", 'flee'), ("    |Alarm|", 'alarm'),
+            ("\n|Hello|", 'hello'),
+            ("\n|Fight|", 'fight'),
+            ("\n|Flee|", 'flee'),
+            ("\n|Alarm|", 'alarm'),
             ("\n|Buys / Sells|", 'buys_sells', []),
             ("\n|Other Services|", 'other_services', [])
         ])]
@@ -233,8 +240,8 @@ class MwCREA(MwRecord):
 
     def diff(self, other):
         return MwRecord.diff(self, other, ['animation_file', 'sound_gen_creature', 'name', 'script', 'get_type',
-                                           'level', 'attributes', 'health', 'spell_pts', 'fatigue', 'soul', 'combat',
-                                           'magic', 'stealth', 'attack1_min', 'attack1_max', 'attack2_min',
+                                           'level', 'get_attributes_dict', 'health', 'spell_pts', 'fatigue', 'soul',
+                                           'combat', 'magic', 'stealth', 'attack1_min', 'attack1_max', 'attack2_min',
                                            'attack2_max', 'attack3_min', 'attack3_max', 'barter_gold', 'biped',
                                            'respawn', 'weapon_and_shield', 'none', 'swims', 'flies', 'walks',
                                            'essential', 'white_blood', 'gold_blood', 'scale', 'items', 'spells',
