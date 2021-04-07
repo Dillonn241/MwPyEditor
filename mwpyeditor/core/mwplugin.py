@@ -110,7 +110,7 @@ def args_dump(args):
                     print(rcd)
             else:
                 for rcd in mwglobals.plugin_records[plugin][rcd_type]:
-                    print(rcd.record_details())
+                    print(f"{rcd.record_details()}\n")
         print("\n")
 
 
