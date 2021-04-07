@@ -50,18 +50,19 @@ def args_diff(args):
     plugin1 = args.plugins[0]  # 'Tamriel_Data_6.esm'
     plugin2 = args.plugins[1]  # 'Tamriel_Data.esm'
     record_types = mwglobals.RECORDS_MIN + args.type if args.type else mwglobals.RECORDS_ALL
+    print(f"# Diff plugin {plugin1} with {plugin2}: #\n")
     load_plugin(plugin1, records_to_load=record_types)
     load_plugin(plugin2, records_to_load=record_types)
-    print(f"# Diff plugin {plugin1} with {plugin2}: #\n")
 
     diff_changed = not args.diff_ignore_changed if args.diff_ignore_changed else True
     diff_equal = args.diff_equal if args.diff_equal else False
     diff_added = args.diff_added if args.diff_added else False
     diff_removed = args.diff_removed if args.diff_removed else False
     for rcd_type in record_types:
-        print(f"## Diff record type {rcd_type}: ##\n")
+        print(f"\n## Diff record type {rcd_type}: ##\n")
         diff_plugins(plugin1, plugin2, rcd_type, changed=diff_changed, equal=diff_equal, added=diff_added,
                      removed=diff_removed)
+    print("\n")
 
 
 def diff_plugins(plugin1, plugin2, record_type, changed=True, equal=False, added=False, removed=False):
@@ -81,40 +82,36 @@ def diff_plugins(plugin1, plugin2, record_type, changed=True, equal=False, added
                     diff = record.diff(record2)
                     if changed and diff:
                         print(diff)
-                        print()
                     if equal and not diff:
                         print(f"Identical records: {record.get_id()} = {record2.get_id()}")
-                        print()
 
     if added:
         for record in mwglobals.records[record_type]:
             if record.file_name == plugin2:
                 if record.get_id() not in object_ids1:
-                    print("\nAdded", record)
-                    print(record.record_details())
-                    print()
+                    print(f"\nAdded {record}\n{record.details()}\n")
 
     if removed:
         for record in mwglobals.records[record_type]:
             if record.file_name == plugin1:
                 if record.get_id() not in object_ids2:
-                    print("\nRemoved", record)
-                    print()
+                    print(f"\nRemoved {record}")
 
 
 def args_dump(args):
     for plugin in args.plugins:
         record_types = mwglobals.RECORDS_MIN + args.type if args.type else mwglobals.RECORDS_ALL
-        load_plugin(plugin, records_to_load=record_types)
         print(f"# Dump plugin {plugin}: #\n")
+        load_plugin(plugin, records_to_load=record_types)
         for rcd_type in record_types:
-            print(f"## Dump record type {rcd_type}: ##\n")
+            print(f"\n## Dump record type {rcd_type}: ##\n")
             if args.list:
                 for rcd in mwglobals.plugin_records[plugin][rcd_type]:
                     print(rcd)
             else:
                 for rcd in mwglobals.plugin_records[plugin][rcd_type]:
                     print(rcd.record_details())
+        print("\n")
 
 
 def load_plugin(file_name, records_to_load=None, masters_loaded=None):
