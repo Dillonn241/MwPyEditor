@@ -1,4 +1,6 @@
-
+*.esm
+*.esp
+*.ess
 *.iml
-*.xml
 *.pyc
+*.xml
