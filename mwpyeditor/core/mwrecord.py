@@ -73,13 +73,14 @@ class MwRecord:
         subarray = self.subrecords.get(subtype, None)
         if subarray and 0 <= index < len(subarray):
             subrecord = subarray[index]
-            return subrecord.get_data(start=start, length=length)
+            return subrecord.data[start:start + length] if length else subrecord.data[start:]
 
     def parse_int(self, subtype, index=0, start=0, length=4):
         subarray = self.subrecords.get(subtype, None)
         if subarray and 0 <= index < len(subarray):
             subrecord = subarray[index]
-            return subrecord.parse_int(start=start, length=length)
+            subdata = subrecord.data[start:start + length]
+            return int.from_bytes(subdata, byteorder='little', signed=True)
 
     def parse_int_array(self, subtype):
         subarray = self.subrecords.get(subtype, None)
@@ -91,7 +92,8 @@ class MwRecord:
         subarray = self.subrecords.get(subtype, None)
         if subarray and 0 <= index < len(subarray):
             subrecord = subarray[index]
-            return subrecord.parse_uint(start=start, length=length)
+            subdata = subrecord.data[start:start + length]
+            return int.from_bytes(subdata, byteorder='little', signed=False)
 
     def parse_uint_array(self, subtype):
         subarray = self.subrecords.get(subtype, None)
@@ -125,15 +127,15 @@ class MwRecord:
 
     def add_int(self, value, subtype, length=4):
         if value is not None:
-            self.add_subrecord(subtype).add_int(value, length=length)
+            self.add_subrecord(subtype).data += int.to_bytes(value, byteorder='little', length=length, signed=True)
 
     def add_uint(self, value, subtype, length=4):
         if value is not None:
-            self.add_subrecord(subtype).add_uint(value, length=length)
+            self.add_subrecord(subtype).data += int.to_bytes(value, byteorder='little', length=length, signed=False)
 
     def add_float(self, value, subtype):
         if value is not None:
-            self.add_subrecord(subtype).add_float(value)
+            self.add_subrecord(subtype).data += struct.pack('<f', value)
 
     def add_string(self, value, subtype, length=None, terminator=True):
         if value is not None:
@@ -241,7 +243,7 @@ class Subrecord:
         if value is not None:
             if length:
                 if length < len(value):
-                 value = value[:length]
+                    value = value[:length]
                 elif length > len(value):
                     value = f"{value:\x00<{length}}"
             format_str = f"{len(value)}s"

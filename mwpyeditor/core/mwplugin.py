@@ -1,13 +1,12 @@
 import argparse
 import struct
 import sys
-from collections import defaultdict
 
 from mwpyeditor.core import mwglobals
-from mwpyeditor.record import (mwacti, mwalch, mwappa, mwarmo, mwbody, mwbook, mwbsgn, mwcell, mwclas, mwclot, mwcont, mwcrea,
-                               mwdial, mwdoor, mwench, mwfact, mwglob, mwgmst, mwinfo, mwingr, mwland, mwlevc, mwlevi, mwligh,
-                               mwlock, mwltex, mwmgef, mwmisc, mwnpc_, mwpgrd, mwprob, mwrace, mwregn, mwrepa, mwscpt, mwskil,
-                               mwsndg, mwsoun, mwspel, mwsscr, mwstat, mwtes3, mwweap)
+from mwpyeditor.record import (mwacti, mwalch, mwappa, mwarmo, mwbody, mwbook, mwbsgn, mwcell, mwclas, mwclot, mwcont,
+                               mwcrea, mwdial, mwdoor, mwench, mwfact, mwglob, mwgmst, mwinfo, mwingr, mwland, mwlevc,
+                               mwlevi, mwligh, mwlock, mwltex, mwmgef, mwmisc, mwnpc_, mwpgrd, mwprob, mwrace, mwregn,
+                               mwrepa, mwscpt, mwskil, mwsndg, mwsoun, mwspel, mwsscr, mwstat, mwtes3, mwweap)
 
 auto_load_masters = True
 
@@ -133,7 +132,9 @@ def load_plugin(file_name, records_to_load=None, masters_loaded=None):
         records_to_load = [x for x in records_to_load if x not in mwglobals.plugin_records[file_name]]
     # otherwise, set up a record list for this plugin in plugin_records
     else:
-        mwglobals.plugin_records[file_name] = defaultdict(list)
+        mwglobals.plugin_records[file_name] = {}
+        for x in records_to_load:
+            mwglobals.plugin_records[file_name][x] = []
     # nothing to do if records_to_load is empty
     if not records_to_load:
         return

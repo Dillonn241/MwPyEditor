@@ -4,8 +4,6 @@ from mwpyeditor.record import mwmgef
 
 
 class MwENCH(MwRecord):
-    do_autocalc = False
-
     def __init__(self):
         MwRecord.__init__(self)
         self.id_ = ''
@@ -13,6 +11,7 @@ class MwENCH(MwRecord):
         self.enchantment_cost = 0
         self.charge = 0
         self.autocalc = False
+        self.auto_stats = None
         self.enchantments = []
 
     def load(self):
@@ -26,30 +25,46 @@ class MwENCH(MwRecord):
 
         load_enchantments(self)
 
-        if MwENCH.do_autocalc and self.autocalc:
-            self.autocalc_stats()
-
         mwglobals.object_ids[self.id_] = self
 
+    def save(self):
+        self.clear_subrecords()
+        self.add_string(self.id_, 'NAME')
+        sub_endt = self.add_subrecord('ENDT')
+        sub_endt.add_uint(self.type_id)
+        sub_endt.add_uint(self.enchantment_cost)
+        sub_endt.add_uint(self.charge)
+        flags = 0x1 if self.autocalc else 0x0
+        sub_endt.add_uint(flags)
+        save_enchantments(self)
+        self.save_deleted()
+
+    def get_auto_stats(self):
+        if self.auto_stats:
+            return self.auto_stats
+        return self.autocalc_stats()
+
     def autocalc_stats(self):
-        if self.type_id != 3:  # Constant Effect
-            cost = 0
-            for enchantment in self.enchantments:
-                base_cost = mwglobals.records['MGEF'][enchantment.effect_id].base_cost
-                base_cost /= 40
-                multiplier = base_cost
-                base_cost *= enchantment.duration
-                base_cost *= enchantment.mag_min + enchantment.mag_max
-                base_cost += enchantment.area * multiplier
-                if enchantment.range_type_id == mwglobals.ENCH_RANGES[2]:  # Target
-                    base_cost *= 1.5
-                cost += base_cost
-            self.enchantment_cost = round(cost)
-            self.charge = self.enchantment_cost
-            if self.type_id == 2:  # Cast When Used
-                self.charge *= 5
-            elif self.type_id == 1:  # Cast When Strikes
-                self.charge *= 10
+        if not self.autocalc or self.type_id == 3:  # Constant Effect
+            return self.enchantment_cost, self.charge
+        cost = 0
+        for enchantment in self.enchantments:
+            base_cost = mwglobals.records['MGEF'][enchantment.effect_id].base_cost
+            base_cost /= 40
+            multiplier = base_cost
+            base_cost *= enchantment.duration
+            base_cost *= enchantment.mag_min + enchantment.mag_max
+            base_cost += enchantment.area * multiplier
+            if enchantment.range_type_id == mwglobals.ENCH_RANGES[2]:  # Target
+                base_cost *= 1.5
+            cost += base_cost
+        auto_enchantment_cost = round(cost)
+        auto_charge = auto_enchantment_cost
+        if self.type_id == 2:  # Cast When Used
+            auto_charge *= 5
+        elif self.type_id == 1:  # Cast When Strikes
+            auto_charge *= 10
+        return auto_enchantment_cost, auto_charge
 
     def get_type(self):
         if 0 <= self.type_id < len(mwglobals.ENCH_TYPES):
@@ -73,11 +88,12 @@ class MwENCH(MwRecord):
         return string
 
     def record_details(self):
+        auto_enchantment_cost, auto_charge = self.get_auto_stats()
         return MwRecord.format_record_details(self, [
             ("|ID|", 'id_'),
             ("\n|Cast Type|", 'get_type'),
-            ("\n|Charge Amount|", 'charge'),
-            ("\n|Enchantment Cost|", 'enchantment_cost'),
+            ("\n|Charge Amount|", auto_charge), (" {}", "(auto)" if self.autocalc else ''),
+            ("\n|Enchantment Cost|", auto_enchantment_cost), (" {}", "(auto)" if self.autocalc else ''),
             ("\n|Auto Calculate|", 'autocalc', False),
             ("\n|Enchantments|", 'enchantments', [])
         ])
@@ -99,6 +115,19 @@ def load_enchantments(self):
                                       enam.parse_uint(start=16),  # mag min
                                       enam.parse_uint(start=20))  # mag max
                          for enam in self.subrecords.get('ENAM', [])]
+
+
+def save_enchantments(self):
+    for ench_single in self.enchantments:
+        sub_enam = self.add_subrecord('ENAM')
+        sub_enam.add_uint(ench_single.effect_id, length=2)
+        sub_enam.add_int(ench_single.skill_id, length=1)
+        sub_enam.add_int(ench_single.attribute_id, length=1)
+        sub_enam.add_uint(ench_single.range_type_id)
+        sub_enam.add_uint(ench_single.area)
+        sub_enam.add_uint(ench_single.duration)
+        sub_enam.add_uint(ench_single.mag_min)
+        sub_enam.add_uint(ench_single.mag_max)
 
 
 class MwENCHSingle:

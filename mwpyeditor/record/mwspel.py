@@ -4,8 +4,6 @@ from mwpyeditor.record.mwench import load_enchantments
 
 
 class MwSPEL(MwRecord):
-    do_autocalc = False
-
     def __init__(self):
         MwRecord.__init__(self)
         self.id_ = ''
@@ -13,6 +11,7 @@ class MwSPEL(MwRecord):
         self.type_id = 0
         self.spell_cost = 0
         self.autocalc = False
+        self.auto_spell_cost = None
         self.pc_start_spell = False
         self.always_succeeds = False
         self.enchantments = []
@@ -30,25 +29,29 @@ class MwSPEL(MwRecord):
 
         load_enchantments(self)
 
-        if MwSPEL.do_autocalc and self.autocalc:
-            self.autocalc_stats()
-
         mwglobals.object_ids[self.id_] = self
 
-    def autocalc_stats(self):
-        if self.type_id == 0 or self.type_id == 5:  # Spell or Power
-            cost = 0
-            for enchantment in self.enchantments:
-                base_cost = mwglobals.records['MGEF'][enchantment.effect_id].base_cost
-                base_cost /= 40
-                multiplier = base_cost
-                base_cost *= enchantment.duration
-                base_cost *= enchantment.mag_min + enchantment.mag_max
-                base_cost += enchantment.area * multiplier
-                if enchantment.range_type_id == 2:  # Target
-                    base_cost *= 1.5
-                cost += base_cost
-            self.spell_cost = round(cost)
+    def get_auto_spell_cost(self):
+        if self.auto_spell_cost:
+            return self.auto_spell_cost
+        return self.autocalc_spell_cost()
+
+    def autocalc_spell_cost(self):
+        if not self.autocalc and self.type_id != 0 and self.type_id != 5:  # Spell or Power
+            return self.spell_cost
+        cost = 0
+        for enchantment in self.enchantments:
+            base_cost = mwglobals.records['MGEF'][enchantment.effect_id].base_cost
+            base_cost /= 40
+            multiplier = base_cost
+            base_cost *= enchantment.duration
+            base_cost *= enchantment.mag_min + enchantment.mag_max
+            base_cost += enchantment.area * multiplier
+            if enchantment.range_type_id == 2:  # Target
+                base_cost *= 1.5
+            cost += base_cost
+        self.auto_spell_cost = round(cost)
+        return self.auto_spell_cost
 
     def get_type(self):
         if 0 <= self.type_id < len(mwglobals.SPEL_TYPES):
@@ -71,8 +74,8 @@ class MwSPEL(MwRecord):
         return MwRecord.format_record_details(self, [
             ("|Name|", '__str__'),
             ("\n|Type|", 'get_type'),
-            ("\n|Spell Cost|", 'spell_cost'),
-            ("\n|Auto Calculate Cost|", 'autocalc', False),
+            ("\n|Spell Cost|", 'get_auto_spell_cost'), (" {}", "(auto)" if self.autocalc else ''),
+            ("\n|Auto Calculate|", 'autocalc', False),
             ("\n|PC Start Spell|", 'pc_start_spell', False),
             ("\n|Always Succeeds|", 'always_succeeds', False),
             ("\n|Enchantments|", 'enchantments', [])

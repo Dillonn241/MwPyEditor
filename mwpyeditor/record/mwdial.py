@@ -32,10 +32,7 @@ class MwDIAL(MwRecord):
                                                   pc_faction=pc_faction)]
 
     def record_details(self):
-        string = [str(self)]
-        for info in self.infos:
-            string.append(f"\n\n{info.record_details()}")
-        return ''.join(string)
+        return str(self)
 
     def __str__(self):
         return f"{self.name} <{self.get_type()}>"

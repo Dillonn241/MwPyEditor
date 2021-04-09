@@ -1,7 +1,7 @@
 import sys
 import time
 
-from mwpyeditor.core import mwplugin, mwjobs, mwglobals, mwutil
+from mwpyeditor.core import mwplugin, mwglobals
 from mwpyeditor.core.mwplugin import load_plugin
 from mwpyeditor.record import mwalch, mwcell, mwench, mwland, mwspel, mwnpc_
 
@@ -31,12 +31,6 @@ def init_settings():
     mwcell.init_references = True  # statics and other references placed in the world
     mwland.init_lod = False  # lod to show global map
     mwland.init_terrain = False  # normals, heights, colors, and textures of landscape (long load time)
-
-    """Run algorithms to autocalc stats for ALCH, ENCH, SPEL, and NPC_. Little to no performance gain without."""
-    mwalch.MwALCH.do_autocalc = True  # requires MGEF
-    mwench.MwENCH.do_autocalc = True  # requires MGEF
-    mwspel.MwSPEL.do_autocalc = True  # requires MGEF
-    mwnpc_.MwNPC_.do_autocalc = True  # requires CLAS, RACE, SKIL
 
 
 def init_plugins():
@@ -81,7 +75,7 @@ def init_plugins():
     # load_plugin('TR_Travels_(Preview_and_Mainland).esp')
     # load_plugin('TR_Andothren_v0067.ESP')
     # load_plugin('TR_RorynsBluff_v0213.esp')
-    # load_plugin('TR_ArmunAshlands_v0052.ESP')
+    load_plugin('TR_ArmunAshlands_v0052.ESP')
     # load_plugin('TR_SouthernVelothis_v.0011.esp')
     # load_plugin('TR_ThirrValley_v0073.ESP')
     # load_plugin('TR_Kartur_v0022.ESP')
@@ -89,7 +83,7 @@ def init_plugins():
     # load_plugin('TR_ShipalShin_v0004.ESP')
 
     """Skyrim: Home of the Nords"""
-    # load_plugin('Sky_Main_2021_03_29.ESP')
+    # load_plugin('Sky_Main_2021_04_05.esp')
     # load_plugin('Sky_Markarth_2021_01_31.ESP')
     # load_plugin('Sky_Falkheim_2021_01_31.ESP')
 
@@ -114,6 +108,7 @@ def testing_area():
     #                top=-35, bottom=-58, left=-141, right=-108)
 
     """Start"""
+    mwplugin.save_plugin("test.esp", "TR_ArmunAshlands_v0052.ESP")
     pass
 
 

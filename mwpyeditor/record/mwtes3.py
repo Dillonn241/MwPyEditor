@@ -30,7 +30,9 @@ class MwTES3(MwRecord):
         sub_hedr.add_uint(self.plugin_type)
         sub_hedr.add_string(self.author, length=32, terminator=False)
         sub_hedr.add_string(self.description, length=256, terminator=False)
-        self.num_records = len([x for x in mwglobals.ordered_records if x.file_name == self.file_name]) - 1
+        self.num_records = -1
+        for record_list in mwglobals.plugin_records[self.file_name].values():
+            self.num_records += len(record_list)
         sub_hedr.add_uint(self.num_records)
         for master_name in self.masters:
             self.add_string(master_name, 'MAST')

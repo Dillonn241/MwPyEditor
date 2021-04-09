@@ -5,8 +5,6 @@ from mwpyeditor.core.mwrecord import MwRecord
 
 
 class MwNPC_(MwRecord):
-    do_autocalc = False
-
     def __init__(self):
         MwRecord.__init__(self)
         self.id_ = ''
@@ -32,6 +30,7 @@ class MwNPC_(MwRecord):
         self.essential = False
         self.respawn = False
         self.autocalc = False
+        self.auto_stats = None
         self.white_blood = False
         self.gold_blood = False
         self.items = {}
@@ -109,15 +108,19 @@ class MwNPC_(MwRecord):
 
         load_ai(self)
 
-        if MwNPC_.do_autocalc and self.autocalc:
-            self.autocalc_stats()
-
         mwglobals.object_ids[self.id_] = self
 
+    def get_auto_stats(self):
+        if self.auto_stats:
+            return self.auto_stats
+        return self.autocalc_stats()
+
     def autocalc_stats(self):
+        if not self.autocalc:
+            return self.attributes, self.skills, self.health, self.magicka, self.fatigue, self.reputation
         mw_race = mwglobals.object_ids[self.race]
         mw_class = mwglobals.object_ids[self.class_]
-        self.attributes = []
+        auto_attributes = []
         for attribute_id in range(8):  # len(mwglobals.ATTRIBUTES)
             base = mw_race.attribute_base_from_id(attribute_id, self.female)
             if attribute_id in mw_class.primary_attribute_ids:
@@ -132,7 +135,7 @@ class MwNPC_(MwRecord):
                         k += 0.5
                     else:
                         k += 0.2
-            self.attributes.append(round(base + k * (self.level - 1)))
+            auto_attributes.append(round(base + k * (self.level - 1)))
 
         health_mult = 3
         if mw_class.specialization_id == 2:  # Combat
@@ -141,14 +144,14 @@ class MwNPC_(MwRecord):
             health_mult += 1
         if 5 in mw_class.primary_attribute_ids:  # Endurance
             health_mult += 1
-        str_end_average = 0.5 * (self.attributes[0] + self.attributes[5])  # Strength + Endurance
-        self.health = math.floor(str_end_average + health_mult * (self.level - 1))
+        str_end_average = 0.5 * (auto_attributes[0] + auto_attributes[5])  # Strength + Endurance
+        auto_health = math.floor(str_end_average + health_mult * (self.level - 1))
 
-        self.magicka = math.floor(2 * self.attributes[1])  # fNPCbaseMagickaMult * Intelligence
+        auto_magicka = math.floor(2 * auto_attributes[1])  # fNPCbaseMagickaMult * Intelligence
         # Strength + Willpower + Agility + Endurance
-        self.fatigue = self.attributes[0] + self.attributes[2] + self.attributes[3] + self.attributes[5]
+        auto_fatigue = auto_attributes[0] + auto_attributes[2] + auto_attributes[3] + auto_attributes[5]
 
-        self.skills = []
+        auto_skills = []
         for mw_skill in mwglobals.records['SKIL']:
             if mw_skill.id_ in mw_class.major_skill_ids:
                 k = 1
@@ -163,15 +166,18 @@ class MwNPC_(MwRecord):
                 base += 5
                 k += 0.5
             base += mw_race.skill_bonus_from_id(mw_skill.id_)
-            self.skills.append(round(base + k * (self.level - 1)))
+            auto_skills.append(round(base + k * (self.level - 1)))
 
         if self.faction:
-            self.reputation = 2 * (self.faction_rank + 1)  # 2 = iAutoRepFacMod
+            auto_reputation = 2 * (self.faction_rank + 1)  # 2 = iAutoRepFacMod
             # formula technically adds
             # iAutoRepLevMod [0] * (level - 1)
             # which is always 0
         else:
-            self.reputation = 0
+            auto_reputation = 0
+
+        self.auto_stats = auto_attributes, auto_skills, auto_health, auto_magicka, auto_fatigue, auto_reputation
+        return self.auto_stats
 
     def get_wiki_race(self):
         if self.race == "Dark Elf":
@@ -196,21 +202,25 @@ class MwNPC_(MwRecord):
                 return ranks[self.faction_rank].name
 
     def get_attribute(self, attribute_name):
+        attributes = self.get_auto_stats()[0]
         if attribute_name in mwglobals.ATTRIBUTES:
             attribute_id = mwglobals.ATTRIBUTES.index(attribute_name)
-            return self.attributes[attribute_id]
+            return attributes[attribute_id]
     
     def get_attributes_dict(self):
-        return {mwglobals.ATTRIBUTES[attribute_id]: self.attributes[attribute_id]
+        attributes = self.get_auto_stats()[0]
+        return {mwglobals.ATTRIBUTES[attribute_id]: attributes[attribute_id]
                 for attribute_id in range(8)}
 
     def get_skill(self, skill_name):
+        skills = self.get_auto_stats()[1]
         if skill_name in mwglobals.SKILLS:
             skill_id = mwglobals.SKILLS.index(skill_name)
-            return self.skills[skill_id]
+            return skills[skill_id]
     
     def get_skills_dict(self):
-        return {mwglobals.SKILLS[skill_id]: self.skills[skill_id]
+        skills = self.get_auto_stats()[1]
+        return {mwglobals.SKILLS[skill_id]: skills[skill_id]
                 for skill_id in range(27)}
 
     def get_sex(self):
@@ -275,6 +285,7 @@ class MwNPC_(MwRecord):
         return []
 
     def record_details(self):
+        auto_attributes, auto_skills, auto_health, auto_magicka, auto_fatigue, auto_reputation = self.get_auto_stats()
         string = [MwRecord.format_record_details(self, [
             ("|Name|", '__str__'),
             ("\n|Script|", 'script'),
@@ -292,13 +303,13 @@ class MwNPC_(MwRecord):
             ("\n|Animation File|", 'animation_file'),
             ("\n|Attributes|", 'get_attributes_dict'),
             ("\n|Skills|", 'get_skills_dict'),
-            ("\n|Health|", 'health'),
-            ("\n|Magicka|", 'magicka'),
-            ("\n|Fatigue|", 'fatigue'),
+            ("\n|Health|", auto_health), (" {}", "(auto)" if self.autocalc else ''),
+            ("\n|Magicka|", auto_magicka), (" {}", "(auto)" if self.autocalc else ''),
+            ("\n|Fatigue|", auto_fatigue), (" {}", "(auto)" if self.autocalc else ''),
             ("\n|Disposition|", 'disposition'),
-            ("\n|Reputation|", 'reputation'),
+            ("\n|Reputation|", auto_reputation), (" {}", "(auto)" if self.autocalc else ''),
             ("\n|Blood Texture|", 'get_blood', "Default (Red)"),
-            ("\n|Auto Calculate Stats|", 'autocalc', False),
+            ("\n|Auto Calculate|", 'autocalc', False),
             ("\n|Items|", 'items', {}),
             ("\n|Spells|", 'spells', []),
             ("\n|Hello|", 'hello'),
