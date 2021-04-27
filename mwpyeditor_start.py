@@ -108,7 +108,6 @@ def testing_area():
     #                top=-35, bottom=-58, left=-141, right=-108)
 
     """Start"""
-    mwplugin.save_plugin("test.esp", "TR_ArmunAshlands_v0052.ESP")
     pass
 
 

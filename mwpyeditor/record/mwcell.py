@@ -258,10 +258,8 @@ class MwCELL(MwRecord):
                 self.add_int(0, 'DELE')
 
         # self.references.sort(key=lambda x: (not x.is_persistent_child, x.get_master_index(), x.get_object_index()))
-        num_refs = len(self.references)
-        nam0 = -1
-        for i in range(num_refs):
-            ref = self.references[i]
+        temp_refs = []
+        for ref in self.references:
             if ref.moved:
                 self.add_uint(ref.index, 'MVRF')
                 if ref.moved_cell:
@@ -270,9 +268,21 @@ class MwCELL(MwRecord):
                     sub_cndt = self.add_subrecord('CNDT')
                     sub_cndt.add_int(ref.moved_grid_x)
                     sub_cndt.add_int(ref.moved_grid_y)
-            elif nam0 == -1 and not ref.is_persistent_child():
-                nam0 = num_refs - i
-                self.add_uint(nam0, 'NAM0')
+                save_reference()
+            elif ref.is_persistent_child():
+                save_reference()
+            else:
+                temp_refs.append(ref)
+        nam0 = 0
+        if self.is_interior:
+            merged_cell = mwglobals.interior_cells[self.id_]
+        else:
+            merged_cell = mwglobals.exterior_cells[(self.grid_x, self.grid_y)]
+        for ref in merged_cell.references:
+            if not ref.moved and not ref.is_persistent_child():
+                nam0 += 1
+        self.add_uint(nam0, 'NAM0')
+        for ref in temp_refs:
             save_reference()
         self.save_deleted()
 

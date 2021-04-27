@@ -23,9 +23,9 @@ class MwWEAP(MwRecord):
         self.thrust_max = 0
         self.ignores_normal_weapon_resistance = False
         self.silver_weapon = False
+        self.script = None
         self.icon = None
         self.enchanting = None
-        self.script = None
 
     def load(self):
         self.id_ = self.parse_string('NAME')
@@ -49,9 +49,9 @@ class MwWEAP(MwRecord):
         self.ignores_normal_weapon_resistance = (flags & 0x1) == 0x1
         self.silver_weapon = (flags & 0x2) == 0x2
 
+        self.script = self.parse_string('SCRI')
         self.icon = self.parse_string('ITEX')
         self.enchanting = self.parse_string('ENAM')
-        self.script = self.parse_string('SCRI')
 
         mwglobals.object_ids[self.id_] = self
 
@@ -82,9 +82,9 @@ class MwWEAP(MwRecord):
             flags |= 0x2
         sub_wpdt.add_uint(flags)
 
+        self.add_string(self.script, 'SCRI')
         self.add_string(self.icon, 'ITEX')
         self.add_string(self.enchanting, 'ENAM')
-        self.add_string(self.script, 'SCRI')
         self.save_deleted()
 
     def get_type(self):
@@ -113,9 +113,9 @@ class MwWEAP(MwRecord):
             ("\n|Thrust|", 'thrust_min'), (" - {}", 'thrust_max'),
             ("\n|Ignores Normal Weapon Resistance|", 'ignores_normal_weapon_resistance', False),
             ("\n|Silver Weapon|", 'silver_weapon', False),
+            ("\n|Script|", 'script'),
             ("\n|Icon|", 'icon'),
-            ("\n|Enchanting|", 'enchanting'),
-            ("\n|Script|", 'script')
+            ("\n|Enchanting|", 'enchanting')
         ])
 
     def __str__(self):
@@ -125,4 +125,4 @@ class MwWEAP(MwRecord):
         return MwRecord.diff(self, other, ['model', 'name', 'weight', 'value', 'get_type', 'health', 'speed', 'reach',
                                            'enchantment', 'chop_min', 'chop_max', 'slash_min', 'slash_max',
                                            'thrust_min', 'thrust_max', 'ignore_normal_weapon_resistance', 'silver',
-                                           'icon', 'enchanting', 'script'])
+                                           'script', 'icon', 'enchanting'])
