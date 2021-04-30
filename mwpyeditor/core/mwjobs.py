@@ -418,6 +418,7 @@ def journal_entries(file_name):
             else:
                 print(f"|!||{quest.id_}")
 
+            quest.infos.sort(key=lambda x: x.disposition)
             for info in quest.infos:
                 if info.quest_name:
                     continue
