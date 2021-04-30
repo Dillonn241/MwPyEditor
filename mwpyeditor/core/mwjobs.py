@@ -399,6 +399,7 @@ def print_trainers_by_skill():
             print(trainer.name, value)
         print()
 
+
 def journal_entries(file_name):
     quests = collections.defaultdict(list)
     for quest in mwglobals.records['DIAL']:
