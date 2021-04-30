@@ -1,3 +1,4 @@
+import collections
 import tkinter as tk
 
 import matplotlib.pyplot as plt
@@ -397,3 +398,35 @@ def print_trainers_by_skill():
         for trainer, value in trainers[skill]:
             print(trainer.name, value)
         print()
+
+def journal_entries(file_name):
+    quests = collections.defaultdict(list)
+    for quest in mwglobals.records['DIAL']:
+        if quest.file_name == file_name and quest.type_id == 4:  # Journal
+            for info in quest.infos:
+                if info.quest_name:
+                    quests[info.response].append(quest)
+                    break
+    for name in quests:
+        quest_list = quests[name]
+        quest_list.sort(key=lambda x: x.id_)
+        print(f"{name}\n==Quest Stages==\n{{{{MW Quest Stages Notes}}}}\n{{{{Journal Entries")
+        for i in range(len(quest_list)):
+            quest = quest_list[i]
+            if i == 0:
+                print(f"id={quest.id_}")
+            else:
+                print(f"|!||{quest.id_}")
+
+            for info in quest.infos:
+                if info.quest_name:
+                    continue
+
+                if info.quest_finished:
+                    special = "fin"
+                elif info.quest_restart:
+                    special = "restart"
+                else:
+                    special = ""
+                print(f"|{info.disposition}|{special}|{info.response}")
+        print("}}\n")

@@ -1,7 +1,7 @@
 import sys
 import time
 
-from mwpyeditor.core import mwplugin, mwglobals
+from mwpyeditor.core import mwplugin, mwglobals, mwjobs
 from mwpyeditor.core.mwplugin import load_plugin
 from mwpyeditor.record import mwalch, mwcell, mwench, mwland, mwspel, mwnpc_
 
@@ -62,6 +62,7 @@ def init_plugins():
     # load_plugin('TR_Mainland_1809.esm')
     # load_plugin('TR_Mainland_1912.esm')
     # load_plugin('TR_Mainland_2002.esm')
+    # load_plugin('TR_Mainland_2101.esm')
     # load_plugin('Cyrodiil_Main_0.2.esm')
     # load_plugin('Sky_Main_02.esp')
     # load_plugin('Sky_Main_1812.esm')
@@ -75,7 +76,7 @@ def init_plugins():
     # load_plugin('TR_Travels_(Preview_and_Mainland).esp')
     # load_plugin('TR_Andothren_v0067.ESP')
     # load_plugin('TR_RorynsBluff_v0213.esp')
-    load_plugin('TR_ArmunAshlands_v0052.ESP')
+    # load_plugin('TR_ArmunAshlands_v0052.ESP')
     # load_plugin('TR_SouthernVelothis_v.0011.esp')
     # load_plugin('TR_ThirrValley_v0073.ESP')
     # load_plugin('TR_Kartur_v0022.ESP')

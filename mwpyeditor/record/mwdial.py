@@ -5,17 +5,17 @@ from mwpyeditor.core.mwrecord import MwRecord
 class MwDIAL(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
-        self.name = ''
+        self.id_ = ''
         self.type_id = 0
         self.infos = []
 
     def load(self):
-        self.name = self.parse_string('NAME')
+        self.id_ = self.parse_string('NAME')
         self.type_id = self.parse_uint('DATA', length=1)
 
     def save(self):
         self.clear_subrecords()
-        self.add_string(self.name, 'NAME')
+        self.add_string(self.id_, 'NAME')
         self.add_uint(self.type_id, 'DATA', length=1)
         self.save_deleted()
 
@@ -35,9 +35,9 @@ class MwDIAL(MwRecord):
         return str(self)
 
     def __str__(self):
-        return f"{self.name} <{self.get_type()}>"
+        return f"{self.id_} <{self.get_type()}>"
 
-    def get_id(self):
+    def __repr__(self):
         return str(self)
 
     def diff(self, other):
