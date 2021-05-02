@@ -32,7 +32,7 @@ class MwINGR(MwRecord):
         mwglobals.object_ids[self.id_] = self
 
     def get_effects(self):
-        return [self.get_effect(x) for x in self.effect_ids]
+        return [self.get_effect(i) for i in range(4)]
 
     def set_effects(self, effect_tuples):
         for i in range(len(self.effect_ids)):

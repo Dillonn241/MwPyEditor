@@ -88,7 +88,7 @@ def diff_plugins(plugin1, plugin2, record_type, changed=True, equal=False, added
         for record in mwglobals.records[record_type]:
             if record.file_name == plugin2:
                 if record.get_id() not in object_ids1:
-                    print(f"\nAdded {record}\n{record.details()}\n")
+                    print(f"\nAdded {record}\n{record.record_details()}\n")
 
     if removed:
         for record in mwglobals.records[record_type]:

@@ -76,7 +76,7 @@ def init_plugins():
     # load_plugin('TR_Travels_(Preview_and_Mainland).esp')
     # load_plugin('TR_Andothren_v0067.ESP')
     # load_plugin('TR_RorynsBluff_v0213.esp')
-    # load_plugin('TR_ArmunAshlands_v0052.ESP')
+    # load_plugin('TR_ArmunAshlands_v0053.ESP')
     # load_plugin('TR_SouthernVelothis_v.0011.esp')
     # load_plugin('TR_ThirrValley_v0073.ESP')
     # load_plugin('TR_Kartur_v0022.ESP')

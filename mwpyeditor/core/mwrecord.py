@@ -179,7 +179,7 @@ class MwRecord:
                     attr_other = getattr(other, attr_name)
                     if callable(attr_other):
                         attr_other = attr_other()
-                    if attr_self != attr_other:
+                    if str(attr_self) != str(attr_other):
                         string.append(f"\n\t{attr_name}: {attr_self}\n\t{attr_name}: {attr_other}")
                 else:
                     string.append(f"\n\tRemoved {attr_name}: {attr_self}")
@@ -197,6 +197,7 @@ class MwRecord:
                 diff_attr()
         if string:
             return f"Changed {self}{''.join(string)}"
+        return ''
 
 
 class Subrecord:
