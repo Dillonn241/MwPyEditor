@@ -271,7 +271,7 @@ MAPPING
 
 
 def exterior_doors(file):
-    doorfile = open('../exceptions/mwdoor.txt', 'r')
+    doorfile = open('mwpyeditor/exceptions/mwdoor.txt', 'r')
     doorlist = doorfile.read().splitlines()
     cols = ['Name', 'GridX', 'GridY', 'PosX', 'PosY', 'ID', 'Check']
     data = []
@@ -291,9 +291,9 @@ def exterior_doors(file):
 
 
 def find_creatures(file):
-    creafile = open('../exceptions/mwcrea.txt', 'r')
+    creafile = open('mwpyeditor/exceptions/mwcrea.txt', 'r')
     crealist = creafile.read().splitlines()
-    levcfile = open('../exceptions/mwlevc.txt', 'r')
+    levcfile = open('mwpyeditor/exceptions/mwlevc.txt', 'r')
     levclist = levcfile.read().splitlines()
     cols = ['Name', 'GridX', 'GridY', 'PosX', 'PosY', 'ID', 'Check']
     data = []
@@ -319,7 +319,7 @@ def ref_map(file, img, top, bottom, left, right):
     ref_locs = ref_locs[ref_locs.Check != 2]
     ref_locs.PosX = ref_locs.PosX / pow(2, 13)
     ref_locs.PosY = ref_locs.PosY / pow(2, 13)
-    ref_locs['Check'] = ref_locs['Check'].map({0: '#00FFFF', 1: '#FF0000'})
+    ref_locs['Check'] = ref_locs['Check'].map({0: '#00FFFF', 1: '#FF0000', 2: '#00FF00', 3: '#0000FF'})
     cellexp = plt.imread(img)
     h, w, _ = cellexp.shape
     h = h / 256
@@ -336,7 +336,7 @@ def ref_map(file, img, top, bottom, left, right):
     ax.get_xaxis().set_minor_locator(MultipleLocator(1))
     ax.get_yaxis().set_minor_locator(MultipleLocator(1))
     ax.imshow(cellexp, extent=(left, right + 1, bottom, top + 1))
-    ax.scatter(ref_locs.PosX, ref_locs.PosY, c = ref_locs.Check, marker='.', s=4, edgecolor=None)
+    ax.scatter(ref_locs.PosX, ref_locs.PosY, c=ref_locs.Check, marker='.', s=4, edgecolor=None)
     ax.legend([],[], frameon=False)
     del ref_locs
     del cellexp
