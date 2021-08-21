@@ -3,11 +3,10 @@ import tkinter as tk
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
 from matplotlib.ticker import MultipleLocator
 
 from mwpyeditor.core import mwglobals, mwutil
-from mwpyeditor.record import mwcrea, mwdoor, mwlevc
+from mwpyeditor.record import mwcrea, mwdoor, mwlevc, mwnpc_
 
 
 """
@@ -161,12 +160,118 @@ def find_item_usage(id_, file_names=None):
 
 
 """
+DIALOGUE
+"""
+
+def journal_list(drop=True):
+    journaldata = []
+    for info in mwglobals.records["INFO"]:
+        if info.quest_name:
+            journaldata.append([info.dial.id_, info.response])
+    journaldata = pd.DataFrame(journaldata, columns=['ID', 'Name'])
+    journaldata = journaldata.drop_duplicates(subset=['ID'], keep='first')
+    if drop:
+        journaldata = journaldata.drop_duplicates(subset=['Name'], keep='first')
+    return journaldata
+
+def npc_freq():
+    npcdata = []
+    for cell in mwglobals.records["CELL"]:
+        for ref in cell.references:
+            try:
+                obj = mwglobals.object_ids[ref.id_]
+            except:
+                print("Object not found: " + ref.id_)
+            finally:
+                if isinstance(obj, mwnpc_.MwNPC_) and not ref.deleted:
+                    npcfilter = cell.get_region()
+                    if cell.id_ != '':
+                        npcfilter = cell.id_.split(',')[0]
+                    npcdata.append([obj.id_, npcfilter])
+    npcs = pd.DataFrame(npcdata, columns=['Name', 'Cell'])
+    npcs['Freq'] = npcs.groupby('Name')['Name'].transform('count')
+    return npcs
+
+def choice_tree(): # WIP
+    choicetree = []
+    for info in mwglobals.records["INFO"]:
+        fromchoice = []
+        tochoice = None
+        if info.result is not None:
+            if "Choice" in info.result or "choice" in info.result:
+                dialresult = info.result.replace(',', '')
+                dialresult = dialresult.split('\r\n')
+                dialresult = [s for s in dialresult if "Choice" in s]
+                dialresult = ' '.join(dialresult)
+                dialresult = dialresult.split(' ')
+                dialresult = list(set(dialresult))
+                tochoice = [i for i in dialresult if i.isnumeric()]
+                tochoice = ','.join(tochoice)
+                tochoice = str(dialresult)
+        for ifilter in info.func_var_filters:
+            if ifilter.get_function() == 'Choice' or ifilter.get_function() == 'choice':
+                fromchoice.append(ifilter.get_operator() + str(ifilter.intv))
+        if fromchoice or tochoice is not None:
+            choicetree.append([info.dial, info.id_, fromchoice, tochoice])
+    choicetree = pd.DataFrame(choicetree, columns=['Topic', 'ID', 'From', 'To'])
+    # dialpivot = choicetree.groupby(['Topic'])['To'].apply(lambda x: ','.join(item for item in x if item))
+    # dialpivot['Choices'] = dialpivot['Choices'].split(',')
+    return choicetree
+
+def dump_dialogue():
+    cols = ['Topic', 'Type', 'Disp', 'Actor', 'Cell', 'Entry', 'Sex', 'Race', 'Class', 'Faction', 'Rank', 'PCFaction', 'PCRank', 'FunVar', 'Result', 'ID']
+    data = []
+    for info in mwglobals.records["INFO"]:
+        if info.rank == 255:
+            info.rank = None
+        if info.pc_rank == 255:
+            info.pc_rank = None
+        data.append(
+            [info.dial.id_, info.dial.get_type(), info.disposition, info.actor, info.cell, info.response, info.sex, info.race, info.class_,
+             info.faction, info.rank, info.pc_faction, info.pc_rank, info.func_var_filters, info.result, info.id_])
+    entries = pd.DataFrame(data, columns=cols)
+    return entries
+
+def dialogue_analysis(): #WIP
+    dial = dump_dialogue()
+    npcs = npc_freq()
+    journaldata = journal_list(drop=False)
+    journallist = list(journaldata['ID'])
+    cellfilters = []
+    npcfilters = []
+    questfilters = []
+    dial['Merge'] = dial[dial.columns].astype(str).apply(lambda x: ','.join(x), axis=1)
+    for ind in dial.index:
+        if dial['Actor'][ind] is not None:
+            npcfilters.append(dial['Actor'][ind])
+        else:
+            npcfilters.append("")
+        if dial['Cell'][ind] is not None:
+            cellfilters.append(dial['Cell'][ind].split(',')[0])
+        elif dial['Actor'][ind] is not None and npcs[npcs['Name'] == dial['Actor'][ind]]['Freq'].min() == 1:
+            if npcs.loc[npcs['Name'] == dial['Actor'][ind], 'Cell'].item() != "":
+                cellfilters.append(npcs.loc[npcs['Name'] == dial['Actor'][ind], 'Cell'].item())
+        else:
+            cellfilters.append("")
+        journals = set()
+        for journal in journallist:
+            if dial['Merge'][ind].find(journal) >= 0:
+                journals.add(journaldata.loc[journaldata['ID'] == journal, 'Name'].item())
+        questfilters.append(";".join(journals))
+    dial['CellFilter'] = cellfilters
+    dial['NPCFilter'] = npcfilters
+    dial['QuestFilter'] = questfilters
+    # choicetree = choice_tree()
+    return dial.drop(columns=['Merge'])
+
+
+"""
 MAPPING
 """
 
 
 def exterior_doors(file):
-    doorfile = open('../exceptions/mwdoor.txt', 'r')
+    doorfile = open('mwpyeditor/exceptions/mwdoor.txt', 'r')
     doorlist = doorfile.read().splitlines()
     cols = ['Name', 'GridX', 'GridY', 'PosX', 'PosY', 'ID', 'Check']
     data = []
@@ -186,9 +291,9 @@ def exterior_doors(file):
 
 
 def find_creatures(file):
-    creafile = open('../exceptions/mwcrea.txt', 'r')
+    creafile = open('mwpyeditor/exceptions/mwcrea.txt', 'r')
     crealist = creafile.read().splitlines()
-    levcfile = open('../exceptions/mwlevc.txt', 'r')
+    levcfile = open('mwpyeditor/exceptions/mwlevc.txt', 'r')
     levclist = levcfile.read().splitlines()
     cols = ['Name', 'GridX', 'GridY', 'PosX', 'PosY', 'ID', 'Check']
     data = []
@@ -214,6 +319,7 @@ def ref_map(file, img, top, bottom, left, right):
     ref_locs = ref_locs[ref_locs.Check != 2]
     ref_locs.PosX = ref_locs.PosX / pow(2, 13)
     ref_locs.PosY = ref_locs.PosY / pow(2, 13)
+    ref_locs['Check'] = ref_locs['Check'].map({0: '#00FFFF', 1: '#FF0000', 2: '#00FF00', 3: '#0000FF'})
     cellexp = plt.imread(img)
     h, w, _ = cellexp.shape
     h = h / 256
@@ -230,10 +336,11 @@ def ref_map(file, img, top, bottom, left, right):
     ax.get_xaxis().set_minor_locator(MultipleLocator(1))
     ax.get_yaxis().set_minor_locator(MultipleLocator(1))
     ax.imshow(cellexp, extent=(left, right + 1, bottom, top + 1))
-    g = sns.scatterplot(x='PosX', y='PosY', hue='Check', data=ref_locs, ax=ax, marker='.', size=2, edgecolor=None,
-                        palette=sns.color_palette('bright', 3))
-    g.legend([], [], frameon=False)
-    fig.savefig("Refs.png", dpi=256)
+    ax.scatter(ref_locs.PosX, ref_locs.PosY, c=ref_locs.Check, marker='.', s=4, edgecolor=None)
+    ax.legend([],[], frameon=False)
+    del ref_locs
+    del cellexp
+    fig.savefig("files/Refs.png", dpi=256, bbox_inches='tight')
 
 
 def view_heightmap(window_width=800, window_height=600, downscale=5, lod=False):

@@ -8,6 +8,11 @@ RECORDS_ALL = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', '
                'REPA', 'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'LEVC', 'CELL', 'LAND', 'PGRD',
                'SNDG', 'DIAL', 'INFO', 'SSCR']
 
+RECORDS_NODIAL = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', 'MGEF', 'SCPT', 'REGN', 'BSGN', 'LTEX',
+               'STAT', 'DOOR', 'MISC', 'WEAP', 'CONT', 'SPEL', 'CREA', 'BODY', 'LIGH', 'ENCH', 'NPC_', 'ARMO', 'CLOT',
+               'REPA', 'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'LEVC', 'CELL', 'LAND', 'PGRD',
+               'SNDG', 'SSCR']
+
 RECORDS_MOST = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', 'MGEF', 'SCPT', 'REGN', 'BSGN', 'LTEX',
                 'STAT', 'DOOR', 'MISC', 'WEAP', 'CONT', 'SPEL', 'CREA', 'BODY', 'LIGH', 'ENCH', 'NPC_', 'ARMO', 'CLOT',
                 'REPA', 'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'LEVC', 'SNDG', 'SSCR']

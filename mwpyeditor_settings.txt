@@ -1,1 +1,1 @@
-DATA_PATH=C:/Games/Morrowind/Data Files/
+DATA_PATH=C:/Program Files (x86)/GOG Galaxy/Games/Morrowind/Data Files/

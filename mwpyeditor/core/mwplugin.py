@@ -8,7 +8,7 @@ from mwpyeditor.record import (mwacti, mwalch, mwappa, mwarmo, mwbody, mwbook, m
                                mwlevi, mwligh, mwlock, mwltex, mwmgef, mwmisc, mwnpc_, mwpgrd, mwprob, mwrace, mwregn,
                                mwrepa, mwscpt, mwskil, mwsndg, mwsoun, mwspel, mwsscr, mwstat, mwtes3, mwweap)
 
-auto_load_masters = True
+auto_load_masters = False
 
 
 def init_args():
@@ -170,12 +170,13 @@ def load_plugin(file_name, records_to_load=None, masters_loaded=None):
             return record
 
         # if setting on, automatically load records from masters; skip if TES3 has been loaded previously
-        if auto_load_masters and 'TES3' in records_to_load:
-            if header := file.read(16):  # same as single iteration of load_record loop
-                for master in load_record().masters:  # first record must be TES3
-                    if master not in masters_loaded:
-                        masters_loaded.append(master)
-                        load_plugin(master, records_to_load=records_to_load, masters_loaded=masters_loaded)
+        if auto_load_masters:
+            if 'TES3' in records_to_load:
+                if header := file.read(16):  # same as single iteration of load_record loop
+                    for master in load_record().masters:  # first record must be TES3
+                        if master not in masters_loaded:
+                            masters_loaded.append(master)
+                            load_plugin(master, records_to_load=records_to_load, masters_loaded=masters_loaded)
         # print a loading message
         print(f"** Loading {file_name}: {records_to_load} **")
         # load_record loop
