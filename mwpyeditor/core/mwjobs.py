@@ -192,6 +192,27 @@ def npc_freq():
     npcs['Freq'] = npcs.groupby('Name')['Name'].transform('count')
     return npcs
 
+def npc_list():
+    npcdata = []
+    for npc in mwglobals.records['NPC_']:
+        npcdata.append(npc.id_)
+    npcs = pd.DataFrame(npcdata, columns=['Name'])
+    npcs['Cell'] = ""
+    for cell in mwglobals.records["CELL"]:
+        for ref in cell.references:
+            try:
+                obj = mwglobals.object_ids[ref.id_]
+            except:
+                print("Object not found: " + ref.id_)
+            finally:
+                if isinstance(obj, mwnpc_.MwNPC_) and not ref.deleted:
+                    if cell.id_ != '':
+                        npcloc = cell.id_
+                    else:
+                        npcloc = cell.get_region()
+                    npcs.loc[npcs['Name'] == ref.id_, 'Cell'] = npcs.loc[npcs['Name'] == ref.id_, 'Cell'] + npcloc + ";"
+    return npcs
+
 def choice_tree(): # WIP
     choicetree = []
     for info in mwglobals.records["INFO"]:
@@ -199,14 +220,10 @@ def choice_tree(): # WIP
         tochoice = None
         if info.result is not None:
             if "Choice" in info.result or "choice" in info.result:
+                dialresult = info.result
                 dialresult = info.result.replace(',', '')
                 dialresult = dialresult.split('\r\n')
-                dialresult = [s for s in dialresult if "Choice" in s]
-                dialresult = ' '.join(dialresult)
-                dialresult = dialresult.split(' ')
-                dialresult = list(set(dialresult))
-                tochoice = [i for i in dialresult if i.isnumeric()]
-                tochoice = ','.join(tochoice)
+                dialresult = [s for s in dialresult if "Choice \"" in s]
                 tochoice = str(dialresult)
         for ifilter in info.func_var_filters:
             if ifilter.get_function() == 'Choice' or ifilter.get_function() == 'choice':
@@ -214,8 +231,6 @@ def choice_tree(): # WIP
         if fromchoice or tochoice is not None:
             choicetree.append([info.dial, info.id_, fromchoice, tochoice])
     choicetree = pd.DataFrame(choicetree, columns=['Topic', 'ID', 'From', 'To'])
-    # dialpivot = choicetree.groupby(['Topic'])['To'].apply(lambda x: ','.join(item for item in x if item))
-    # dialpivot['Choices'] = dialpivot['Choices'].split(',')
     return choicetree
 
 def dump_dialogue():

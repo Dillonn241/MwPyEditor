@@ -38,9 +38,9 @@ def init_plugins():
     """Choose common plugins to load for TR and PT devs. Versions likely out of date."""
 
     """Vanilla"""
-    # load_plugin('Morrowind.esm', records_to_load=mwglobals.RECORDS_NODIAL)
-    # load_plugin('Tribunal.esm', records_to_load=mwglobals.RECORDS_NODIAL)
-    # load_plugin('Bloodmoon.esm', records_to_load=mwglobals.RECORDS_NODIAL)
+    load_plugin('Morrowind.esm', records_to_load=mwglobals.RECORDS_NODIAL)
+    load_plugin('Tribunal.esm', records_to_load=mwglobals.RECORDS_NODIAL)
+    load_plugin('Bloodmoon.esm', records_to_load=mwglobals.RECORDS_NODIAL)
 
     """DLC"""
     # load_plugin('adamantiumarmor.esp')
@@ -56,8 +56,8 @@ def init_plugins():
     # load_plugin('Tamriel_Data_6.esm')
     # load_plugin('Tamriel_Data_7.esm')
     # load_plugin('Tamriel_Data_7.1.esm')
-    # load_plugin('Tamriel_Data.esm', records_to_load=mwglobals.RECORDS_NODIAL)
-    # load_plugin('TD_Addon.esp', records_to_load=mwglobals.RECORDS_NODIAL)
+    load_plugin('Tamriel_Data.esm', records_to_load=mwglobals.RECORDS_NODIAL)
+    load_plugin('TD_Addon.esp', records_to_load=mwglobals.RECORDS_NODIAL)
 
     """Released versions of province mods (renamed)"""
     # load_plugin('TR_Mainland_1809.esm')
@@ -71,12 +71,12 @@ def init_plugins():
     # load_plugin('Sky_Main_2001.esm')
 
     """Tamriel Rebuilt"""
-    # load_plugin('TR_Mainland.esp', records_to_load=mwglobals.RECORDS_NODIAL)
+    load_plugin('TR_Mainland.esp', records_to_load=mwglobals.RECORDS_NODIAL)
     # load_plugin('TR_Factions.esp')
     # load_plugin('TR_Travels.esp')
     # load_plugin('TR_Travels_(Preview_and_Mainland).esp')
     # load_plugin('TR_Andothren_v0067.ESP')
-    # load_plugin('TR_RorynsBluff_v0222.esp')
+    load_plugin('TR_RorynsBluff_v0236.esp')
     # load_plugin('TR_ArmunAshlands_v0053.ESP')
     # load_plugin('TR_SouthernVelothis_v.0011.esp')
     # load_plugin('TR_ThirrValley_v0073.ESP')
@@ -110,8 +110,8 @@ def testing_area():
     # mwjobs.ref_map(file='files/PC_Doors.csv', img='files/cellexp/PC_CellExport.png', top=-35, bottom=-58, left=-141, right=-108)
     # mwjobs.ref_map(file='files/TR_Doors.csv', img='files/cellexp/TR_CellExport.png', top=29, bottom=-59, left=-39, right=49)
     # mwjobs.dump_dialogue(file='files/Dump.csv')
-    # dump = mwjobs.dialogue_analysis()
-    # dump.to_csv('files/Dump.csv', index=False, header=True)
+    dump = mwjobs.choice_tree()
+    dump.to_csv('files/Dump.csv', index=False, header=True)
 
     """Start"""
     pass
