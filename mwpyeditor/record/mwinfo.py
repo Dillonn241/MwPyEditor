@@ -69,7 +69,14 @@ class MwINFO(MwRecord):
         self.quest_finished = self.parse_uint('QSTF') == 1
         self.quest_restart = self.parse_uint('QSTR') == 1
 
-        mwglobals.info_ids[self.id_] = self
+        dial_infos = mwglobals.dial_infos[self.dial.id_]
+        inserted = False
+        for i in range(len(dial_infos)):
+            if dial_infos[i].id_ == self.prev_id:
+                mwglobals.dial_infos[self.dial.id_].insert(i + 1, self)
+                inserted = True
+        if not inserted:
+            mwglobals.dial_infos[self.dial.id_].append(self)
 
     def save(self):
         self.clear_subrecords()
@@ -165,8 +172,8 @@ class MwINFO(MwRecord):
         return str(self)
 
     def diff(self, other):
-        return MwRecord.diff(self, other, ['prev_id', 'next_id', 'disposition', 'rank', 'sex', 'pc_rank', 'actor',
-                                           'race', 'class_', 'faction', 'cell', 'pc_faction', 'sound_file', 'response',
+        return MwRecord.diff(self, other, ['disposition', 'rank', 'sex', 'pc_rank', 'actor', 'race', 'class_',
+                                           'faction', 'cell', 'pc_faction', 'sound_file', 'response',
                                            'func_var_filters', 'result', 'quest_name', 'quest_finished',
                                            'quest_restart'])
 

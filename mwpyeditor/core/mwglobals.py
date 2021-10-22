@@ -170,9 +170,10 @@ plugin_records = {}
 default_records = ['TES3']
 game_settings = {}
 object_ids = {}
-info_ids = {}
+dial_infos = {}
 interior_cells = {}
 exterior_cells = {}
+all_cells = []
 
 
 class PluginType(Enum):

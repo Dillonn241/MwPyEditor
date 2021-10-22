@@ -31,6 +31,8 @@ class MwALCH(MwRecord):
 
         load_enchantments(self)
 
+        # self.autocalc_value()
+
         mwglobals.object_ids[self.id_] = self
 
     def save(self):
@@ -48,14 +50,9 @@ class MwALCH(MwRecord):
         save_enchantments(self)
         self.save_deleted()
 
-    def get_auto_value(self):
-        if self.auto_value:
-            return self.auto_value
-        return self.autocalc_value()
-
     def autocalc_value(self):
         if not self.autocalc:
-            return self.value
+            self.auto_value = self.value
         cost = 0
         for enchantment in self.enchantments:
             base_cost = mwglobals.records['MGEF'][enchantment.effect_id].base_cost
@@ -65,7 +62,6 @@ class MwALCH(MwRecord):
                 base_cost += (enchantment.duration + enchantment.mag_min) * multiplier
             cost += base_cost
         self.auto_value = round(cost)
-        return self.auto_value
 
     def wiki_entry(self, is_beverage=True):
         enchantment_string = []
@@ -92,7 +88,7 @@ class MwALCH(MwRecord):
             ("\n|Icon|", "icon"),
             ("\n|Script|", "script"),
             ("\n|Weight|    {:.2f}", "weight"),
-            ("\n|Value|", "get_auto_value"), (" {}", "(auto)" if self.autocalc else ''),
+            ("\n|Value|", "auto_value"), (" {}", "(auto)" if self.autocalc else ''),
             ("\n|Auto Calculate|", "autocalc", False),
             ("\n|Enchantments|", "enchantments", [])
         ])

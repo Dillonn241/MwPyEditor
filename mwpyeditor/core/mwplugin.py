@@ -82,7 +82,7 @@ def diff_plugins(plugin1, plugin2, record_type, changed=True, equal=False, added
                     if changed and diff:
                         print(diff)
                     if equal and not diff:
-                        print(f"Identical records: {record.get_id()} = {record2.get_id()}")
+                        print(f"Identical records:\nrecord 1: {record}\nrecord 2: {record2}")
 
     if added:
         for record in mwglobals.records[record_type]:
@@ -95,6 +95,52 @@ def diff_plugins(plugin1, plugin2, record_type, changed=True, equal=False, added
             if record.file_name == plugin1:
                 if record.get_id() not in object_ids2:
                     print(f"\nRemoved {record}")
+
+
+def clean_identical_records(plugin, master):
+    object_ids_p = {}
+    object_ids_m = {}
+    del_list = []
+    for record_type in mwglobals.records:
+        for record in mwglobals.records[record_type]:
+            if record.file_name == plugin:
+                object_ids_p[record.get_id()] = record
+            elif record.file_name == master:
+                object_ids_m[record.get_id()] = record
+
+        for record_p in mwglobals.records[record_type]:
+            if record_p.file_name == plugin:
+                if record_p.get_id() in object_ids_m:
+                    record_m = object_ids_m[record_p.get_id()]
+                    diff = record_p.diff(record_m)
+                    if not diff:
+                        if record_type == 'LTEX':
+                            continue  # messes up land textures
+                        elif record_type == 'DIAL':
+                            if record_p.infos:  # do not delete DIAL records with INFOs
+                                continue
+                        del_list.append(record_p)
+    for record in del_list:
+        print(record)
+        remove_record(record)
+
+
+def remove_record(record):
+    record_type = record.get_record_type()
+    record_list = mwglobals.records[record_type]
+    for i in range(len(record_list)):
+        if record_list[i] == record:
+            del record_list[i]
+            break
+    for i in range(len(mwglobals.ordered_records)):
+        if mwglobals.ordered_records[i] == record:
+            del mwglobals.ordered_records[i]
+            break
+    plugin_record_list = mwglobals.plugin_records[record.file_name][record_type]
+    for i in range(len(plugin_record_list)):
+        if plugin_record_list[i] == record:
+            del plugin_record_list[i]
+            break
 
 
 def args_dump(args):
@@ -170,13 +216,12 @@ def load_plugin(file_name, records_to_load=None, masters_loaded=None):
             return record
 
         # if setting on, automatically load records from masters; skip if TES3 has been loaded previously
-        if auto_load_masters:
-            if 'TES3' in records_to_load:
-                if header := file.read(16):  # same as single iteration of load_record loop
-                    for master in load_record().masters:  # first record must be TES3
-                        if master not in masters_loaded:
-                            masters_loaded.append(master)
-                            load_plugin(master, records_to_load=records_to_load, masters_loaded=masters_loaded)
+        if auto_load_masters and 'TES3' in records_to_load:
+            if header := file.read(16):  # same as single iteration of load_record loop
+                for master in load_record().masters:  # first record must be TES3
+                    if master not in masters_loaded:
+                        masters_loaded.append(master)
+                        load_plugin(master, records_to_load=records_to_load, masters_loaded=masters_loaded)
         # print a loading message
         print(f"** Loading {file_name}: {records_to_load} **")
         # load_record loop
@@ -184,22 +229,23 @@ def load_plugin(file_name, records_to_load=None, masters_loaded=None):
             load_record()
 
 
-def save_plugin(file_name, active_file, *merge_files):
+def save_plugin(file_name, active_file):
     print(file_name)
-    files = (active_file,) + merge_files
     with open(file_name, mode='wb') as file:
-        for record in mwglobals.ordered_records:
-            if record.file_name in files:
-                flags = record.save_flags()
-                if hasattr(record, 'save'):  # temporary until all are implemented
-                    record.save()
-                length = 0
-                for subrecord in record.ordered_subrecords:
-                    length += 8 + len(subrecord.data)
-                file.write(struct.pack('<4siii', record.get_record_type().encode('mbcs'), length, 0, flags))
-                for subrecord in record.ordered_subrecords:
-                    file.write(struct.pack('<4si', subrecord.record_type.encode('mbcs'), len(subrecord.data)))
-                    file.write(subrecord.data)
+        active_records = [record for record in mwglobals.ordered_records if record.file_name == active_file]
+        for record in active_records:
+            if isinstance(record, mwtes3.MwTES3):
+                record.num_records = len(active_records) - 1
+            flags = record.save_flags()
+            if hasattr(record, 'save'):  # temporary until all are implemented
+                record.save()
+            length = 0
+            for subrecord in record.ordered_subrecords:
+                length += 8 + len(subrecord.data)
+            file.write(struct.pack('<4siii', record.get_record_type().encode('mbcs'), length, 0, flags))
+            for subrecord in record.ordered_subrecords:
+                file.write(struct.pack('<4si', subrecord.record_type.encode('mbcs'), len(subrecord.data)))
+                file.write(subrecord.data)
 
 
 def create_record(record_type):

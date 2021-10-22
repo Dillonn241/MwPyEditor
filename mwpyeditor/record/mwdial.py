@@ -13,6 +13,8 @@ class MwDIAL(MwRecord):
         self.id_ = self.parse_string('NAME')
         self.type_id = self.parse_uint('DATA', length=1)
 
+        mwglobals.dial_infos[self.id_] = []
+
     def save(self):
         self.clear_subrecords()
         self.add_string(self.id_, 'NAME')

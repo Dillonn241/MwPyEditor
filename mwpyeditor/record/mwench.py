@@ -11,7 +11,8 @@ class MwENCH(MwRecord):
         self.enchantment_cost = 0
         self.charge = 0
         self.autocalc = False
-        self.auto_stats = None
+        self.auto_enchantment_cost = None
+        self.auto_charge = None
         self.enchantments = []
 
     def load(self):
@@ -24,6 +25,8 @@ class MwENCH(MwRecord):
         self.autocalc = (flags & 0x1) == 0x1
 
         load_enchantments(self)
+
+        # self.autocalc_stats()
 
         mwglobals.object_ids[self.id_] = self
 
@@ -39,14 +42,10 @@ class MwENCH(MwRecord):
         save_enchantments(self)
         self.save_deleted()
 
-    def get_auto_stats(self):
-        if self.auto_stats:
-            return self.auto_stats
-        return self.autocalc_stats()
-
     def autocalc_stats(self):
         if not self.autocalc or self.type_id == 3:  # Constant Effect
-            return self.enchantment_cost, self.charge
+            self.auto_enchantment_cost = self.enchantment_cost
+            self.auto_charge = self.charge
         cost = 0
         for enchantment in self.enchantments:
             base_cost = mwglobals.records['MGEF'][enchantment.effect_id].base_cost
@@ -58,13 +57,12 @@ class MwENCH(MwRecord):
             if enchantment.range_type_id == mwglobals.ENCH_RANGES[2]:  # Target
                 base_cost *= 1.5
             cost += base_cost
-        auto_enchantment_cost = round(cost)
-        auto_charge = auto_enchantment_cost
+        self.auto_enchantment_cost = round(cost)
+        self.auto_charge = self.auto_enchantment_cost
         if self.type_id == 2:  # Cast When Used
-            auto_charge *= 5
+            self.auto_charge *= 5
         elif self.type_id == 1:  # Cast When Strikes
-            auto_charge *= 10
-        return auto_enchantment_cost, auto_charge
+            self.auto_charge *= 10
 
     def get_type(self):
         if 0 <= self.type_id < len(mwglobals.ENCH_TYPES):
@@ -88,12 +86,11 @@ class MwENCH(MwRecord):
         return string
 
     def record_details(self):
-        auto_enchantment_cost, auto_charge = self.get_auto_stats()
         return MwRecord.format_record_details(self, [
             ("|ID|", 'id_'),
             ("\n|Cast Type|", 'get_type'),
-            ("\n|Charge Amount|", auto_charge), (" {}", "(auto)" if self.autocalc else ''),
-            ("\n|Enchantment Cost|", auto_enchantment_cost), (" {}", "(auto)" if self.autocalc else ''),
+            ("\n|Charge Amount|", 'auto_charge'), (" {}", "(auto)" if self.autocalc else ''),
+            ("\n|Enchantment Cost|", 'auto_enchantment_cost'), (" {}", "(auto)" if self.autocalc else ''),
             ("\n|Auto Calculate|", 'autocalc', False),
             ("\n|Enchantments|", 'enchantments', [])
         ])

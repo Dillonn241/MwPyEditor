@@ -36,6 +36,8 @@ class MwCELL(MwRecord):
         self.fog_density = None
         self.nam0 = None
         self.references = []
+        self.land = None
+        self.pgrd = None
 
     def load(self):
         self.id_ = self.parse_string('NAME')
@@ -80,6 +82,7 @@ class MwCELL(MwRecord):
             else:
                 mwglobals.interior_cells[self.id_] = copy.copy(self)
                 mwglobals.interior_cells[self.id_].references = copy.copy(self.references)
+                mwglobals.all_cells.append(mwglobals.interior_cells[self.id_])
         else:
             grid = (self.grid_x, self.grid_y)
             if grid in mwglobals.exterior_cells:
@@ -88,6 +91,7 @@ class MwCELL(MwRecord):
             else:
                 mwglobals.exterior_cells[grid] = copy.copy(self)
                 mwglobals.exterior_cells[grid].references = copy.copy(self.references)
+                mwglobals.all_cells.append(mwglobals.exterior_cells[grid])
 
     def load_references(self):
         self.references = []
@@ -173,6 +177,7 @@ class MwCELL(MwRecord):
                                         x for x in cell_copy.references]
         return cell_copy
 
+    """
     def save(self):
         self.clear_subrecords()
         self.add_string(self.id_, 'NAME')
@@ -285,6 +290,7 @@ class MwCELL(MwRecord):
         for ref in temp_refs:
             save_reference()
         self.save_deleted()
+        """
 
     def get_region(self):
         if not self.is_interior and self.region is None:
@@ -324,7 +330,7 @@ class MwCELL(MwRecord):
             return self.id_
         if self.id_:
             return f"{self.id_} {self.get_coords()}"
-        return f"{self.region} {self.get_coords()}"
+        return f"{self.get_region()} {self.get_coords()}"
 
     def get_id(self):
         return str(self)

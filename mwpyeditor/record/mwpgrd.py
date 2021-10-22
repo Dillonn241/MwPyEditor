@@ -6,8 +6,8 @@ class MwPGRD(MwRecord):
     def __init__(self):
         MwRecord.__init__(self)
         self.cell = None
-        self.grid_x = 0
-        self.grid_y = 0
+        self.grid_x = None
+        self.grid_y = None
         self.num_points = 0
         self.id_ = ''
         self.points = None
@@ -20,7 +20,7 @@ class MwPGRD(MwRecord):
             cell = mwglobals.interior_cells[self.id_]
             cell.pgrd = self
             self.cell = cell
-        else:
+        elif (self.grid_x, self.grid_y) in mwglobals.exterior_cells:
             cell = mwglobals.exterior_cells[(self.grid_x, self.grid_y)]
             cell.pgrd = self
             self.cell = cell

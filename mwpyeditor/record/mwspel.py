@@ -29,6 +29,8 @@ class MwSPEL(MwRecord):
 
         load_enchantments(self)
 
+        # self.autocalc_spell_cost()
+
         mwglobals.object_ids[self.id_] = self
 
     def get_auto_spell_cost(self):
@@ -38,7 +40,7 @@ class MwSPEL(MwRecord):
 
     def autocalc_spell_cost(self):
         if not self.autocalc and self.type_id != 0 and self.type_id != 5:  # Spell or Power
-            return self.spell_cost
+            self.auto_spell_cost = self.spell_cost
         cost = 0
         for enchantment in self.enchantments:
             base_cost = mwglobals.records['MGEF'][enchantment.effect_id].base_cost
@@ -51,7 +53,6 @@ class MwSPEL(MwRecord):
                 base_cost *= 1.5
             cost += base_cost
         self.auto_spell_cost = round(cost)
-        return self.auto_spell_cost
 
     def get_type(self):
         if 0 <= self.type_id < len(mwglobals.SPEL_TYPES):
@@ -74,7 +75,7 @@ class MwSPEL(MwRecord):
         return MwRecord.format_record_details(self, [
             ("|Name|", '__str__'),
             ("\n|Type|", 'get_type'),
-            ("\n|Spell Cost|", 'get_auto_spell_cost'), (" {}", "(auto)" if self.autocalc else ''),
+            ("\n|Spell Cost|", 'auto_spell_cost'), (" {}", "(auto)" if self.autocalc else ''),
             ("\n|Auto Calculate|", 'autocalc', False),
             ("\n|PC Start Spell|", 'pc_start_spell', False),
             ("\n|Always Succeeds|", 'always_succeeds', False),
