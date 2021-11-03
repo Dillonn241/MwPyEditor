@@ -38,9 +38,9 @@ def init_plugins():
     """Choose common plugins to load for TR and PT devs. Versions likely out of date."""
 
     """Vanilla"""
-    load_plugin('Morrowind.esm', records_to_load=mwglobals.RECORDS_NODIAL)
-    load_plugin('Tribunal.esm', records_to_load=mwglobals.RECORDS_NODIAL)
-    load_plugin('Bloodmoon.esm', records_to_load=mwglobals.RECORDS_NODIAL)
+    # load_plugin('Morrowind.esm')
+    # load_plugin('Tribunal.esm')
+    # load_plugin('Bloodmoon.esm')
 
     """DLC"""
     # load_plugin('adamantiumarmor.esp')
@@ -52,47 +52,31 @@ def init_plugins():
     # load_plugin('master_index.esp')
     # load_plugin('Siege at Firemoth.esp')
 
-    """Tamriel Data"""
-    # load_plugin('Tamriel_Data_6.esm')
-    # load_plugin('Tamriel_Data_7.esm')
-    # load_plugin('Tamriel_Data_7.1.esm')
-    load_plugin('Tamriel_Data.esm', records_to_load=mwglobals.RECORDS_NODIAL)
-    load_plugin('TD_Addon.esp', records_to_load=mwglobals.RECORDS_NODIAL)
-
-    """Released versions of province mods (renamed)"""
-    # load_plugin('TR_Mainland_1809.esm')
-    # load_plugin('TR_Mainland_1912.esm')
-    # load_plugin('TR_Mainland_2002.esm')
-    # load_plugin('TR_Mainland_2101.esm')
-    # load_plugin('Cyrodiil_Main_0.2.esm')
-    # load_plugin('Sky_Main_02.esp')
-    # load_plugin('Sky_Main_1812.esm')
-    # load_plugin('Sky_Main_1903.esm')
-    # load_plugin('Sky_Main_2001.esm')
+    """Tamriel_Data"""
+    # load_plugin('Tamriel_Data.esm')
+    # load_plugin('TD_Addon.esp')
 
     """Tamriel Rebuilt"""
-    load_plugin('TR_Mainland.esp', records_to_load=mwglobals.RECORDS_NODIAL)
+    # load_plugin('TR_Mainland.esp')
     # load_plugin('TR_Factions.esp')
     # load_plugin('TR_Travels.esp')
     # load_plugin('TR_Travels_(Preview_and_Mainland).esp')
-    # load_plugin('TR_Andothren_v0067.ESP')
-    load_plugin('TR_RorynsBluff_v0236.esp')
-    # load_plugin('TR_ArmunAshlands_v0053.ESP')
-    # load_plugin('TR_SouthernVelothis_v.0011.esp')
-    # load_plugin('TR_ThirrValley_v0073.ESP')
-    # load_plugin('TR_Kartur_v0022.ESP')
-    # load_plugin('TR_RestExterior.esp')
+    # load_plugin('TR_RorynsBluff_v0246.ESP')
+    # load_plugin('TR_ArmunAshlands_v0069.ESP')
+    # load_plugin('TR_SouthernVelothis_v.0013.esp')
+    # load_plugin('TR_ThirrValley_v0075.ESP')
     # load_plugin('TR_ShipalShin_v0004.ESP')
+    # load_plugin('TR_RestExterior.ESP')
 
     """Skyrim: Home of the Nords"""
-    # load_plugin('Sky_Main_2021_08_01.esp')
-    # load_plugin('Sky_Markarth_2021-08-12.ESP')
-    # load_plugin('Sky_Falkheim_2021_01_31.ESP')
+    # load_plugin('Sky_Main_2021_10_08.ESP')
+    # load_plugin('Sky_Markarth_2021-10-29.ESP')
+    # load_plugin('Sky_Falkheim_2021_10_30.ESP')
 
     """Province: Cyrodiil"""
-    # load_plugin('Cyrodiil_Main_2021_03_12b.ESP')
-    # load_plugin('PC_Anvil_v0073.ESP')
-    # load_plugin('PC_Sutch_v0017.ESP')
+    # load_plugin('Cyrodiil_Main_2021_06_27.esp')
+    # load_plugin('PC_Anvil_v0082.esp')
+    # load_plugin('PC_Sutch_v0018.ESP')
 
 
 def testing_area():
