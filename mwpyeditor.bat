@@ -1,1 +1,1 @@
-python -i mwespreader.py
+python -i mwpyeditor_start.py
