@@ -163,6 +163,12 @@ def find_item_usage(id_, file_names=None):
 DIALOGUE
 """
 
+def unique_dialogue(actor_id):
+    for info in mwglobals.records['INFO']:
+        if (info.filter(actor=actor_id)):
+            print(info.record_details())
+            print()
+
 def journal_list(drop=True):
     journaldata = []
     for info in mwglobals.records["INFO"]:
