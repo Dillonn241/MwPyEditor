@@ -3,7 +3,7 @@ import time
 
 from mwpyeditor.core import mwplugin, mwglobals, mwjobs
 from mwpyeditor.core.mwplugin import load_plugin
-from mwpyeditor.record import mwalch, mwcell, mwench, mwland, mwspel, mwnpc_
+from mwpyeditor.record import mwcell, mwland
 
 
 def init_settings():
@@ -20,7 +20,7 @@ def init_settings():
         RECORDS_DIALOGUE -- DIAL and INFO
         RECORDS_NONE     -- nothing except for TES3, which is always loaded
     """
-    mwglobals.default_records = mwglobals.RECORDS_ALL
+    mwglobals.default_records = mwglobals.RECORDS_DIALOGUE
 
     """Expand initial list above."""
     mwglobals.default_records += []
@@ -38,9 +38,9 @@ def init_plugins():
     """Choose common plugins to load for TR and PT devs. Versions likely out of date."""
 
     """Vanilla"""
-    # load_plugin('Morrowind.esm')
-    # load_plugin('Tribunal.esm')
-    # load_plugin('Bloodmoon.esm')
+    load_plugin('Morrowind.esm')
+    load_plugin('Tribunal.esm')
+    load_plugin('Bloodmoon.esm')
 
     """DLC"""
     # load_plugin('adamantiumarmor.esp')
@@ -61,9 +61,6 @@ def init_plugins():
     # load_plugin('TR_Factions.esp')
     # load_plugin('TR_Travels.esp')
     # load_plugin('TR_Travels_(Preview_and_Mainland).esp')
-    # load_plugin('TR_RorynsBluff_v0246.ESP')
-    # load_plugin('TR_ArmunAshlands_v0069.ESP')
-    # load_plugin('TR_SouthernVelothis_v.0013.esp')
     # load_plugin('TR_ThirrValley_v0075.ESP')
     # load_plugin('TR_ShipalShin_v0004.ESP')
     # load_plugin('TR_RestExterior.ESP')
@@ -90,14 +87,18 @@ def testing_area():
     # mwjobs.exterior_doors(file='files/PC_Doors.csv')
     # mwjobs.exterior_doors(file='files/SHOTN_Doors.csv')
     # mwjobs.exterior_doors(file='files/TR_Doors.csv')
-    # mwjobs.ref_map(file='files/SHOTN_Doors.csv', img='files/cellexp/SHOTN_CellExport.png', top=23, bottom=-3, left=-120, right=-94)
-    # mwjobs.ref_map(file='files/PC_Doors.csv', img='files/cellexp/PC_CellExport.png', top=-35, bottom=-58, left=-141, right=-108)
-    # mwjobs.ref_map(file='files/TR_Doors.csv', img='files/cellexp/TR_CellExport.png', top=29, bottom=-59, left=-39, right=49)
+    # mwjobs.ref_map(file='files/SHOTN_Doors.csv', img='files/cellexp/SHOTN_CellExport.png',
+    #                top=23, bottom=-3, left=-120, right=-94)
+    # mwjobs.ref_map(file='files/PC_Doors.csv', img='files/cellexp/PC_CellExport.png',
+    #                top=-35, bottom=-58, left=-141, right=-108)
+    # mwjobs.ref_map(file='files/TR_Doors.csv', img='files/cellexp/TR_CellExport.png',
+    #                top=29, bottom=-59, left=-39, right=49)
     # mwjobs.dump_dialogue(file='files/Dump.csv')
     dump = mwjobs.choice_tree()
     dump.to_csv('files/Dump.csv', index=False, header=True)
 
     """Start"""
+    mwjobs.unique_dialogue("adanja")
     pass
 
 

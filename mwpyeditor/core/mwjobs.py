@@ -163,11 +163,13 @@ def find_item_usage(id_, file_names=None):
 DIALOGUE
 """
 
+
 def unique_dialogue(actor_id):
     for info in mwglobals.records['INFO']:
-        if (info.filter(actor=actor_id)):
+        if info.filter(actor=actor_id):
             print(info.record_details())
             print()
+
 
 def journal_list(drop=True):
     journaldata = []
@@ -179,6 +181,7 @@ def journal_list(drop=True):
     if drop:
         journaldata = journaldata.drop_duplicates(subset=['Name'], keep='first')
     return journaldata
+
 
 def npc_freq():
     npcdata = []
@@ -197,6 +200,7 @@ def npc_freq():
     npcs = pd.DataFrame(npcdata, columns=['Name', 'Cell'])
     npcs['Freq'] = npcs.groupby('Name')['Name'].transform('count')
     return npcs
+
 
 def npc_list():
     npcdata = []
@@ -219,6 +223,7 @@ def npc_list():
                     npcs.loc[npcs['Name'] == ref.id_, 'Cell'] = npcs.loc[npcs['Name'] == ref.id_, 'Cell'] + npcloc + ";"
     return npcs
 
+
 def choice_tree(): # WIP
     choicetree = []
     for info in mwglobals.records["INFO"]:
@@ -239,6 +244,7 @@ def choice_tree(): # WIP
     choicetree = pd.DataFrame(choicetree, columns=['Topic', 'ID', 'From', 'To'])
     return choicetree
 
+
 def dump_dialogue():
     cols = ['Topic', 'Type', 'Disp', 'Actor', 'Cell', 'Entry', 'Sex', 'Race', 'Class', 'Faction', 'Rank', 'PCFaction', 'PCRank', 'FunVar', 'Result', 'ID']
     data = []
@@ -252,6 +258,7 @@ def dump_dialogue():
              info.faction, info.rank, info.pc_faction, info.pc_rank, info.func_var_filters, info.result, info.id_])
     entries = pd.DataFrame(data, columns=cols)
     return entries
+
 
 def dialogue_analysis(): #WIP
     dial = dump_dialogue()
