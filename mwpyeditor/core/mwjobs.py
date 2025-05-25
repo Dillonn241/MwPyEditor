@@ -231,7 +231,6 @@ def choice_tree(): # WIP
         tochoice = None
         if info.result is not None:
             if "Choice" in info.result or "choice" in info.result:
-                dialresult = info.result
                 dialresult = info.result.replace(',', '')
                 dialresult = dialresult.split('\r\n')
                 dialresult = [s for s in dialresult if "Choice \"" in s]
@@ -550,7 +549,7 @@ def journal_entries(file_name):
         for i in range(len(quest_list)):
             quest = quest_list[i]
             if i == 0:
-                print(f"id={quest.id_}")
+                print(f"|id={quest.id_}")
             else:
                 print(f"|!||{quest.id_}")
 

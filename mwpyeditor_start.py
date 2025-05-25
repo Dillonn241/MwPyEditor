@@ -11,14 +11,15 @@ def init_settings():
 
     """
     Record types loaded by default for every plugin. Options:
-        RECORDS_ALL      -- all types
-        RECORDS_NODIAL   -- all types except: DIAL, INFO
-        RECORDS_MOST     -- all types except: DIAL, INFO, CELL, LAND
-        RECORDS_REFS     -- RECORDS_MIN, CELL, and anything that can be placed as a ref
-        RECORDS_ITEMS    -- RECORDS_MIN, CONT, CREA, NPC_, LEVI, CELL, and items that can be held in inventories
-        RECORDS_MIN      -- minimum types required for autocalc: MGEF, CLAS, RACE, SKIL
-        RECORDS_DIALOGUE -- DIAL and INFO
-        RECORDS_NONE     -- nothing except for TES3, which is always loaded
+        RECORDS_ALL        -- all types
+        RECORDS_NO_DIAL    -- all types except: DIAL, INFO
+        RECORDS_MOST       -- all types except: DIAL, INFO, CELL, LAND
+        RECORDS_REFS       -- RECORDS_AUTOCALC, CELL, and anything that can be placed as a ref
+        RECORDS_ITEMS      -- RECORDS_AUTOCALC, CONT, CREA, NPC_, LEVI, CELL, and items that can be held in inventories
+        RECORDS_ITEM_USAGE -- minimum types required for item usage job: CONT, CREA, NPC_, LEVI, CELL
+        RECORDS_AUTOCALC   -- minimum types required for autocalc: MGEF, CLAS, RACE, SKIL
+        RECORDS_DIALOGUE   -- DIAL and INFO
+        RECORDS_NONE       -- nothing except for TES3, which is always loaded
     """
     mwglobals.default_records = mwglobals.RECORDS_DIALOGUE
 
@@ -35,12 +36,12 @@ def init_settings():
 
 
 def init_plugins():
-    """Choose common plugins to load for TR and PT devs. Versions likely out of date."""
+    """Choose common plugins to load for TR and PT devs."""
 
     """Vanilla"""
-    load_plugin('Morrowind.esm')
-    load_plugin('Tribunal.esm')
-    load_plugin('Bloodmoon.esm')
+    # load_plugin('Morrowind.esm')
+    # load_plugin('Tribunal.esm')
+    # load_plugin('Bloodmoon.esm')
 
     """DLC"""
     # load_plugin('adamantiumarmor.esp')
@@ -54,26 +55,16 @@ def init_plugins():
 
     """Tamriel_Data"""
     # load_plugin('Tamriel_Data.esm')
-    # load_plugin('TD_Addon.esp')
 
     """Tamriel Rebuilt"""
-    # load_plugin('TR_Mainland.esp')
+    load_plugin('TR_Mainland.esm')
     # load_plugin('TR_Factions.esp')
-    # load_plugin('TR_Travels.esp')
-    # load_plugin('TR_Travels_(Preview_and_Mainland).esp')
-    # load_plugin('TR_ThirrValley_v0075.ESP')
-    # load_plugin('TR_ShipalShin_v0004.ESP')
-    # load_plugin('TR_RestExterior.ESP')
 
     """Skyrim: Home of the Nords"""
-    # load_plugin('Sky_Main_2021_10_08.ESP')
-    # load_plugin('Sky_Markarth_2021-10-29.ESP')
-    # load_plugin('Sky_Falkheim_2021_10_30.ESP')
+    # load_plugin('Sky_Main.esm')
 
     """Province: Cyrodiil"""
-    # load_plugin('Cyrodiil_Main_2021_06_27.esp')
-    # load_plugin('PC_Anvil_v0082.esp')
-    # load_plugin('PC_Sutch_v0018.ESP')
+    # load_plugin('Cyr_Main.esm')
 
 
 def testing_area():
@@ -82,24 +73,7 @@ def testing_area():
     jobs, or anything else not possible through command line args (you can run those too).
     """
 
-    """Jani's Jobs"""
-    # mwjobs.find_creatures(file='files/SHOTN_Creas.csv')
-    # mwjobs.exterior_doors(file='files/PC_Doors.csv')
-    # mwjobs.exterior_doors(file='files/SHOTN_Doors.csv')
-    # mwjobs.exterior_doors(file='files/TR_Doors.csv')
-    # mwjobs.ref_map(file='files/SHOTN_Doors.csv', img='files/cellexp/SHOTN_CellExport.png',
-    #                top=23, bottom=-3, left=-120, right=-94)
-    # mwjobs.ref_map(file='files/PC_Doors.csv', img='files/cellexp/PC_CellExport.png',
-    #                top=-35, bottom=-58, left=-141, right=-108)
-    # mwjobs.ref_map(file='files/TR_Doors.csv', img='files/cellexp/TR_CellExport.png',
-    #                top=29, bottom=-59, left=-39, right=49)
-    # mwjobs.dump_dialogue(file='files/Dump.csv')
-    dump = mwjobs.choice_tree()
-    dump.to_csv('files/Dump.csv', index=False, header=True)
-
-    """Start"""
-    mwjobs.unique_dialogue("adanja")
-    pass
+    mwjobs.journal_entries("TR_Mainland.esm")
 
 
 """

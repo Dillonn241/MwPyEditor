@@ -8,7 +8,7 @@ RECORDS_ALL = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', '
                'REPA', 'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'LEVC', 'CELL', 'LAND', 'PGRD',
                'SNDG', 'DIAL', 'INFO', 'SSCR']
 
-RECORDS_NODIAL = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', 'MGEF', 'SCPT', 'REGN', 'BSGN',
+RECORDS_NO_DIAL = ['TES3', 'GMST', 'GLOB', 'CLAS', 'FACT', 'RACE', 'SOUN', 'SKIL', 'MGEF', 'SCPT', 'REGN', 'BSGN',
                   'LTEX', 'STAT', 'DOOR', 'MISC', 'WEAP', 'CONT', 'SPEL', 'CREA', 'BODY', 'LIGH', 'ENCH', 'NPC_',
                   'ARMO', 'CLOT', 'REPA', 'ACTI', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'LEVC',
                   'CELL', 'LAND', 'PGRD', 'SNDG', 'SSCR']
@@ -23,7 +23,9 @@ RECORDS_REFS = ['TES3', 'CLAS', 'RACE', 'SKIL', 'MGEF', 'STAT', 'DOOR', 'MISC', 
 RECORDS_ITEMS = ['TES3', 'CLAS', 'RACE', 'SKIL', 'MGEF', 'MISC', 'WEAP', 'CONT', 'CREA', 'LIGH', 'NPC_', 'ARMO', 'CLOT',
                  'REPA', 'APPA', 'LOCK', 'PROB', 'INGR', 'BOOK', 'ALCH', 'LEVI', 'CELL']
 
-RECORDS_MIN = ['TES3', 'CLAS', 'RACE', 'SKIL', 'MGEF']
+RECORDS_ITEM_USAGE = ['TES3', 'CONT', 'CREA', 'NPC_', 'LEVI', 'CELL']
+
+RECORDS_AUTOCALC = ['TES3', 'CLAS', 'RACE', 'SKIL', 'MGEF']
 
 RECORDS_DIALOGUE = ['TES3', 'DIAL', 'INFO']
 
